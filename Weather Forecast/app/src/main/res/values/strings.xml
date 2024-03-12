@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Weather Forecast</string>
+    //menu
+    <string name="home">Home</string>
+    <string name="alarm">Alarm</string>
+    <string name="favourites">Favourites</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+    //home page
+    <string name="today">Today</string>
+    <string name="week">Next Forecast</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind speed</string>
+    <string name="pressure">Pressure</string>
+    <string name="cloud">Clouds</string>
+
 </resources>
