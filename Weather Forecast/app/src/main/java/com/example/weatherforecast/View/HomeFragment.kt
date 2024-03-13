@@ -1,0 +1,143 @@
+package com.example.weatherforecast.View
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.example.weatherforecast.Helpers.getCountryFlagUrl
+import com.example.weatherforecast.Helpers.getFromSharedPreferences
+import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.Helpers.getWeatherImageUrl
+import com.example.weatherforecast.Helpers.saveOnSharedPreferences
+import com.example.weatherforecast.LocalDataSource.LocalDataSource
+import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Model.WeatherData
+import com.example.weatherforecast.R
+import com.example.weatherforecast.RecycleView.DayAdapter
+import com.example.weatherforecast.RecycleView.HourAdapter
+import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
+import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Repository.Repository
+import com.example.weatherforecast.Repository.RepositoryImpl
+import com.example.weatherforecast.ViewModel.RemoteViewModel
+import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
+import com.example.weatherforecast.databinding.FragmentHomeBinding
+import com.example.weatherforecast.databinding.FragmentWeatherDetailsBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+
+class HomeFragment : Fragment() {
+
+    lateinit var binding: FragmentHomeBinding
+    lateinit var hourAdapter: HourAdapter
+    lateinit var dayAdapter: DayAdapter
+    lateinit var viewModel: RemoteViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View? {
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpHourRecyclerView()
+        setUpDayRecyclerView()
+        initViewModel()
+        getData()
+    }
+
+    private fun setUpHourRecyclerView(){
+        var manager = LinearLayoutManager(context)
+        manager.orientation = RecyclerView.HORIZONTAL
+        binding.todayRecyclerView.layoutManager = manager
+
+        hourAdapter = HourAdapter(context)
+        hourAdapter.submitList(emptyList())
+        binding.todayRecyclerView.adapter = hourAdapter
+    }
+    private fun setUpDayRecyclerView(){
+        var manager = LinearLayoutManager(context)
+        manager.orientation = RecyclerView.VERTICAL
+        binding.weekRecyclerView.layoutManager = manager
+
+        dayAdapter = DayAdapter(context)
+        dayAdapter.submitList(emptyList())
+        binding.weekRecyclerView.adapter = dayAdapter
+    }
+    private fun initViewModel(){
+        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
+        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+
+        val factory = RemoteViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(RemoteViewModel::class.java)
+
+        viewModel.weather.observe(viewLifecycleOwner){
+                item -> setData(item)
+        }
+        viewModel.hourlyWeatherList.observe(viewLifecycleOwner){
+            items -> hourAdapter.submitList(items)
+            hourAdapter.notifyDataSetChanged()
+        }
+        viewModel.dayList.observe(viewLifecycleOwner){
+                items -> dayAdapter.submitList(items)
+            dayAdapter.notifyDataSetChanged()
+        }
+    }
+    private fun getData(){
+        val latitude = getFromSharedPreferences(requireContext(), "latitude", "0").toDouble()
+        val longitude = getFromSharedPreferences(requireContext(), "longitude", "0").toDouble()
+        val language =  getFromSharedPreferences(requireContext(), "language", "eg")
+
+        viewModel.getCurrentWeather(latitude, longitude, language)
+        viewModel.getHourlyWeather(latitude, longitude, language)
+        hourAdapter.notifyDataSetChanged()
+        viewModel.getDailyWeather(latitude, longitude, language)
+        dayAdapter.notifyDataSetChanged()
+    }
+    private fun setData(weather: WeatherData){
+        binding.apply {
+            val flagUrl = weather.countryCode?.let { getCountryFlagUrl(it) }
+            Glide.with(requireContext()).load(flagUrl).into(flagImg)
+            val imgUrl = getWeatherIconUrl(weather.weatherIcon)
+            Glide.with(requireContext()).load(imgUrl).into(image)
+
+            time.text = weather.Time
+            date.text = weather.Date
+            cityName.text = weather.cityName
+            temperature.text = weather.temperature.toString()
+            description.text = weather.weatherDescription
+            humidity.text = weather.humidity.toString()
+            cloud.text = weather.cloudiness.toString()
+            wind.text = weather.wind.toString()
+            pressure.text = weather.pressure.toString()
+        }
+    }
+
+}
