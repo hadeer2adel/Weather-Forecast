@@ -66,16 +66,30 @@
 
             <TextView
                 android:id="@+id/temperature"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="28 ºC"
+                android:text="28"
                 android:textColor="@color/white"
-                android:textSize="50dp"
+                android:textSize="70dp"
                 android:textStyle="bold"
                 android:gravity="center"
                 app:layout_constraintEnd_toEndOf="@+id/image"
                 app:layout_constraintStart_toStartOf="@+id/image"
                 app:layout_constraintTop_toBottomOf="@+id/image"/>
+
+            <TextView
+                android:id="@+id/temperatureUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="10dp"
+                android:text="ºC"
+                android:textColor="@color/white"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:layout_constraintStart_toEndOf="@+id/temperature"
+                app:layout_constraintTop_toTopOf="@+id/temperature"/>
 
             <TextView
                 android:id="@+id/description"
@@ -100,130 +114,146 @@
                 app:layout_constraintEnd_toEndOf="@+id/description"
                 app:layout_constraintTop_toBottomOf="@+id/description"/>
 
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/grid"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                app:columnCount="2"
-                app:rowCount="2"
+            <TextView
+                android:id="@+id/pText"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:drawableLeft="@drawable/ic_pressure"
+                android:text="@string/pressure"
+                android:textColor="@color/white"
+                android:textSize="22dp"
+                android:alpha="0.8"
                 app:layout_constraintStart_toStartOf="@+id/view3"
+                app:layout_constraintTop_toTopOf="@+id/view3"/>
+            <TextView
+                android:id="@+id/pressure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="20dp"
+                android:text="1021"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="@+id/pText"
+                app:layout_constraintTop_toBottomOf="@+id/pText"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="hpa"
+                android:textSize="22dp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/pressure"
+                app:layout_constraintBottom_toBottomOf="@+id/pressure"/>
+
+            <TextView
+                android:id="@+id/wText"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:drawableLeft="@drawable/ic_wind"
+                android:text="@string/wind"
+                android:textColor="@color/white"
+                android:textSize="22dp"
+                android:alpha="0.8"
+                app:layout_constraintBottom_toBottomOf="@+id/pText"
                 app:layout_constraintEnd_toEndOf="@+id/view3"
-                app:layout_constraintTop_toTopOf="@+id/view3">
+                app:layout_constraintTop_toTopOf="@+id/pText"/>
+            <TextView
+                android:id="@+id/wind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="25dp"
+                android:text="2.06"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="@+id/wText"
+                app:layout_constraintTop_toBottomOf="@+id/wText"/>
+            <TextView
+                android:id="@+id/windUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="m/s"
+                android:textSize="22dp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/wind"
+                app:layout_constraintBottom_toBottomOf="@+id/wind"/>
 
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="25dp"
-                    android:orientation="vertical"
-                    app:layout_column="0"
-                    app:layout_row="0" >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_humidity"
-                        android:text="@string/humidity"
-                        android:textColor="@color/white"
-                        android:alpha="0.8"
-                        android:textSize="22dp" />
+            <TextView
+                android:id="@+id/hText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:drawableLeft="@drawable/ic_humidity"
+                android:text="@string/humidity"
+                android:textColor="@color/white"
+                android:textSize="22dp"
+                android:alpha="0.8"
+                app:layout_constraintStart_toStartOf="@+id/pText"
+                app:layout_constraintEnd_toEndOf="@+id/pText"
+                app:layout_constraintTop_toBottomOf="@+id/pressure"/>
+            <TextView
+                android:id="@+id/humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="40dp"
+                android:text="77"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="@+id/hText"
+                app:layout_constraintTop_toBottomOf="@+id/hText"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="%"
+                android:textSize="22dp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/humidity"
+                app:layout_constraintBottom_toBottomOf="@+id/humidity"/>
 
-                    <TextView
-                        android:id="@+id/humidity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        android:text="77%"
-                        android:textColor="@color/white"
-                        android:textSize="22dp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="25dp"
-                    android:orientation="vertical"
-                    app:layout_column="1"
-                    app:layout_row="0" >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_cloud"
-                        android:text="@string/cloud"
-                        android:textColor="@color/white"
-                        android:alpha="0.8"
-                        android:textSize="22dp" />
-                    <TextView
-                        android:id="@+id/cloud"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="40%"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="22dp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="25dp"
-                    android:orientation="vertical"
-                    app:layout_column="0"
-                    app:layout_row="1" >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_pressure"
-                        android:text="@string/pressure"
-                        android:textColor="@color/white"
-                        android:alpha="0.8"
-                        android:textSize="22dp" />
-                    <TextView
-                        android:id="@+id/pressure"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="1021 hpa"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="22dp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="25dp"
-                    android:orientation="vertical"
-                    app:layout_column="1"
-                    app:layout_row="1" >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_wind"
-                        android:text="@string/wind"
-                        android:textColor="@color/white"
-                        android:alpha="0.8"
-                        android:textSize="22dp" />
-                    <TextView
-                        android:id="@+id/wind"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="2.06 m/s"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="22dp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-            </androidx.gridlayout.widget.GridLayout>
+            <TextView
+                android:id="@+id/cText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_cloud"
+                android:text="@string/cloud"
+                android:textColor="@color/white"
+                android:textSize="22dp"
+                android:alpha="0.8"
+                app:layout_constraintStart_toStartOf="@+id/wText"
+                app:layout_constraintEnd_toEndOf="@+id/wText"
+                app:layout_constraintTop_toTopOf="@+id/hText"
+                app:layout_constraintBottom_toBottomOf="@+id/hText"/>
+            <TextView
+                android:id="@+id/cloud"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="50dp"
+                android:text="40"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="@+id/cText"
+                app:layout_constraintTop_toBottomOf="@+id/cText"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="%"
+                android:textSize="22dp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/cloud"
+                app:layout_constraintBottom_toBottomOf="@+id/cloud"/>
 
             <View
                 android:id="@+id/view1"

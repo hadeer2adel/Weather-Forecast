@@ -12,6 +12,6 @@
     <string name="humidity">Humidity</string>
     <string name="wind">Wind speed</string>
     <string name="pressure">Pressure</string>
-    <string name="cloud">Clouds</string>
+    <string name="cloud">Cloudiness</string>
 
 </resources>
