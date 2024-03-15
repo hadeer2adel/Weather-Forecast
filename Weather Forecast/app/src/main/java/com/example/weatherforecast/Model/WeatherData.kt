@@ -19,9 +19,9 @@ data class WeatherData(
     val Time: String,
     val weatherDescription: String,
     val weatherIcon: String,
-    val temperature: Double,
+    val temperature: Long,
     val humidity: Int,
-    val pressure: Double,
+    val pressure: Long,
     val wind: Double,
     val cloudiness: Int,
     val cityName: String,
@@ -30,14 +30,14 @@ data class WeatherData(
 
 data class HourlyWeatherData(
     val time: String,
-    val temperature: Double,
+    val temperature: Long,
     val weatherIcon: String
 )
 
 data class DailyWeatherData(
     val date: String,
-    val minTemperature: Double,
-    val maxTemperature: Double,
+    val minTemperature: Long,
+    val maxTemperature: Long,
     val weatherIcon: String
 )
 
@@ -51,9 +51,9 @@ fun getWeatherData(weather: CurrentWeatherResponse, isCurrentLocation: Boolean):
         convertTimestampToTime(weather.timestamp, weather.timezone),
         weather.weather.get(0).description,
         weather.weather.get(0).icon,
-        weather.main.temperature,
+        weather.main.temperature.toLong(),
         weather.main.humidity,
-        weather.main.pressure,
+        weather.main.pressure.toLong(),
         weather.wind.speed,
         weather.clouds.cloudiness,
         weather.cityName,
@@ -69,7 +69,9 @@ fun getHourlyWeatherData(forecastWeather: ForecastWeatherResponse): List<HourlyW
     for (hourlyData in forecastWeather.list){
         val day = hourlyData.dateTimeText.split(" ")
         if (todayDate.equals(day[0]))
-            hourlyWeather.add(HourlyWeatherData(convertTimeTo12HourFormat(day[1]), hourlyData.main.temperature, hourlyData.weather.get(0).icon))
+            hourlyWeather.add(HourlyWeatherData(convertTimeTo12HourFormat(day[1]),
+                hourlyData.main.temperature.toLong(),
+                hourlyData.weather.get(0).icon))
         else
             break
     }
@@ -82,7 +84,10 @@ fun getDailyWeatherData(forecastWeather: ForecastWeatherResponse): List<DailyWea
     for (hourlyData in forecastWeather.list){
         val day = hourlyData.dateTimeText.split(" ")
         if (day[1].equals("00:00:00"))
-            hourlyWeather.add(DailyWeatherData(getDayOfWeek(day[0]), hourlyData.main.minTemperature, hourlyData.main.maxTemperature, hourlyData.weather.get(0).icon))
+            hourlyWeather.add(DailyWeatherData(getDayOfWeek(day[0]),
+                hourlyData.main.minTemperature.toLong(),
+                hourlyData.main.maxTemperature.toLong(),
+                hourlyData.weather.get(0).icon))
     }
     return hourlyWeather
 }

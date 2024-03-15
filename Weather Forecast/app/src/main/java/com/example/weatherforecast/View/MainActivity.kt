@@ -1,65 +1,55 @@
 package com.example.weatherforecast.View
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.weatherforecast.R
-import com.example.weatherforecast.RecycleView.TabLayoutAdapter
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
-    lateinit var tabLayoutAdapter: TabLayoutAdapter
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        tabLayoutAdapter = TabLayoutAdapter(this)
+        setSupportActionBar(binding.topBar)
 
-        initTopBar()
-        initTabLayout()
-        initViewPager()
+        navController = findNavController(this, R.id.nav_host_fragment)
+        setupActionBarWithNavController(this, navController)
     }
 
-    private fun initTopBar(){
-        binding.topBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.search -> true
-                R.id.settings -> true
-                else -> false
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.top_bar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.search -> {
+                navController.navigate(R.id.settingFragment)
+                true
             }
+            R.id.setting -> {
+                navController.navigate(R.id.settingFragment)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
-    private fun initTabLayout(){
-        binding.apply {
-            tabLayout.addTab(tabLayout.newTab().setText(R.string.home))
-            tabLayout.addTab(tabLayout.newTab().setText(R.string.alarm))
-            tabLayout.addTab(tabLayout.newTab().setText(R.string.favourites))
 
-            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    if (tab != null) {
-                        viewPager.currentItem = tab.position
-                    }
-                }
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {}
-                override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            })
-        }
-    }
-    private fun initViewPager(){
-        binding.apply {
-            viewPager.adapter = tabLayoutAdapter
-            viewPager.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    tabLayout.getTabAt(position)?.select()
-                }
-            })
-        }
-    }
 }

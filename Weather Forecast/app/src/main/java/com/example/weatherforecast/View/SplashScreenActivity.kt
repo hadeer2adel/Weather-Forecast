@@ -14,6 +14,7 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+        getSupportActionBar()?.hide()
 
         lottie_1 = findViewById(R.id.lottie_1)
 

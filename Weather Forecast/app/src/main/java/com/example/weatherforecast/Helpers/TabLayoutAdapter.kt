@@ -1,4 +1,4 @@
-package com.example.weatherforecast.RecycleView
+package com.example.weatherforecast.Helpers
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

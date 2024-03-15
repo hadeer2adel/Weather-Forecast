@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_color_1"
+    tools:context=".View.SettingFragment">
+
+    <ImageView
+        android:id="@+id/nIcon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/ic_notification"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="@string/settings"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:gravity="start"
+        android:textAllCaps="false"
+        android:clickable="false"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        app:layout_constraintStart_toEndOf="@+id/nIcon"
+        app:layout_constraintTop_toTopOf="@+id/nIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/nIcon"/>
+
+    <ImageView
+        android:id="@+id/lIcon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ic_language"
+        app:layout_constraintStart_toStartOf="@+id/nIcon"
+        app:layout_constraintEnd_toEndOf="@+id/nIcon"
+        app:layout_constraintTop_toBottomOf="@+id/nIcon"/>
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="@string/settings"
+        android:textSize="28dp"
+        android:textColor="@color/white"
+        android:gravity="start"
+        android:textAllCaps="false"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        app:layout_constraintStart_toEndOf="@+id/lIcon"
+        app:layout_constraintTop_toTopOf="@+id/lIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/lIcon"
+        app:layout_constraintEnd_toEndOf="@id/view1"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

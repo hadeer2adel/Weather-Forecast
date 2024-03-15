@@ -10,15 +10,15 @@ import retrofit2.Response
 class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSource: LocalDataSource):
     Repository {
 
-    override suspend fun getCurrentWeather(latitude: Double, longitude: Double, language: String
+    override suspend fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String
     ): Response<CurrentWeatherResponse> {
-        return  remoteDataSource.getCurrentWeather(latitude, longitude, language)
+        return  remoteDataSource.getCurrentWeather(latitude, longitude, units, language)
     }
 
 
-    override suspend fun getForecastWeather(latitude: Double, longitude: Double, language: String
+    override suspend fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String
     ): Response<ForecastWeatherResponse> {
-        return  remoteDataSource.getForecastWeather(latitude, longitude, language)
+        return  remoteDataSource.getForecastWeather(latitude, longitude, units, language)
     }
 
     override suspend fun getAllLocations(): List<WeatherData> {

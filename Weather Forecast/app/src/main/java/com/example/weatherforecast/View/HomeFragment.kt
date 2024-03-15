@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getFromSharedPreferences
+import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
 import com.example.weatherforecast.Helpers.getWeatherImageUrl
 import com.example.weatherforecast.Helpers.saveOnSharedPreferences
@@ -56,6 +57,9 @@ class HomeFragment : Fragment() {
     lateinit var hourAdapter: HourAdapter
     lateinit var dayAdapter: DayAdapter
     lateinit var viewModel: RemoteViewModel
+
+    var temperatureUnits = "K"
+    var windUnits = "m/s"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -114,11 +118,14 @@ class HomeFragment : Fragment() {
         val latitude = getFromSharedPreferences(requireContext(), "latitude", "0").toDouble()
         val longitude = getFromSharedPreferences(requireContext(), "longitude", "0").toDouble()
         val language =  getFromSharedPreferences(requireContext(), "language", "eg")
+        temperatureUnits = getFromSharedPreferences(requireContext(), "temperatureUnit", temperatureUnits)
+        windUnits =  getFromSharedPreferences(requireContext(), "windUnit", windUnits)
+        val units = getUnits(temperatureUnits, windUnits)
 
-        viewModel.getCurrentWeather(latitude, longitude, language)
-        viewModel.getHourlyWeather(latitude, longitude, language)
+        viewModel.getCurrentWeather(latitude, longitude, units, language)
+        viewModel.getHourlyWeather(latitude, longitude, units, language)
         hourAdapter.notifyDataSetChanged()
-        viewModel.getDailyWeather(latitude, longitude, language)
+        viewModel.getDailyWeather(latitude, longitude, units, language)
         dayAdapter.notifyDataSetChanged()
     }
     private fun setData(weather: WeatherData){
@@ -132,10 +139,12 @@ class HomeFragment : Fragment() {
             date.text = weather.Date
             cityName.text = weather.cityName
             temperature.text = weather.temperature.toString()
+            temperatureUnit.text = "º$temperatureUnits"
             description.text = weather.weatherDescription
             humidity.text = weather.humidity.toString()
             cloud.text = weather.cloudiness.toString()
             wind.text = weather.wind.toString()
+            windUnit.text = windUnits
             pressure.text = weather.pressure.toString()
         }
     }

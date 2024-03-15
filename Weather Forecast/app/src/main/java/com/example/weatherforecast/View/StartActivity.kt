@@ -36,6 +36,7 @@ class StartActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
+        getSupportActionBar()?.hide()
         if(checkPermissions()){
             if (isLocationEnabled()){
                 getFreshLocation()

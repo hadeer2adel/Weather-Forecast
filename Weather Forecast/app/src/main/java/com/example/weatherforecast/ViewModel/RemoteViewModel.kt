@@ -27,9 +27,9 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
     private var _dayList = MutableLiveData<List<DailyWeatherData>>()
     var dayList: LiveData<List<DailyWeatherData>> = _dayList
 
-    fun getCurrentWeather(latitude: Double, longitude: Double, language: String){
+    fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getCurrentWeather(latitude, longitude, language)
+            val response = repository.getCurrentWeather(latitude, longitude, units, language)
             if (response.isSuccessful && response.body() != null) {
                 val data = getWeatherData(response.body()!!, true)
                 _weather.postValue(data)
@@ -37,9 +37,9 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
         }
     }
 
-    fun getHourlyWeather(latitude: Double, longitude: Double, language: String){
+    fun getHourlyWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getForecastWeather(latitude, longitude, language)
+            val response = repository.getForecastWeather(latitude, longitude, units, language)
             if (response.isSuccessful && response.body() != null) {
                 val list = getHourlyWeatherData(response.body()!!)
                 _hourlyWeatherList.postValue(list)
@@ -47,9 +47,9 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
         }
     }
 
-    fun getDailyWeather(latitude: Double, longitude: Double, language: String){
+    fun getDailyWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getForecastWeather(latitude, longitude, language)
+            val response = repository.getForecastWeather(latitude, longitude, units, language)
             if (response.isSuccessful && response.body() != null) {
                 val list = getDailyWeatherData(response.body()!!)
                 _dayList.postValue(list)

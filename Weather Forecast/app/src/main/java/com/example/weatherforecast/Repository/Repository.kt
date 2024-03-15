@@ -7,8 +7,8 @@ import retrofit2.Response
 
 interface Repository {
     //Remote
-    suspend fun getCurrentWeather(latitude: Double, longitude: Double, language: String): Response<CurrentWeatherResponse>
-    suspend fun getForecastWeather(latitude: Double, longitude: Double, language: String): Response<ForecastWeatherResponse>
+    suspend fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String): Response<CurrentWeatherResponse>
+    suspend fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String): Response<ForecastWeatherResponse>
     
     //Local
     suspend fun getAllLocations(): List<WeatherData>

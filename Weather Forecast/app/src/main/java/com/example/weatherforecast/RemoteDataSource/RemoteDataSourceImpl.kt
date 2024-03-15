@@ -30,13 +30,13 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
-    override suspend fun getCurrentWeather(latitude: Double, longitude: Double, language: String
+    override suspend fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String
     ): Response<CurrentWeatherResponse> {
-        return service.getCurrentWeather(latitude, longitude, language, apiKey)
+        return service.getCurrentWeather(latitude, longitude, language, units, apiKey)
     }
 
-    override suspend fun getForecastWeather(latitude: Double, longitude: Double, language: String
+    override suspend fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String
     ): Response<ForecastWeatherResponse> {
-        return service.getForecastWeather(latitude, longitude, language, 40, apiKey)
+        return service.getForecastWeather(latitude, longitude, language, units, 40, apiKey)
     }
 }

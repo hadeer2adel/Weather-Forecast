@@ -20,25 +20,14 @@
             app:menu="@menu/top_bar"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"/>
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/dark_color_2"
-        app:tabIndicatorColor="@color/white"
-        app:tabSelectedTextColor="@color/white"
-        app:tabRippleColor="@color/white"
-        app:tabTextColor="@color/gray"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
-        app:tabMode="fixed"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/topBarLayout"/>
+        android:layout_below="@+id/topBarLayout"
+        app:navGraph="@navigation/nav_graph" />
 
 </RelativeLayout>
