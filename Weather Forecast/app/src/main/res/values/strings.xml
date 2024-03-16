@@ -13,5 +13,19 @@
     <string name="wind">Wind speed</string>
     <string name="pressure">Pressure</string>
     <string name="cloud">Cloudiness</string>
-
+    //setting page
+    <string name="location">Location</string>
+    <string name="notification">Notifications</string>
+    <string name="language">Language</string>
+    <string name="language_1">English</string>
+    <string name="language_2">Arabic</string>
+    <string name="t_units">Temperature</string>
+    <string name="t_unit_1">Kelvin</string>
+    <string name="t_unit_2">Celsius</string>
+    <string name="t_unit_3">Fahrenheit</string>
+    <string name="w_units">Wind Speed</string>
+    <string name="w_unit_1">m/s</string>
+    <string name="w_unit_2">mi/hr</string>
+    <string name="rv_alarms">Remove All Alarms</string>
+    <string name="rv_locations">Remove All Locations</string>
 </resources>

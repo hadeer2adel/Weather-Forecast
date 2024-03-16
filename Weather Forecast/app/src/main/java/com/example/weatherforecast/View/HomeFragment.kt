@@ -51,7 +51,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(){
 
     lateinit var binding: FragmentHomeBinding
     lateinit var hourAdapter: HourAdapter
@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
         setUpHourRecyclerView()
         setUpDayRecyclerView()
         initViewModel()
-        getData()
+        getData(requireContext())
     }
 
     private fun setUpHourRecyclerView(){
@@ -103,7 +103,7 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory).get(RemoteViewModel::class.java)
 
         viewModel.weather.observe(viewLifecycleOwner){
-                item -> setData(item)
+                item -> setDataOnView(item)
         }
         viewModel.hourlyWeatherList.observe(viewLifecycleOwner){
             items -> hourAdapter.submitList(items)
@@ -114,12 +114,12 @@ class HomeFragment : Fragment() {
             dayAdapter.notifyDataSetChanged()
         }
     }
-    private fun getData(){
-        val latitude = getFromSharedPreferences(requireContext(), "latitude", "0").toDouble()
-        val longitude = getFromSharedPreferences(requireContext(), "longitude", "0").toDouble()
-        val language =  getFromSharedPreferences(requireContext(), "language", "eg")
-        temperatureUnits = getFromSharedPreferences(requireContext(), "temperatureUnit", temperatureUnits)
-        windUnits =  getFromSharedPreferences(requireContext(), "windUnit", windUnits)
+    private fun getData(context: Context){
+        val latitude = getFromSharedPreferences(context, "latitude", "0").toDouble()
+        val longitude = getFromSharedPreferences(context, "longitude", "0").toDouble()
+        val language =  getFromSharedPreferences(context, "language", "eg")
+        temperatureUnits = getFromSharedPreferences(context, "temperatureUnit", temperatureUnits)
+        windUnits =  getFromSharedPreferences(context, "windUnit", windUnits)
         val units = getUnits(temperatureUnits, windUnits)
 
         viewModel.getCurrentWeather(latitude, longitude, units, language)
@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
         viewModel.getDailyWeather(latitude, longitude, units, language)
         dayAdapter.notifyDataSetChanged()
     }
-    private fun setData(weather: WeatherData){
+    private fun setDataOnView(weather: WeatherData){
         binding.apply {
             val flagUrl = weather.countryCode?.let { getCountryFlagUrl(it) }
             Glide.with(requireContext()).load(flagUrl).into(flagImg)

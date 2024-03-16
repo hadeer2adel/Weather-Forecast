@@ -1,6 +1,7 @@
 package com.example.weatherforecast.View
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,7 +15,7 @@ import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +49,10 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.settingFragment)
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            else -> {
+                navController.navigate(R.id.mainFragment)
+                true
+            }
         }
     }
 
