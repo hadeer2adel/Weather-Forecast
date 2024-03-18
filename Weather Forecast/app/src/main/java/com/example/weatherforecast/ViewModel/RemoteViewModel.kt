@@ -1,59 +1,49 @@
 package com.example.weatherforecast.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.Model.DailyWeatherData
-import com.example.weatherforecast.Model.HourlyWeatherData
-import com.example.weatherforecast.Model.WeatherData
-import com.example.weatherforecast.Model.getWeatherData
-import com.example.weatherforecast.Model.getDailyWeatherData
-import com.example.weatherforecast.Model.getHourlyWeatherData
+import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
+import com.example.weatherforecast.RemoteDataSource.ApiForecastWeatherResponse
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 
 class RemoteViewModel(private var repository: Repository) : ViewModel (){
 
-    private var _weather = MutableLiveData<WeatherData>()
-    var weather: LiveData<WeatherData> = _weather
+    private var _weather = MutableStateFlow<ApiCurrentWeatherResponse>(ApiCurrentWeatherResponse.Loading)
+    var weather: MutableStateFlow<ApiCurrentWeatherResponse> = _weather
 
-    private var _hourlyWeatherList = MutableLiveData<List<HourlyWeatherData>>()
-    var hourlyWeatherList: LiveData<List<HourlyWeatherData>> = _hourlyWeatherList
+    private var _weatherList = MutableStateFlow<ApiForecastWeatherResponse>(ApiForecastWeatherResponse.Loading)
+    var weatherList: MutableStateFlow<ApiForecastWeatherResponse> = _weatherList
 
     private var _dayList = MutableLiveData<List<DailyWeatherData>>()
     var dayList: LiveData<List<DailyWeatherData>> = _dayList
 
     fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getCurrentWeather(latitude, longitude, units, language)
-            if (response.isSuccessful && response.body() != null) {
-                val data = getWeatherData(response.body()!!, true)
-                _weather.postValue(data)
-            }
+            repository.getCurrentWeather(latitude, longitude, units, language)
+                .catch {
+                    _weather.value = ApiCurrentWeatherResponse.Failure(it)
+                }.collect {
+                    _weather.value = ApiCurrentWeatherResponse.Success(it!!)
+                }
         }
     }
 
-    fun getHourlyWeather(latitude: Double, longitude: Double, units: String, language: String){
+    fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getForecastWeather(latitude, longitude, units, language)
-            if (response.isSuccessful && response.body() != null) {
-                val list = getHourlyWeatherData(response.body()!!)
-                _hourlyWeatherList.postValue(list)
-            }
-        }
-    }
-
-    fun getDailyWeather(latitude: Double, longitude: Double, units: String, language: String){
-        viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getForecastWeather(latitude, longitude, units, language)
-            if (response.isSuccessful && response.body() != null) {
-                val list = getDailyWeatherData(response.body()!!)
-                _dayList.postValue(list)
-            }
+            repository.getForecastWeather(latitude, longitude, units, language)
+                .catch {
+                    _weatherList.value = ApiForecastWeatherResponse.Failure(it)
+                }.collect {
+                    _weatherList.value = ApiForecastWeatherResponse.Success(it!!)
+                }
         }
     }
 

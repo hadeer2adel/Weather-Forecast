@@ -15,6 +15,9 @@
     <string name="cloud">Cloudiness</string>
     //setting page
     <string name="location">Location</string>
+    <string name="location_1">GPS</string>
+    <string name="location_2">On Map</string>
+    <string name="location_3">Saved Locations</string>
     <string name="notification">Notifications</string>
     <string name="language">Language</string>
     <string name="language_1">English</string>

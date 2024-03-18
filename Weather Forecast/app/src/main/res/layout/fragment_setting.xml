@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
     <Button
-        android:id="@+id/location"
+        android:id="@+id/lBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -26,25 +26,28 @@
         android:textColor="@color/white"
         android:gravity="start"
         android:textAllCaps="false"
+        android:clickable="false"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
         app:layout_constraintStart_toEndOf="@+id/lIcon"
         app:layout_constraintTop_toTopOf="@+id/lIcon"
         app:layout_constraintBottom_toBottomOf="@+id/lIcon"
         app:layout_constraintEnd_toEndOf="parent"/>
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="20dp"
+    <ImageButton
+        android:id="@+id/location"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|end"
         android:src="@drawable/ic_arrow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/lIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/lIcon"/>
+        android:backgroundTint="@color/noColor"
+        app:layout_constraintTop_toTopOf="@+id/lIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/lIcon"
+        app:layout_constraintEnd_toEndOf="parent"/>
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/location"/>
+        app:layout_constraintTop_toBottomOf="@+id/lBtn"/>
 
     <ImageView
         android:id="@+id/nIcon"
@@ -66,10 +69,10 @@
         android:textAllCaps="false"
         android:clickable="false"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/location"
+        app:layout_constraintStart_toStartOf="@+id/lBtn"
         app:layout_constraintTop_toTopOf="@+id/nIcon"
         app:layout_constraintBottom_toBottomOf="@+id/nIcon"
-        app:layout_constraintEnd_toEndOf="@+id/location"/>
+        app:layout_constraintEnd_toEndOf="@+id/lBtn"/>
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/notification"
         android:layout_width="wrap_content"

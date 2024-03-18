@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.weatherforecast.Helpers.getFromSharedPreferences
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.databinding.CardTodayWeatherBinding
 import com.example.weatherforecast.databinding.CardWeekWeatherBinding
 
 class DayAdapter (
-    private val context: Context?,
+    private val context: Context,
         ):ListAdapter<DailyWeatherData, DayAdapter.DayViewHolder>(DayDiffUtil()){
 
     lateinit var binding: CardWeekWeatherBinding
@@ -32,14 +32,12 @@ class DayAdapter (
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
         val dayWeather = getItem(position)
-        if (context != null) {
-            val imgUrl = getWeatherIconUrl(dayWeather.weatherIcon)
-            Glide.with(context).load(imgUrl).into(holder.binding.image)
-        }
         holder.binding.apply {
+            val imgUrl = getWeatherIconUrl(dayWeather.weatherIcon)
+            Glide.with(context).load(imgUrl).into(image)
             day.text = dayWeather.date
             temperature.text = dayWeather.minTemperature.toString() + " / " + dayWeather.maxTemperature.toString()
-            val unit = context?.let { getFromSharedPreferences(it, "temperatureUnit", "K") }
+            val unit = AppSettings.getInstance(context).temperatureUnit
             temperatureUnit.text = "º$unit"
         }
     }

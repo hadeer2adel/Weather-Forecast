@@ -6,11 +6,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherforecast.Model.WeatherData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocalDAO {
     @Query("SELECT * FROM Weather WHERE currentLocation = 0")
-    suspend fun getAllLocations(): List<WeatherData>
+    fun getAllLocations(): Flow<List<WeatherData>>
 
     @Query("SELECT * FROM Weather WHERE currentLocation = 1")
     suspend fun getLastWeather(): WeatherData

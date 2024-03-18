@@ -1,24 +1,24 @@
 package com.example.weatherforecast.View
 
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
-import com.example.weatherforecast.Helpers.getFromSharedPreferences
-import com.example.weatherforecast.Helpers.saveOnSharedPreferences
+import androidx.annotation.MenuRes
+import android.widget.PopupMenu
+import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
-    private var notificationText = "true"
-    private var languageText = "eg"
-    private var temperatureUnit = "K"
-    private var windUnit = "m/s"
+    private lateinit var appSettings: AppSettings
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +30,12 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getData()
+        appSettings = AppSettings.getInstance(requireContext())
+
+        binding.location.setOnClickListener { v ->
+            binding.location.setImageResource(R.drawable.ic_arrow_down)
+            showMenu(v, R.menu.location_options)
+        }
         setDataOnView()
         setUpNotificationOptions()
         setUpLanguageOptions(view)
@@ -38,28 +43,46 @@ class SettingFragment : Fragment() {
         setUpWindOptions(view)
         //setUpRemoveBtn()
     }
-    private fun getData(){
-        notificationText =  getFromSharedPreferences(requireContext(), "notification", notificationText)
-        languageText =  getFromSharedPreferences(requireContext(), "language", languageText)
-        temperatureUnit = getFromSharedPreferences(requireContext(), "temperatureUnit", temperatureUnit)
-        windUnit =  getFromSharedPreferences(requireContext(), "windUnit", windUnit)
+    private fun showMenu(v: View, @MenuRes menuRes: Int) {
+        val popup = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PopupMenu(ContextThemeWrapper(context, R.style.PopupMenuStyle), v)
+        } else {
+            PopupMenu(context, v)
+        }
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.gps -> true
+                R.id.map -> {
+                    true
+                }
+                R.id.saved -> {
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.setOnDismissListener {
+            binding.location.setImageResource(R.drawable.ic_arrow)
+        }
+        popup.show()
     }
     private fun setDataOnView(){
-
         binding.apply {
-            if (notificationText.equals("true"))
+            if (appSettings.notification)
                 notification.isChecked = true
 
-            if (languageText.equals("eg"))
+            if (appSettings.language.equals("eg"))
                 language1.isChecked = true
             else
                 language2.isChecked = true
 
-            if (temperatureUnit.equals("K")){
+            if (appSettings.temperatureUnit.equals("K")){
                 tUnit1.isChecked = true
                 wUnit1.isChecked = true
             }
-            else if (temperatureUnit.equals("C")){
+            else if (appSettings.temperatureUnit.equals("C")){
                 tUnit2.isChecked = true
                 wUnit1.isChecked = true
             }
@@ -71,37 +94,27 @@ class SettingFragment : Fragment() {
     }
     private fun setUpNotificationOptions(){
         binding.notification.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked)
-                saveOnSharedPreferences(requireContext(), "notification", "true")
-            else
-                saveOnSharedPreferences(requireContext(), "notification", "false")
+                appSettings.notification = isChecked
         }
     }
     private fun setUpLanguageOptions(view: View){
         binding.language.setOnCheckedChangeListener { group, checkedId ->
             val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
             val selectedText = selectedRadioButton.text.toString()
-            if (selectedText.equals(getString(R.string.language_2)))
-                saveOnSharedPreferences(requireContext(), "language", "ar")
-            else
-                saveOnSharedPreferences(requireContext(), "language", "eg")
+            when(selectedText) {
+                getString(R.string.language_2) -> appSettings.language = "ar"
+                else -> appSettings.language = "eg"
+            }
         }
     }
     private fun setUpTemperatureOptions(view: View){
         binding.temperature.setOnCheckedChangeListener { group, checkedId ->
             val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
             val selectedText = selectedRadioButton.text.toString()
-            if (selectedText.equals(getString(R.string.t_unit_3))) {
-                binding.wUnit2.isChecked = true
-                saveOnSharedPreferences(requireContext(), "temperatureUnit", "F")
-            }
-            else if (selectedText.equals(getString(R.string.t_unit_2))) {
-                binding.wUnit1.isChecked = true
-                saveOnSharedPreferences(requireContext(), "temperatureUnit", "C")
-            }
-            else {
-                binding.wUnit1.isChecked = true
-                saveOnSharedPreferences(requireContext(), "temperatureUnit", "K")
+            when(selectedText) {
+                getString(R.string.t_unit_3) -> { binding.wUnit2.isChecked = true; appSettings.temperatureUnit = "F" }
+                getString(R.string.t_unit_2) -> { binding.wUnit1.isChecked = true; appSettings.temperatureUnit = "C" }
+                else -> { binding.wUnit1.isChecked = true; appSettings.temperatureUnit = "K" }
             }
         }
     }
@@ -109,12 +122,13 @@ class SettingFragment : Fragment() {
         binding.wind.setOnCheckedChangeListener { group, checkedId ->
             val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
             val selectedText = selectedRadioButton.text.toString()
-            if (selectedText.equals(getString(R.string.w_unit_2))) {
-                binding.tUnit3.isChecked = true
-                saveOnSharedPreferences(requireContext(), "windUnit", "mi/hr")
-            } else {
-                binding.tUnit2.isChecked = true
-                saveOnSharedPreferences(requireContext(), "windUnit", "m/s")
+            when(selectedText) {
+                getString(R.string.w_unit_2) -> { binding.tUnit3.isChecked = true; appSettings.windUnit = "mi/hr" }
+                else -> {
+                    if(!binding.tUnit1.isChecked)
+                        binding.tUnit2.isChecked = true
+                    appSettings.windUnit = "m/s"
+                }
             }
         }
     }

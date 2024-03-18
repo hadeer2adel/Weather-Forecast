@@ -2,6 +2,7 @@ package com.example.weatherforecast.LocalDataSource
 
 import android.content.Context
 import com.example.weatherforecast.Model.WeatherData
+import kotlinx.coroutines.flow.Flow
 
 class LocalDataSourceImpl private constructor(val context: Context):LocalDataSource {
 
@@ -22,7 +23,7 @@ class LocalDataSourceImpl private constructor(val context: Context):LocalDataSou
         }
     }
 
-    override suspend fun getAllLocations(): List<WeatherData> {
+    override fun getAllLocations(): Flow<List<WeatherData>> {
         return dao.getAllLocations()
     }
 

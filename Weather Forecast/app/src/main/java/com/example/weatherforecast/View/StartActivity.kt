@@ -12,11 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.weatherforecast.Helpers.saveOnSharedPreferences
+import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -91,10 +90,8 @@ class StartActivity : AppCompatActivity() {
             override fun onLocationResult(locationResult: LocationResult) {
                 location = locationResult.lastLocation
                 if (location != null){
-                    val latitude = location?.latitude.toString()
-                    val longitude = location?.longitude.toString()
-                    saveOnSharedPreferences(this@StartActivity, "latitude", latitude)
-                    saveOnSharedPreferences(this@StartActivity, "longitude", longitude)
+                    AppSettings.getInstance(this@StartActivity).latitude = location?.latitude!!
+                    AppSettings.getInstance(this@StartActivity).longitude = location?.longitude!!
                     fusedClient.removeLocationUpdates(this)
                     val intent = Intent(this@StartActivity, SplashScreenActivity::class.java)
                     startActivity(intent)

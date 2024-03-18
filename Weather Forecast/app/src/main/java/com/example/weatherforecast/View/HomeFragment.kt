@@ -1,41 +1,31 @@
 package com.example.weatherforecast.View
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
-import android.provider.Settings
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
-import com.example.weatherforecast.Helpers.getFromSharedPreferences
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
-import com.example.weatherforecast.Helpers.getWeatherImageUrl
-import com.example.weatherforecast.Helpers.saveOnSharedPreferences
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.WeatherData
-import com.example.weatherforecast.R
+import com.example.weatherforecast.Model.getDailyWeatherData
+import com.example.weatherforecast.Model.getHourlyWeatherData
+import com.example.weatherforecast.Model.getWeatherData
 import com.example.weatherforecast.RecycleView.DayAdapter
 import com.example.weatherforecast.RecycleView.HourAdapter
+import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
+import com.example.weatherforecast.RemoteDataSource.ApiForecastWeatherResponse
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
@@ -43,13 +33,8 @@ import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
 import com.example.weatherforecast.databinding.FragmentHomeBinding
-import com.example.weatherforecast.databinding.FragmentWeatherDetailsBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(){
 
@@ -57,9 +42,7 @@ class HomeFragment : Fragment(){
     lateinit var hourAdapter: HourAdapter
     lateinit var dayAdapter: DayAdapter
     lateinit var viewModel: RemoteViewModel
-
-    var temperatureUnits = "K"
-    var windUnits = "m/s"
+    private lateinit var appSettings: AppSettings
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,13 +53,15 @@ class HomeFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpHourRecyclerView()
-        setUpDayRecyclerView()
+        appSettings = AppSettings.getInstance(requireContext())
+
+        setUpHourRecyclerView(requireContext())
+        setUpDayRecyclerView(requireContext())
         initViewModel()
-        getData(requireContext())
+        getData()
     }
 
-    private fun setUpHourRecyclerView(){
+    private fun setUpHourRecyclerView(context: Context){
         var manager = LinearLayoutManager(context)
         manager.orientation = RecyclerView.HORIZONTAL
         binding.todayRecyclerView.layoutManager = manager
@@ -85,7 +70,7 @@ class HomeFragment : Fragment(){
         hourAdapter.submitList(emptyList())
         binding.todayRecyclerView.adapter = hourAdapter
     }
-    private fun setUpDayRecyclerView(){
+    private fun setUpDayRecyclerView(context: Context){
         var manager = LinearLayoutManager(context)
         manager.orientation = RecyclerView.VERTICAL
         binding.weekRecyclerView.layoutManager = manager
@@ -101,32 +86,63 @@ class HomeFragment : Fragment(){
 
         val factory = RemoteViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(RemoteViewModel::class.java)
+    }
+    private fun getData(){
+        val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
 
-        viewModel.weather.observe(viewLifecycleOwner){
-                item -> setDataOnView(item)
-        }
-        viewModel.hourlyWeatherList.observe(viewLifecycleOwner){
-            items -> hourAdapter.submitList(items)
-            hourAdapter.notifyDataSetChanged()
-        }
-        viewModel.dayList.observe(viewLifecycleOwner){
-                items -> dayAdapter.submitList(items)
-            dayAdapter.notifyDataSetChanged()
+        viewModel.getCurrentWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+        viewModel.getForecastWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+
+        handleCurrentWeatherResponse()
+        handleForecastWeatherResponse()
+    }
+    private fun handleCurrentWeatherResponse(){
+        lifecycleScope.launch {
+            viewModel.weather.collectLatest {response ->
+                when(response){
+                    is ApiCurrentWeatherResponse.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.scrollView.visibility = View.GONE
+                    }
+                    is ApiCurrentWeatherResponse.Success ->{
+                        binding.progressBar.visibility = View.GONE
+                        binding.scrollView.visibility = View.VISIBLE
+                        val weather = getWeatherData(response.data, true)
+                        setDataOnView(weather)
+                    }
+                    is ApiCurrentWeatherResponse.Failure ->{
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
-    private fun getData(context: Context){
-        val latitude = getFromSharedPreferences(context, "latitude", "0").toDouble()
-        val longitude = getFromSharedPreferences(context, "longitude", "0").toDouble()
-        val language =  getFromSharedPreferences(context, "language", "eg")
-        temperatureUnits = getFromSharedPreferences(context, "temperatureUnit", temperatureUnits)
-        windUnits =  getFromSharedPreferences(context, "windUnit", windUnits)
-        val units = getUnits(temperatureUnits, windUnits)
-
-        viewModel.getCurrentWeather(latitude, longitude, units, language)
-        viewModel.getHourlyWeather(latitude, longitude, units, language)
-        hourAdapter.notifyDataSetChanged()
-        viewModel.getDailyWeather(latitude, longitude, units, language)
-        dayAdapter.notifyDataSetChanged()
+    private fun handleForecastWeatherResponse(){
+        lifecycleScope.launch {
+            viewModel.weatherList.collectLatest {response ->
+                when(response){
+                    is ApiForecastWeatherResponse.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.scrollView.visibility = View.GONE
+                    }
+                    is ApiForecastWeatherResponse.Success ->{
+                        binding.progressBar.visibility = View.GONE
+                        binding.scrollView.visibility = View.VISIBLE
+                        val hourlyWeatherData = getHourlyWeatherData(response.data)
+                        hourAdapter.submitList(hourlyWeatherData)
+                        hourAdapter.notifyDataSetChanged()
+                        val dailyWeatherData = getDailyWeatherData(response.data, AppSettings.getInstance(requireContext()).language )
+                        dayAdapter.submitList(dailyWeatherData)
+                        dayAdapter.notifyDataSetChanged()
+                    }
+                    is ApiForecastWeatherResponse.Failure ->{
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
     }
     private fun setDataOnView(weather: WeatherData){
         binding.apply {
@@ -139,12 +155,12 @@ class HomeFragment : Fragment(){
             date.text = weather.Date
             cityName.text = weather.cityName
             temperature.text = weather.temperature.toString()
-            temperatureUnit.text = "º$temperatureUnits"
+            temperatureUnit.text = "º${appSettings.temperatureUnit}"
             description.text = weather.weatherDescription
             humidity.text = weather.humidity.toString()
             cloud.text = weather.cloudiness.toString()
             wind.text = weather.wind.toString()
-            windUnit.text = windUnits
+            windUnit.text = appSettings.windUnit
             pressure.text = weather.pressure.toString()
         }
     }

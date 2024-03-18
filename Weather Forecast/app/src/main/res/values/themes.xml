@@ -6,6 +6,7 @@
         <item name="windowNoTitle">true</item>
         <item name="switchStyle">@style/Widget.App.Switch</item>
         <item name="radioButtonStyle">@style/Widget.App.RadioButton</item>
+        <item name="android:popupMenuStyle">@style/PopupMenuStyle</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
@@ -21,6 +22,12 @@
     <style name="ThemeOverlay.App.Color" parent="">
         <item name="colorOnSurface">@color/dark_color_4</item>
         <item name="colorSecondary">@color/light_color_4</item>
+    </style>
+
+    <style name="PopupMenuStyle" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_color_3</item>
+        <item name="android:textColor">@color/dark_color_1</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="Theme.WeatherForecast" parent="Base.Theme.WeatherForecast" />

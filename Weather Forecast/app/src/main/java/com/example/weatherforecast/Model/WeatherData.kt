@@ -6,6 +6,7 @@ import com.example.weatherforecast.Helpers.convertTimeTo12HourFormat
 import com.example.weatherforecast.Helpers.convertTimestampToDate
 import com.example.weatherforecast.Helpers.convertTimestampToTime
 import com.example.weatherforecast.Helpers.getDayOfWeek
+import org.intellij.lang.annotations.Language
 
 
 @Entity(tableName = "Weather")
@@ -78,13 +79,13 @@ fun getHourlyWeatherData(forecastWeather: ForecastWeatherResponse): List<HourlyW
     return hourlyWeather
 }
 
-fun getDailyWeatherData(forecastWeather: ForecastWeatherResponse): List<DailyWeatherData> {
+fun getDailyWeatherData(forecastWeather: ForecastWeatherResponse, language: String): List<DailyWeatherData> {
     var hourlyWeather = ArrayList<DailyWeatherData>()
 
     for (hourlyData in forecastWeather.list){
         val day = hourlyData.dateTimeText.split(" ")
         if (day[1].equals("00:00:00"))
-            hourlyWeather.add(DailyWeatherData(getDayOfWeek(day[0]),
+            hourlyWeather.add(DailyWeatherData(getDayOfWeek(day[0], language),
                 hourlyData.main.minTemperature.toLong(),
                 hourlyData.main.maxTemperature.toLong(),
                 hourlyData.weather.get(0).icon))

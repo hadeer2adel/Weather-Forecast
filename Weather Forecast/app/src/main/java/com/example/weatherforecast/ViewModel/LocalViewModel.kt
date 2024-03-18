@@ -44,8 +44,10 @@ class LocalViewModel(val repository: Repository) : ViewModel (){
 
     fun getAllLocations(){
         viewModelScope.launch(Dispatchers.IO){
-            val locations = repository.getAllLocations()
-            _locationList.postValue(locations)
+            repository.getAllLocations()
+                .collect {
+                    _locationList.postValue(it)
+                }
         }
     }
 

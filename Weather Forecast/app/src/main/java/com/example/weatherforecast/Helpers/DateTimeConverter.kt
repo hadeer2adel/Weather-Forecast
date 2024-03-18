@@ -1,5 +1,7 @@
 package com.example.weatherforecast.Helpers
 
+import com.example.weatherforecast.Model.AppSettings
+import org.intellij.lang.annotations.Language
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -37,13 +39,28 @@ fun convertTimeTo12HourFormat(timeString: String): String {
     return outputFormat.format(date)
 }
 
-fun getDayOfWeek(date: String):String{
+fun getDayOfWeek(date: String, language: String):String{
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val date = dateFormat.parse(date)
     val calendar = Calendar.getInstance()
     calendar.time = date
 
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+    if (language.equals("ar")){
+        val dayOfWeekString = when (dayOfWeek) {
+            Calendar.SUNDAY -> "الأحد"
+            Calendar.MONDAY -> "الأثنين"
+            Calendar.TUESDAY -> "الثلثاء"
+            Calendar.WEDNESDAY -> "الأربعاء"
+            Calendar.THURSDAY -> "الخميس"
+            Calendar.FRIDAY -> "الجمعة"
+            Calendar.SATURDAY -> "السبت"
+            else -> ""
+        }
+        return dayOfWeekString
+    }
+
     val dayOfWeekString = when (dayOfWeek) {
         Calendar.SUNDAY -> "Sun"
         Calendar.MONDAY -> "Mon"
@@ -54,6 +71,5 @@ fun getDayOfWeek(date: String):String{
         Calendar.SATURDAY -> "Sat"
         else -> ""
     }
-
     return dayOfWeekString
 }
