@@ -32,6 +32,16 @@
         app:layout_constraintTop_toTopOf="@+id/lIcon"
         app:layout_constraintBottom_toBottomOf="@+id/lIcon"
         app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+        android:id="@+id/locationMethod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:alpha="0.7"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@+id/lIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/lIcon"
+        app:layout_constraintEnd_toStartOf="@+id/location"/>
     <ImageButton
         android:id="@+id/location"
         android:layout_width="80dp"

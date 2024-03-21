@@ -16,7 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherForecast"
-        tools:targetApi="31">
+        tools:targetApi="s">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA7oH5dDTfx8KRT-DtvJhHrquNgRxOxCpE" />
         <activity
             android:name=".View.SplashScreenActivity"
             android:exported="false" />

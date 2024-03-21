@@ -18,6 +18,29 @@
         android:id="@+id/settingFragment"
         android:name="com.example.weatherforecast.View.SettingFragment"
         android:label="@string/settings"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_GPS"
+            app:destination="@id/GPS" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.weatherforecast.View.MapFragment"
+        android:label="@string/map"
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/GPS"
+        android:name="com.example.weatherforecast.View.GPS">
+        <action
+            android:id="@+id/action_GPS_to_settingFragment"
+            app:destination="@id/settingFragment" />
+    </fragment>
 
 </navigation>

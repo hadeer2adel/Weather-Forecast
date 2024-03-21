@@ -13,12 +13,18 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Helpers.isSharedPreferencesContains
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.R
+import com.example.weatherforecast.databinding.FragmentLoadingBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -26,7 +32,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
-class StartActivity : AppCompatActivity() {
+class GPS : Fragment() {
 
     private lateinit var fusedClient : FusedLocationProviderClient
     private lateinit var locationRequest : LocationRequest
@@ -34,15 +40,18 @@ class StartActivity : AppCompatActivity() {
     private val My_LOCATION_PERMISSION_ID = 5005
     private var location: Location? = null
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return FragmentLoadingBinding.inflate(inflater, container, false).root
+    }
+
     @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
-        getSupportActionBar()?.hide()
-        if(checkSavedLocation()){
-            val intent = Intent(this, SplashScreenActivity::class.java)
-            startActivity(intent)
-        }
-        else if(checkPermissions()){
+        if(checkPermissions()){
             if (isLocationEnabled()){
                 getFreshLocation()
             }
@@ -51,18 +60,13 @@ class StartActivity : AppCompatActivity() {
             }
         }
         else{
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(requireActivity(),
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
                 My_LOCATION_PERMISSION_ID)
         }
-    }
-
-    private fun checkSavedLocation(): Boolean{
-        val appSettings = AppSettings.getInstance(this)
-        return appSettings.isLatitudeSaved() && appSettings.isLongitudeSaved()
     }
 
     override fun onRequestPermissionsResult( requestCode:Int, permissions:Array<String>, grantResults:IntArray){
@@ -75,15 +79,15 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun checkPermissions():Boolean{
-        if (( ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            ||( ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)){
+        if (( ContextCompat.checkSelfPermission(requireContext() , Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            ||( ContextCompat.checkSelfPermission(requireContext() , Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)){
             return true
         }
         return false
     }
 
     private fun isLocationEnabled():Boolean{
-        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager: LocationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
                 LocationManager.NETWORK_PROVIDER)){
             return true
@@ -93,7 +97,7 @@ class StartActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     private fun getFreshLocation(){
-        fusedClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         locationRequest = LocationRequest.Builder(0).apply {
             setPriority(Priority.PRIORITY_HIGH_ACCURACY)
         }.build()
@@ -101,11 +105,11 @@ class StartActivity : AppCompatActivity() {
             override fun onLocationResult(locationResult: LocationResult) {
                 location = locationResult.lastLocation
                 if (location != null){
-                    AppSettings.getInstance(this@StartActivity).latitude = location?.latitude!!
-                    AppSettings.getInstance(this@StartActivity).longitude = location?.longitude!!
+                    AppSettings.getInstance(requireContext()).latitude = location?.latitude!!
+                    AppSettings.getInstance(requireContext()).longitude = location?.longitude!!
                     fusedClient.removeLocationUpdates(this)
-                    val intent = Intent(this@StartActivity, SplashScreenActivity::class.java)
-                    startActivity(intent)
+                    val navController = findNavController()
+                    navController.navigate(R.id.action_GPS_to_settingFragment)
                 }
             }
         }
@@ -114,7 +118,7 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun enableLocationServices(){
-        Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG)
+        Toast.makeText(requireContext(), "Turn on location", Toast.LENGTH_LONG)
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
     }

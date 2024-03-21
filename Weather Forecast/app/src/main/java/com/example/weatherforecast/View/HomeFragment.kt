@@ -88,10 +88,8 @@ class HomeFragment : Fragment(){
         viewModel = ViewModelProvider(this, factory).get(RemoteViewModel::class.java)
     }
     private fun getData(){
-        val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
-
-        viewModel.getCurrentWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
-        viewModel.getForecastWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+        viewModel.getCurrentWeather(appSettings)
+        viewModel.getForecastWeather(appSettings)
 
         handleCurrentWeatherResponse()
         handleForecastWeatherResponse()

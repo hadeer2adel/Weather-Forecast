@@ -2,6 +2,7 @@ package com.example.weatherforecast.Model
 
 import android.content.Context
 import com.example.weatherforecast.Helpers.getFromSharedPreferences
+import com.example.weatherforecast.Helpers.isSharedPreferencesContains
 import com.example.weatherforecast.Helpers.saveOnSharedPreferences
 import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDAO
@@ -47,7 +48,12 @@ class AppSettings private constructor(_context: Context) {
             field = value
             saveOnSharedPreferences(context, "windUnit", field)
         }
-
+    var locationMethod: String = "gps"
+        get() = field
+        set(value) {
+            field = value
+            saveOnSharedPreferences(context, "locationMethod", field)
+        }
     init {
         context = _context
         latitude = getFromSharedPreferences(context, "latitude", "0").toDouble()
@@ -56,6 +62,7 @@ class AppSettings private constructor(_context: Context) {
         language =  getFromSharedPreferences(context, "language", "eg")
         temperatureUnit = getFromSharedPreferences(context, "temperatureUnit", "K")
         windUnit =  getFromSharedPreferences(context, "windUnit", "m/s")
+        locationMethod =  getFromSharedPreferences(context, "locationMethod", "gps")
     }
 
     companion object {
@@ -67,4 +74,7 @@ class AppSettings private constructor(_context: Context) {
             return instance as AppSettings
         }
     }
+
+    fun isLatitudeSaved() = isSharedPreferencesContains(context, "latitude")
+    fun isLongitudeSaved() = isSharedPreferencesContains(context, "longitude")
 }

@@ -5,14 +5,19 @@ import android.content.Context
 private val FILE_NAME = "Settings"
 
 fun saveOnSharedPreferences(context: Context, key: String, value: String) {
-    val sharedPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
-    with(sharedPref.edit()) {
+    val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
+    with(sharedPreferences.edit()) {
         putString(key, value)
         apply()
     }
 }
 
 fun getFromSharedPreferences(context: Context, key: String, defaultValue: String): String {
-    val sharedPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
-    return sharedPref.getString(key, defaultValue) ?: defaultValue
+    val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
+    return sharedPreferences.getString(key, defaultValue) ?: defaultValue
+}
+
+fun isSharedPreferencesContains(context: Context, key: String): Boolean {
+    val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
+    return sharedPreferences.contains(key)
 }

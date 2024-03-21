@@ -1,5 +1,6 @@
 package com.example.weatherforecast.View
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.annotation.MenuRes
 import android.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentSettingBinding
@@ -53,8 +55,15 @@ class SettingFragment : Fragment() {
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
-                R.id.gps -> true
+                R.id.gps -> {
+                    appSettings.locationMethod = "gps"
+                    val navController = findNavController()
+                    navController.navigate(R.id.action_settingFragment_to_GPS)
+                    true
+                }
                 R.id.map -> {
+                    val navController = findNavController()
+                    navController.navigate(R.id.action_settingFragment_to_mapFragment)
                     true
                 }
                 R.id.saved -> {
@@ -89,6 +98,16 @@ class SettingFragment : Fragment() {
             else{
                 tUnit3.isChecked = true
                 wUnit2.isChecked = true
+            }
+
+            if (appSettings.locationMethod.equals("saved")){
+                locationMethod.text = getString(R.string.location_3)
+            }
+            else if (appSettings.locationMethod.equals("map")){
+                locationMethod.text = getString(R.string.location_2)
+            }
+            else{
+                locationMethod.text = getString(R.string.location_1)
             }
         }
     }

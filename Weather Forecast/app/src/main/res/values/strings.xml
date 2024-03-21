@@ -31,4 +31,7 @@
     <string name="w_unit_2">mi/hr</string>
     <string name="rv_alarms">Remove All Alarms</string>
     <string name="rv_locations">Remove All Locations</string>
+    //map page
+    <string name="save_location">Save Location</string>
+    <string name="map">Map</string>
 </resources>
