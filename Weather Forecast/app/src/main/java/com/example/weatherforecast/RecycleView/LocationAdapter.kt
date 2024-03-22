@@ -2,6 +2,8 @@ package com.example.weatherforecast.RecycleView
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -22,7 +24,10 @@ import com.example.weatherforecast.databinding.CardTodayWeatherBinding
 import com.example.weatherforecast.databinding.CardWeekWeatherBinding
 
 class LocationAdapter (
-    private val context: Context, private val onClick:(location: LocationData)->Unit
+    private val context: Context,
+    private val visibility: Int,
+    private val onClick: (location: LocationData)->Unit,
+    private val onCardClick: (location: LocationData)->Unit
         ):ListAdapter<LocationData, LocationAdapter.LocationViewHolder>(LocationDiffUtil()){
 
     lateinit var binding: CardLocationBinding
@@ -40,7 +45,9 @@ class LocationAdapter (
             val imgUrl = getCountryFlagUrl(locationData.countryCode)
             Glide.with(context).load(imgUrl).into(flagImg)
             location.text = locationData.cityName
+            deleteBtn.visibility = visibility
             deleteBtn.setOnClickListener { onClick(locationData) }
+            card.setOnClickListener { onCardClick(locationData) }
         }
     }
 }

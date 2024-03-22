@@ -57,16 +57,15 @@ class SettingFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.gps -> {
                     appSettings.locationMethod = "gps"
-                    val navController = findNavController()
-                    navController.navigate(R.id.action_settingFragment_to_GPS)
+                    findNavController().navigate(R.id.action_settingFragment_to_GPS)
                     true
                 }
                 R.id.map -> {
-                    val navController = findNavController()
-                    navController.navigate(R.id.action_settingFragment_to_mapFragment)
+                    findNavController().navigate(R.id.action_settingFragment_to_mapFragment)
                     true
                 }
                 R.id.saved -> {
+                    findNavController().navigate(R.id.action_settingFragment_to_savedLocationsFragment)
                     true
                 }
                 else -> false

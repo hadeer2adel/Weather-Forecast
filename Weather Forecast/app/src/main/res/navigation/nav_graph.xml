@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_settingFragment_to_GPS"
             app:destination="@id/GPS" />
+        <action
+            android:id="@+id/action_settingFragment_to_savedLocationsFragment"
+            app:destination="@id/savedLocationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -62,5 +65,13 @@
         android:name="com.example.weatherforecast.View.FavouriteFragment"
         android:label="fragment_favourite"
         tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/savedLocationsFragment"
+        android:name="com.example.weatherforecast.View.SavedLocationsFragment"
+        android:label="SavedLocationsFragment" >
+        <action
+            android:id="@+id/action_savedLocationsFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+    </fragment>
 
 </navigation>

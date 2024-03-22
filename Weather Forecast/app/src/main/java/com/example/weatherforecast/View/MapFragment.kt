@@ -45,8 +45,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 appSettings.latitude = latitude as Double
                 appSettings.longitude = longitude as Double
                 appSettings.locationMethod = "map"
-                val navController = findNavController()
-                navController.navigate(R.id.action_mapFragment_to_settingFragment)
+                findNavController().navigate(R.id.action_mapFragment_to_settingFragment)
             }
         }
     }

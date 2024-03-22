@@ -1,6 +1,7 @@
 package com.example.weatherforecast.View
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,7 +29,7 @@ import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
 import com.example.weatherforecast.databinding.FragmentFavouriteBinding
 
-class FavouriteFragment : Fragment() {
+class SavedLocationsFragment : Fragment() {
     lateinit var binding: FragmentFavouriteBinding
     lateinit var adapter: LocationAdapter
     lateinit var viewModel: LocalViewModel
@@ -43,13 +44,10 @@ class FavouriteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.addBtn.visibility = View.GONE
 
         setUpRecyclerView(requireContext())
         initViewModel()
-
-        binding.addBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_favouriteMapFragment)
-        }
     }
 
     private fun setUpRecyclerView(context: Context){
@@ -57,10 +55,14 @@ class FavouriteFragment : Fragment() {
         manager.orientation = RecyclerView.VERTICAL
         binding.recycleView.layoutManager = manager
 
-        val onClick: (location: LocationData) -> Unit = { location ->
-            viewModel.deleteLocation(location)
+        val onCardClick: (location: LocationData) -> Unit = { location ->
+            val appSettings = AppSettings.getInstance(requireContext())
+            appSettings.latitude = location.latitude
+            appSettings.longitude = location.longitude
+            appSettings.locationMethod = "saved"
+            findNavController().navigate(R.id.action_savedLocationsFragment_to_settingFragment)
         }
-        adapter = LocationAdapter(context, View.VISIBLE, onClick, { })
+        adapter = LocationAdapter(context, View.GONE, {  }, onCardClick)
         adapter.submitList(emptyList())
         binding.recycleView.adapter = adapter
     }
