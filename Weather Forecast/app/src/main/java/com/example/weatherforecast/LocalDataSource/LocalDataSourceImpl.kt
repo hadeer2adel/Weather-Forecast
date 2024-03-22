@@ -2,6 +2,8 @@ package com.example.weatherforecast.LocalDataSource
 
 import android.content.Context
 import android.util.Log
+import com.example.weatherforecast.Model.DailyWeatherData
+import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +43,36 @@ class LocalDataSourceImpl private constructor(val context: Context):LocalDataSou
 
     override suspend fun deleteAllLocations() {
         daoLocations.deleteAllLocations()
+    }
+
+    override fun getLastWeather(): Flow<WeatherData> {
+        return daoLastWeather.getLastWeather()
+    }
+
+    override fun getLastWeatherHours(): Flow<List<HourlyWeatherData>> {
+        return daoLastWeather.getLastWeatherHours()
+    }
+
+    override fun getLastWeatherDays(): Flow<List<DailyWeatherData>> {
+        return daoLastWeather.getLastWeatherDays()
+    }
+
+    override suspend fun insertLastWeather(weather: WeatherData) {
+        daoLastWeather.insertLastWeather(weather)
+    }
+
+    override suspend fun insertLastWeatherHour(hourlyWeatherData: HourlyWeatherData) {
+        daoLastWeather.insertLastWeatherHour(hourlyWeatherData)
+    }
+
+    override suspend fun insertLastWeatherDay(dailyWeatherData: DailyWeatherData) {
+        daoLastWeather.insertLastWeatherDay(dailyWeatherData)
+    }
+
+    override suspend fun deleteLastWeather() {
+        daoLastWeather.deleteLastWeather()
+        daoLastWeather.deleteLastWeatherHours()
+        daoLastWeather.deleteLastWeatherDays()
     }
 
 }

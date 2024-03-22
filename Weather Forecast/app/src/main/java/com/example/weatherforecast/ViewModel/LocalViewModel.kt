@@ -18,9 +18,6 @@ class LocalViewModel(val repository: Repository) : ViewModel (){
     private var _locationList = MutableLiveData<List<LocationData>>()
     var locationList: LiveData<List<LocationData>> = _locationList
 
-    private var _weather = MutableLiveData<WeatherData>()
-    var weather: LiveData<WeatherData> = _weather
-
     init {
         getAllLocations()
     }

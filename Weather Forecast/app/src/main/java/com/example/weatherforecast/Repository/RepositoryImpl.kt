@@ -2,7 +2,9 @@ package com.example.weatherforecast.Repository
 
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.Model.CurrentWeatherResponse
+import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.ForecastWeatherResponse
+import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
@@ -38,5 +40,33 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
 
     override suspend fun deleteAllLocations() {
         localDataSource.deleteAllLocations()
+    }
+
+    override fun getLastWeather(): Flow<WeatherData> {
+        return localDataSource.getLastWeather()
+    }
+
+    override fun getLastWeatherHours(): Flow<List<HourlyWeatherData>> {
+        return localDataSource.getLastWeatherHours()
+    }
+
+    override fun getLastWeatherDays(): Flow<List<DailyWeatherData>> {
+        return localDataSource.getLastWeatherDays()
+    }
+
+    override suspend fun insertLastWeather(weather: WeatherData) {
+        localDataSource.insertLastWeather(weather)
+    }
+
+    override suspend fun insertLastWeatherHour(hourlyWeatherData: HourlyWeatherData) {
+        localDataSource.insertLastWeatherHour(hourlyWeatherData)
+    }
+
+    override suspend fun insertLastWeatherDay(dailyWeatherData: DailyWeatherData) {
+        localDataSource.insertLastWeatherDay(dailyWeatherData)
+    }
+
+    override suspend fun deleteLastWeather() {
+        localDataSource.deleteLastWeather()
     }
 }

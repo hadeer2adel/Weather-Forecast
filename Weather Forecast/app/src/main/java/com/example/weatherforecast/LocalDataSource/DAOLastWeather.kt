@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 interface DAOLastWeather {
 
     @Query("SELECT * FROM Weather")
-    suspend fun getLastWeather(): WeatherData
+    fun getLastWeather(): Flow<WeatherData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLastWeather(weather: WeatherData)
