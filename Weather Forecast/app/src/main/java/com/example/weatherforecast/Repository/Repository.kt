@@ -13,7 +13,8 @@ interface Repository {
     
     //Local
     fun getAllLocations(): Flow<List<WeatherData>>
-    suspend fun getLastWeather(): WeatherData
     suspend fun insertLocation(weather: WeatherData)
     suspend fun deleteLocation(weather: WeatherData)
+    suspend fun getLastWeather(): WeatherData
+    suspend fun insertLastWeather(weather: WeatherData)
 }

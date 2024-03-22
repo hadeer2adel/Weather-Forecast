@@ -29,7 +29,7 @@ data class WeatherData(
     val wind: Double,
     val cloudiness: Int,
     val cityName: String,
-    val countryCode: String?,
+    val countryCode: String,
 )
 
 data class HourlyWeatherData(

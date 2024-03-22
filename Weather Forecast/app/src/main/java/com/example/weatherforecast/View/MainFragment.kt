@@ -1,15 +1,19 @@
 package com.example.weatherforecast.View
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.viewpager2.widget.ViewPager2
 import com.example.weatherforecast.Helpers.TabLayoutAdapter
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlin.math.log
 
 class MainFragment : Fragment() {
 
@@ -28,8 +32,13 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         tabLayoutAdapter = TabLayoutAdapter(requireActivity())
 
-        initTabLayout()
         initViewPager()
+        initTabLayout()
+
+        val tabNumber = requireArguments().getInt("tabNumber", 0)
+        binding.viewPager.doOnPreDraw {
+            binding.viewPager.currentItem = tabNumber
+        }
     }
 
     private fun initTabLayout(){
@@ -44,7 +53,6 @@ class MainFragment : Fragment() {
                         viewPager.currentItem = tab.position
                     }
                 }
-
                 override fun onTabReselected(tab: TabLayout.Tab?) {}
                 override fun onTabUnselected(tab: TabLayout.Tab?) {}
             })

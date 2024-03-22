@@ -27,15 +27,19 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
         return localDataSource.getAllLocations()
     }
 
-    override suspend fun getLastWeather(): WeatherData {
-        return localDataSource.getLastWeather()
-    }
-
     override suspend fun insertLocation(weather: WeatherData) {
         localDataSource.insertLocation(weather)
     }
 
     override suspend fun deleteLocation(weather: WeatherData) {
         localDataSource.deleteLocation(weather)
+    }
+
+    override suspend fun getLastWeather(): WeatherData {
+        return localDataSource.getLastWeather()
+    }
+
+    override suspend fun insertLastWeather(weather: WeatherData) {
+        localDataSource.insertLastWeather(weather)
     }
 }

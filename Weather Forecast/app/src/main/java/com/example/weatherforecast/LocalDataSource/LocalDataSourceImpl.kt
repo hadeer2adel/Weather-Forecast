@@ -1,6 +1,7 @@
 package com.example.weatherforecast.LocalDataSource
 
 import android.content.Context
+import android.util.Log
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
@@ -27,15 +28,19 @@ class LocalDataSourceImpl private constructor(val context: Context):LocalDataSou
         return dao.getAllLocations()
     }
 
-    override suspend fun getLastWeather(): WeatherData {
-        return dao.getLastWeather()
-    }
-
     override suspend fun insertLocation(location: WeatherData) {
         return dao.insertLocation(location)
     }
 
     override suspend fun deleteLocation(location: WeatherData) {
         return dao.deleteLocation(location)
+    }
+
+    override suspend fun getLastWeather(): WeatherData {
+        return dao.getLastWeather()
+    }
+
+    override suspend fun insertLastWeather(weather: WeatherData){
+        return dao.insertLastWeather(weather)
     }
 }

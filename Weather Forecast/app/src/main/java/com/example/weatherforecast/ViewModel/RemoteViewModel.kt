@@ -1,5 +1,6 @@
 package com.example.weatherforecast.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,12 +25,9 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
     private var _weatherList = MutableStateFlow<ApiForecastWeatherResponse>(ApiForecastWeatherResponse.Loading)
     var weatherList: MutableStateFlow<ApiForecastWeatherResponse> = _weatherList
 
-    private var _dayList = MutableLiveData<List<DailyWeatherData>>()
-    var dayList: LiveData<List<DailyWeatherData>> = _dayList
-
-    fun getCurrentWeather(appSettings: AppSettings){
+    fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            repository.getCurrentWeather(appSettings.latitude, appSettings.longitude, getUnits(appSettings.temperatureUnit, appSettings.windUnit), appSettings.language)
+            repository.getCurrentWeather(latitude, longitude, units, language)
                 .catch {
                     _weather.value = ApiCurrentWeatherResponse.Failure(it)
                 }.collect {
@@ -38,9 +36,9 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
         }
     }
 
-    fun getForecastWeather(appSettings: AppSettings){
+    fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
-            repository.getForecastWeather(appSettings.latitude, appSettings.longitude, getUnits(appSettings.temperatureUnit, appSettings.windUnit), appSettings.language)
+            repository.getForecastWeather(latitude, longitude, units, language)
                 .catch {
                     _weatherList.value = ApiForecastWeatherResponse.Failure(it)
                 }.collect {

@@ -11,15 +11,15 @@ interface RemoteDAO {
     @GET("weather")
     suspend fun getCurrentWeather(@Query("lat") latitude: Double,
                                   @Query("lon") longitude: Double,
-                                  @Query("lang") language: String,
                                   @Query("units") units: String,
+                                  @Query("lang") language: String,
                                   @Query("appid") apiKey: String): Response<CurrentWeatherResponse>
 
     @GET("forecast")
     suspend fun getForecastWeather(@Query("lat") latitude: Double,
                                    @Query("lon") longitude: Double,
-                                   @Query("lang") language: String,
                                    @Query("units") units: String,
+                                   @Query("lang") language: String,
                                    @Query("cnt") cnt: Int,
                                    @Query("appid") apiKey: String): Response<ForecastWeatherResponse>
 
