@@ -2,6 +2,7 @@ package com.example.weatherforecast.View
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.Helpers.isNetworkConnected
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -30,6 +32,9 @@ import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
+import com.example.weatherforecast.ViewModel.HomeLocalViewModel
+import com.example.weatherforecast.ViewModel.HomeLocalViewModelFactory
+import com.example.weatherforecast.ViewModel.LocalViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
 import com.example.weatherforecast.databinding.FragmentHomeBinding
@@ -41,7 +46,8 @@ class HomeFragment : Fragment(){
     lateinit var binding: FragmentHomeBinding
     lateinit var hourAdapter: HourAdapter
     lateinit var dayAdapter: DayAdapter
-    lateinit var viewModel: RemoteViewModel
+    lateinit var remoteViewModel: RemoteViewModel
+    lateinit var localViewModel: HomeLocalViewModel
     private lateinit var appSettings: AppSettings
 
     override fun onCreateView(
@@ -58,7 +64,15 @@ class HomeFragment : Fragment(){
         setUpHourRecyclerView(requireContext())
         setUpDayRecyclerView(requireContext())
         initViewModel()
-        getData()
+
+        if(isNetworkConnected(requireContext())) {
+            localViewModel.deleteLastWeather()
+            getRemoteData()
+        }
+        else {
+            getLocalData()
+            localViewModel.getLastWeather()
+        }
     }
 
     private fun setUpHourRecyclerView(context: Context){
@@ -84,20 +98,39 @@ class HomeFragment : Fragment(){
         val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
-        val factory = RemoteViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory).get(RemoteViewModel::class.java)
+        val remoteFactory = RemoteViewModelFactory(repository)
+        remoteViewModel = ViewModelProvider(this, remoteFactory).get(RemoteViewModel::class.java)
+
+        val localFactory = HomeLocalViewModelFactory(repository)
+        localViewModel = ViewModelProvider(this, localFactory).get(HomeLocalViewModel::class.java)
     }
-    private fun getData(){
+    private fun getRemoteData(){
         val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
-        viewModel.getCurrentWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
-        viewModel.getForecastWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+        remoteViewModel.getCurrentWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+        remoteViewModel.getForecastWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
 
         handleCurrentWeatherResponse()
         handleForecastWeatherResponse()
     }
+
+    private fun getLocalData(){
+        localViewModel.weather.observe(viewLifecycleOwner){ weather ->
+            if (weather != null) {
+                setDataOnView(weather)
+            }
+        }
+        localViewModel.hourList.observe(viewLifecycleOwner){
+                list -> hourAdapter.submitList(list)
+            hourAdapter.notifyDataSetChanged()
+        }
+        localViewModel.dayList.observe(viewLifecycleOwner){
+                list -> dayAdapter.submitList(list)
+            dayAdapter.notifyDataSetChanged()
+        }
+    }
     private fun handleCurrentWeatherResponse(){
         lifecycleScope.launch {
-            viewModel.weather.collectLatest {response ->
+            remoteViewModel.weather.collectLatest { response ->
                 when(response){
                     is ApiCurrentWeatherResponse.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -108,6 +141,7 @@ class HomeFragment : Fragment(){
                         binding.scrollView.visibility = View.VISIBLE
                         val weather = getWeatherData(response.data)
                         setDataOnView(weather)
+                        localViewModel.insertLastWeather(weather)
                     }
                     is ApiCurrentWeatherResponse.Failure ->{
                         binding.progressBar.visibility = View.GONE
@@ -119,7 +153,7 @@ class HomeFragment : Fragment(){
     }
     private fun handleForecastWeatherResponse(){
         lifecycleScope.launch {
-            viewModel.weatherList.collectLatest {response ->
+            remoteViewModel.weatherList.collectLatest { response ->
                 when(response){
                     is ApiForecastWeatherResponse.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -134,6 +168,8 @@ class HomeFragment : Fragment(){
                         val dailyWeatherData = getDailyWeatherData(response.data, AppSettings.getInstance(requireContext()).language )
                         dayAdapter.submitList(dailyWeatherData)
                         dayAdapter.notifyDataSetChanged()
+                        localViewModel.insertLastWeatherHour(hourlyWeatherData)
+                        localViewModel.insertLastWeatherDay(dailyWeatherData)
                     }
                     is ApiForecastWeatherResponse.Failure ->{
                         binding.progressBar.visibility = View.GONE

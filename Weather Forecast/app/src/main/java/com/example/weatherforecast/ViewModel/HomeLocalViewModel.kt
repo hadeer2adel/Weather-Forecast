@@ -26,23 +26,21 @@ class HomeLocalViewModel(val repository: Repository) : ViewModel (){
     private var _dayList = MutableLiveData<List<DailyWeatherData>>()
     var dayList: LiveData<List<DailyWeatherData>> = _dayList
 
-    init {
-        getLastWeather()
-    }
-
     fun insertLastWeather(weather: WeatherData){
         viewModelScope.launch(Dispatchers.IO){
             repository.insertLastWeather(weather)
         }
     }
-    fun insertLastWeatherHour(hourlyWeatherData: HourlyWeatherData){
+    fun insertLastWeatherHour(hourlyWeatherData: List<HourlyWeatherData>){
         viewModelScope.launch(Dispatchers.IO){
-            repository.insertLastWeatherHour(hourlyWeatherData)
+            for(weather in hourlyWeatherData)
+                repository.insertLastWeatherHour(weather)
         }
     }
-    fun insertLastWeatherDay(dailyWeatherData: DailyWeatherData){
+    fun insertLastWeatherDay(dailyWeatherData: List<DailyWeatherData>){
         viewModelScope.launch(Dispatchers.IO){
-            repository.insertLastWeatherDay(dailyWeatherData)
+            for(weather in dailyWeatherData)
+                repository.insertLastWeatherDay(weather)
         }
     }
 
