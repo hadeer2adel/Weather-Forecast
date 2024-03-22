@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
@@ -60,7 +61,14 @@ class FavouriteFragment : Fragment() {
         val onClick: (location: LocationData) -> Unit = { location ->
             viewModel.deleteLocation(location)
         }
-        adapter = LocationAdapter(context, View.VISIBLE, onClick, { })
+        val onCardClick: (location: LocationData) -> Unit = { location ->
+            val args = Bundle().apply {
+                putString("latitude", location.latitude.toString())
+                putString("longitude", location.longitude.toString())
+            }
+            findNavController().navigate(R.id.action_mainFragment_to_locationDetailsFragment, args)
+        }
+        adapter = LocationAdapter(context, View.VISIBLE, onClick, onCardClick)
         adapter.submitList(emptyList())
         binding.recycleView.adapter = adapter
     }
@@ -76,6 +84,5 @@ class FavouriteFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
     }
-
 
 }

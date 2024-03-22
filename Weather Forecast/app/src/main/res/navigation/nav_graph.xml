@@ -15,6 +15,9 @@
         <argument
             android:name="tabNumber"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_mainFragment_to_locationDetailsFragment"
+            app:destination="@id/locationDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -72,6 +75,20 @@
         <action
             android:id="@+id/action_savedLocationsFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationDetailsFragment"
+        android:name="com.example.weatherforecast.View.LocationDetailsFragment"
+        android:label="LocationDetailsFragment" >
+        <action
+            android:id="@+id/action_locationDetailsFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
     </fragment>
 
 </navigation>

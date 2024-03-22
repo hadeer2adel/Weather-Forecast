@@ -86,7 +86,7 @@ class FavouriteMapFragment : Fragment(), OnMapReadyCallback {
         longitude = appSettings.longitude
         val currentLocation = LatLng(latitude!!, longitude!!)
         googleMap.addMarker(MarkerOptions().position(currentLocation).title("Your Location"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 8f))
     }
 
     private fun initViewModel(){
@@ -113,8 +113,7 @@ class FavouriteMapFragment : Fragment(), OnMapReadyCallback {
                         val location = getLocationData(response.data)
                         localViewModel.insertLocation(location)
                         val args = Bundle().apply { putInt("tabNumber", 2) }
-                        val navController = findNavController()
-                        navController.navigate(R.id.action_favouriteMapFragment_to_mainFragment, args)
+                        findNavController().navigate(R.id.action_favouriteMapFragment_to_mainFragment, args)
                     }
                     is ApiCurrentWeatherResponse.Failure ->{
                         binding.progressBar.visibility = View.GONE
