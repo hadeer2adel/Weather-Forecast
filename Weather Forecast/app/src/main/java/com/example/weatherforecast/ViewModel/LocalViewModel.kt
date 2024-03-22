@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class LocalViewModel(val repository: Repository) : ViewModel (){
 
-    private var _locationList = MutableLiveData<List<WeatherData>>()
-    var locationList: LiveData<List<WeatherData>> = _locationList
+    private var _locationList = MutableLiveData<List<LocationData>>()
+    var locationList: LiveData<List<LocationData>> = _locationList
 
     private var _weather = MutableLiveData<WeatherData>()
     var weather: LiveData<WeatherData> = _weather
@@ -24,29 +25,23 @@ class LocalViewModel(val repository: Repository) : ViewModel (){
         getAllLocations()
     }
 
-    fun insertLocation(location: WeatherData){
+    fun insertLocation(location: LocationData){
         viewModelScope.launch(Dispatchers.IO){
             repository.insertLocation(location)
             getAllLocations()
         }
     }
 
-    fun deleteLocation(location: WeatherData){
+    fun deleteLocation(location: LocationData){
         viewModelScope.launch(Dispatchers.IO){
             repository.deleteLocation(location)
             getAllLocations()
         }
     }
 
-    fun getLastWeather(){
+    fun deleteAllLocations(){
         viewModelScope.launch(Dispatchers.IO){
-            _weather.postValue(repository.getLastWeather())
-        }
-    }
-
-    fun insertLastWeather(weather: WeatherData){
-        viewModelScope.launch(Dispatchers.IO){
-            repository.insertLastWeather(weather)
+            repository.deleteAllLocations()
         }
     }
 

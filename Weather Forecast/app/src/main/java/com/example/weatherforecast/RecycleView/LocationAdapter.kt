@@ -15,14 +15,15 @@ import com.example.weatherforecast.Helpers.getWeatherIconUrl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.databinding.CardLocationBinding
 import com.example.weatherforecast.databinding.CardTodayWeatherBinding
 import com.example.weatherforecast.databinding.CardWeekWeatherBinding
 
 class LocationAdapter (
-    private val context: Context, private val onClick:(location: WeatherData)->Unit
-        ):ListAdapter<WeatherData, LocationAdapter.LocationViewHolder>(LocationDiffUtil()){
+    private val context: Context, private val onClick:(location: LocationData)->Unit
+        ):ListAdapter<LocationData, LocationAdapter.LocationViewHolder>(LocationDiffUtil()){
 
     lateinit var binding: CardLocationBinding
     class LocationViewHolder (var binding: CardLocationBinding) : RecyclerView.ViewHolder(binding.root)
@@ -44,12 +45,12 @@ class LocationAdapter (
     }
 }
 
-class LocationDiffUtil : DiffUtil.ItemCallback<WeatherData>(){
-    override fun areItemsTheSame(oldItem: WeatherData, newItem: WeatherData): Boolean {
+class LocationDiffUtil : DiffUtil.ItemCallback<LocationData>(){
+    override fun areItemsTheSame(oldItem: LocationData, newItem: LocationData): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: WeatherData, newItem: WeatherData): Boolean {
+    override fun areContentsTheSame(oldItem: LocationData, newItem: LocationData): Boolean {
         return oldItem == newItem
     }
 }

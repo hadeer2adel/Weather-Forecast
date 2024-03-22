@@ -106,7 +106,7 @@ class HomeFragment : Fragment(){
                     is ApiCurrentWeatherResponse.Success ->{
                         binding.progressBar.visibility = View.GONE
                         binding.scrollView.visibility = View.VISIBLE
-                        val weather = getWeatherData(response.data, true)
+                        val weather = getWeatherData(response.data)
                         setDataOnView(weather)
                     }
                     is ApiCurrentWeatherResponse.Failure ->{

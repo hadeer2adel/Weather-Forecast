@@ -14,6 +14,7 @@ import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.getLocationData
 import com.example.weatherforecast.Model.getWeatherData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
@@ -109,7 +110,7 @@ class FavouriteMapFragment : Fragment(), OnMapReadyCallback {
                     }
                     is ApiCurrentWeatherResponse.Success ->{
                         binding.progressBar.visibility = View.GONE
-                        val location = getWeatherData(response.data, false)
+                        val location = getLocationData(response.data)
                         localViewModel.insertLocation(location)
                         val args = Bundle().apply { putInt("tabNumber", 2) }
                         val navController = findNavController()

@@ -2,6 +2,7 @@ package com.example.weatherforecast.Repository
 
 import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.ForecastWeatherResponse
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
@@ -12,9 +13,8 @@ interface Repository {
     suspend fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String): Flow<ForecastWeatherResponse?>
     
     //Local
-    fun getAllLocations(): Flow<List<WeatherData>>
-    suspend fun insertLocation(weather: WeatherData)
-    suspend fun deleteLocation(weather: WeatherData)
-    suspend fun getLastWeather(): WeatherData
-    suspend fun insertLastWeather(weather: WeatherData)
+    fun getAllLocations(): Flow<List<LocationData>>
+    suspend fun insertLocation(location: LocationData)
+    suspend fun deleteLocation(location: LocationData)
+    suspend fun deleteAllLocations()
 }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.DayAdapter
@@ -61,7 +62,7 @@ class FavouriteFragment : Fragment() {
         manager.orientation = RecyclerView.VERTICAL
         binding.recycleView.layoutManager = manager
 
-        val onClick: (location: WeatherData) -> Unit = { location ->
+        val onClick: (location: LocationData) -> Unit = { location ->
             viewModel.deleteLocation(location)
         }
         adapter = LocationAdapter(context, onClick)

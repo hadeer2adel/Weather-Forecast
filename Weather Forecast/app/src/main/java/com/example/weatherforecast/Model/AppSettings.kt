@@ -4,10 +4,6 @@ import android.content.Context
 import com.example.weatherforecast.Helpers.getFromSharedPreferences
 import com.example.weatherforecast.Helpers.isSharedPreferencesContains
 import com.example.weatherforecast.Helpers.saveOnSharedPreferences
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDAO
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
-import com.example.weatherforecast.R
 
 class AppSettings private constructor(_context: Context) {
     private val context: Context

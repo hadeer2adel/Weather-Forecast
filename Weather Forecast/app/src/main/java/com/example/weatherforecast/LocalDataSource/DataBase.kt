@@ -4,11 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.weatherforecast.Model.DailyWeatherData
+import com.example.weatherforecast.Model.HourlyWeatherData
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 
-@Database(entities = arrayOf(WeatherData::class), version = 1)
+@Database(entities = arrayOf(LocationData::class, WeatherData::class, HourlyWeatherData::class, DailyWeatherData::class), version = 1)
 abstract class DataBase : RoomDatabase() {
-    abstract fun getDAO(): LocalDAO
+    abstract fun getDAOLastWeather(): DAOLastWeather
+    abstract fun getDAOLocations(): DAOLocations
 
     companion object {
         @Volatile
@@ -16,7 +20,7 @@ abstract class DataBase : RoomDatabase() {
         fun getInstance(ctx: Context): DataBase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    ctx.applicationContext, DataBase::class.java, "weatherDB_3")
+                    ctx.applicationContext, DataBase::class.java, "weatherDB_4")
                     .build()
                 INSTANCE = instance
                 instance

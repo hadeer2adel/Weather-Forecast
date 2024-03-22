@@ -2,16 +2,19 @@ package com.example.weatherforecast.LocalDataSource
 
 import android.content.Context
 import android.util.Log
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSourceImpl private constructor(val context: Context):LocalDataSource {
 
-    private val dao: LocalDAO
+    private val daoLocations: DAOLocations
+    private val daoLastWeather: DAOLastWeather
 
     init {
         val dataBase:DataBase = DataBase.getInstance(context)
-        dao = dataBase.getDAO()
+        daoLocations = dataBase.getDAOLocations()
+        daoLastWeather = dataBase.getDAOLastWeather()
     }
 
     companion object {
@@ -24,23 +27,20 @@ class LocalDataSourceImpl private constructor(val context: Context):LocalDataSou
         }
     }
 
-    override fun getAllLocations(): Flow<List<WeatherData>> {
-        return dao.getAllLocations()
+    override fun getAllLocations(): Flow<List<LocationData>> {
+        return daoLocations.getAllLocations()
     }
 
-    override suspend fun insertLocation(location: WeatherData) {
-        return dao.insertLocation(location)
+    override suspend fun insertLocation(location: LocationData) {
+        daoLocations.insertLocation(location)
     }
 
-    override suspend fun deleteLocation(location: WeatherData) {
-        return dao.deleteLocation(location)
+    override suspend fun deleteLocation(location: LocationData) {
+        daoLocations.deleteLocation(location)
     }
 
-    override suspend fun getLastWeather(): WeatherData {
-        return dao.getLastWeather()
+    override suspend fun deleteAllLocations() {
+        daoLocations.deleteAllLocations()
     }
 
-    override suspend fun insertLastWeather(weather: WeatherData){
-        return dao.insertLastWeather(weather)
-    }
 }

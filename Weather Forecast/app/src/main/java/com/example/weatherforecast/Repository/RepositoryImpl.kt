@@ -3,6 +3,7 @@ package com.example.weatherforecast.Repository
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.ForecastWeatherResponse
+import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
@@ -23,23 +24,19 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
         return  flowOf(remoteDataSource.getForecastWeather(latitude, longitude, units, language).body())
     }
 
-    override fun getAllLocations(): Flow<List<WeatherData>> {
+    override fun getAllLocations(): Flow<List<LocationData>> {
         return localDataSource.getAllLocations()
     }
 
-    override suspend fun insertLocation(weather: WeatherData) {
+    override suspend fun insertLocation(weather: LocationData) {
         localDataSource.insertLocation(weather)
     }
 
-    override suspend fun deleteLocation(weather: WeatherData) {
+    override suspend fun deleteLocation(weather: LocationData) {
         localDataSource.deleteLocation(weather)
     }
 
-    override suspend fun getLastWeather(): WeatherData {
-        return localDataSource.getLastWeather()
-    }
-
-    override suspend fun insertLastWeather(weather: WeatherData) {
-        localDataSource.insertLastWeather(weather)
+    override suspend fun deleteAllLocations() {
+        localDataSource.deleteAllLocations()
     }
 }
