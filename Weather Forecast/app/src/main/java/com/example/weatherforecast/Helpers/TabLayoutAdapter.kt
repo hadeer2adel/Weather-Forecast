@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.weatherforecast.View.AlarmFragment
 import com.example.weatherforecast.View.FavouriteFragment
 import com.example.weatherforecast.View.HomeFragment
 
@@ -16,7 +17,7 @@ class TabLayoutAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
     override fun createFragment(position: Int): Fragment {
         when{
             position == 0 -> return HomeFragment()
-            position == 1 -> return HomeFragment()
+            position == 1 -> return AlarmFragment()
             position == 2 -> return FavouriteFragment()
             else -> return HomeFragment()
         }

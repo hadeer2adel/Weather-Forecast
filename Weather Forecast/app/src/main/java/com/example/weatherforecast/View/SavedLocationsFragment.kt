@@ -27,10 +27,10 @@ import com.example.weatherforecast.ViewModel.LocalViewModel
 import com.example.weatherforecast.ViewModel.LocalViewModelFactory
 import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
-import com.example.weatherforecast.databinding.FragmentFavouriteBinding
+import com.example.weatherforecast.databinding.FragmentListBinding
 
 class SavedLocationsFragment : Fragment() {
-    lateinit var binding: FragmentFavouriteBinding
+    lateinit var binding: FragmentListBinding
     lateinit var adapter: LocationAdapter
     lateinit var viewModel: LocalViewModel
 
@@ -38,7 +38,7 @@ class SavedLocationsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFavouriteBinding.inflate(inflater, container, false)
+        binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
     }
 

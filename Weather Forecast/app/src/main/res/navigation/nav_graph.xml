@@ -67,7 +67,7 @@
         android:id="@+id/favouriteFragment"
         android:name="com.example.weatherforecast.View.FavouriteFragment"
         android:label="fragment_favourite"
-        tools:layout="@layout/fragment_favourite" />
+        tools:layout="@layout/fragment_list" />
     <fragment
         android:id="@+id/savedLocationsFragment"
         android:name="com.example.weatherforecast.View.SavedLocationsFragment"
