@@ -37,11 +37,7 @@ class NotificationPermission(val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun sendNotification(
-        smallDescription: String,
-        largeDescription: String,
-        image: Bitmap
-    ) {
+    fun sendNotification(weatherDescription: String) {
         setNotificationChannel()
 
         val intent = Intent(context, MainActivity::class.java)
@@ -52,9 +48,7 @@ class NotificationPermission(val context: Context) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("Weather Alarm")
-            .setContentText(smallDescription)
-            .setLargeIcon(image)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(largeDescription))
+            .setContentText(weatherDescription)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
