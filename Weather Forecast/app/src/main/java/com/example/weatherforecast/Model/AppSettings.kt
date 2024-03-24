@@ -26,7 +26,7 @@ class AppSettings private constructor(_context: Context) {
             field = value
             saveOnSharedPreferences(context, "notification", field.toString())
         }
-    var language: String = "eg"
+    var language: String = "en"
         get() = field
         set(value) {
             field = value
@@ -55,7 +55,7 @@ class AppSettings private constructor(_context: Context) {
         latitude = getFromSharedPreferences(context, "latitude", "0").toDouble()
         longitude = getFromSharedPreferences(context, "longitude", "0").toDouble()
         notification =  getFromSharedPreferences(context, "notification", "true").toBoolean()
-        language =  getFromSharedPreferences(context, "language", "eg")
+        language =  getFromSharedPreferences(context, "language", "en")
         temperatureUnit = getFromSharedPreferences(context, "temperatureUnit", "K")
         windUnit =  getFromSharedPreferences(context, "windUnit", "m/s")
         locationMethod =  getFromSharedPreferences(context, "locationMethod", "gps")

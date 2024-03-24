@@ -9,15 +9,21 @@
         android:name="com.example.weatherforecast.View.MainFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_main" >
-        <action
-            android:id="@+id/action_mainFragment_to_favouriteMapFragment"
-            app:destination="@id/favouriteMapFragment" />
         <argument
             android:name="tabNumber"
             app:argType="integer" />
         <action
             android:id="@+id/action_mainFragment_to_locationDetailsFragment"
             app:destination="@id/locationDetailsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_GPS"
+            app:destination="@id/GPS" />
+        <action
+            android:id="@+id/action_mainFragment_to_savedLocationsFragment"
+            app:destination="@id/savedLocationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -38,6 +44,15 @@
         <action
             android:id="@+id/action_settingFragment_to_savedLocationsFragment"
             app:destination="@id/savedLocationsFragment" />
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+        <argument
+            android:name="locationMethod"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -47,6 +62,12 @@
         <action
             android:id="@+id/action_mapFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <argument
+            android:name="Screen"
+            app:argType="com.example.weatherforecast.Model.Screen" />
+        <action
+            android:id="@+id/action_mapFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/GPS"
@@ -54,13 +75,11 @@
         <action
             android:id="@+id/action_GPS_to_settingFragment"
             app:destination="@id/settingFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/favouriteMapFragment"
-        android:name="com.example.weatherforecast.View.FavouriteMapFragment"
-        android:label="@string/map">
+        <argument
+            android:name="Screen"
+            app:argType="com.example.weatherforecast.Model.Screen" />
         <action
-            android:id="@+id/action_favouriteMapFragment_to_mainFragment"
+            android:id="@+id/action_GPS_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment
@@ -75,6 +94,12 @@
         <action
             android:id="@+id/action_savedLocationsFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <argument
+            android:name="Screen"
+            app:argType="com.example.weatherforecast.Model.Screen" />
+        <action
+            android:id="@+id/action_savedLocationsFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/locationDetailsFragment"

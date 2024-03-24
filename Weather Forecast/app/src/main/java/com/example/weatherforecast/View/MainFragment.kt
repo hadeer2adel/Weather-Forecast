@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.viewpager2.widget.ViewPager2
 import com.example.weatherforecast.Helpers.TabLayoutAdapter
+import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayout
@@ -30,12 +31,22 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tabLayoutAdapter = TabLayoutAdapter(requireActivity())
+        val tabNumber = requireArguments().getInt("tabNumber", 0)
+
+        var bundle = Bundle()
+        if(requireArguments().containsKey("latitude")) {
+            val latitude = requireArguments().getString("latitude", "0")
+            val longitude = requireArguments().getString("longitude", "0")
+
+            bundle.putString("latitude", latitude)
+            bundle.putString("longitude", longitude)
+        }
+
+        tabLayoutAdapter = TabLayoutAdapter(requireActivity(), bundle)
 
         initViewPager()
         initTabLayout()
 
-        val tabNumber = requireArguments().getInt("tabNumber", 0)
         binding.viewPager.doOnPreDraw {
             binding.viewPager.currentItem = tabNumber
         }

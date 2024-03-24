@@ -24,7 +24,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA7oH5dDTfx8KRT-DtvJhHrquNgRxOxCpE" />
         <receiver
-            android:name=".Helpers.AlarmReceiver"
+            android:name=".Helpers.NotificationReceiver"
             android:enabled="true"
             android:exported="true" />
         <activity

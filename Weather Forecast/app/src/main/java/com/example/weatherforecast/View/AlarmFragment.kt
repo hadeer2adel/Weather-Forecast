@@ -1,15 +1,10 @@
 package com.example.weatherforecast.View
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,10 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforecast.Helpers.AlarmReceiver
 import com.example.weatherforecast.Helpers.NotificationPermission
+import com.example.weatherforecast.Helpers.NotificationMaker
+import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.LocationAdapter
@@ -34,18 +31,14 @@ import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.LocalViewModel
 import com.example.weatherforecast.ViewModel.LocalViewModelFactory
 import com.example.weatherforecast.databinding.FragmentListBinding
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
-import java.util.Calendar
 
 class AlarmFragment : Fragment() {
     lateinit var binding: FragmentListBinding
     lateinit var adapter: LocationAdapter
     lateinit var viewModel: LocalViewModel
     lateinit var notificationPermission: NotificationPermission
+    lateinit var notificationMaker: NotificationMaker
     private val My_NOTIFICATION_PERMISSION_ID = 202
-    lateinit var alarmManager: AlarmManager
-    lateinit var pendingIntent: PendingIntent
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +51,14 @@ class AlarmFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         notificationPermission = NotificationPermission(requireContext())
+        notificationMaker = NotificationMaker(requireContext())
+
+        if(arguments != null && requireArguments().containsKey("latitude")) {
+            Log.i("TAG", "onViewCreated: ")
+            val latitude = requireArguments().getString("latitude", "0")
+            val longitude = requireArguments().getString("longitude", "0")
+            notificationMaker.selectAlarm(childFragmentManager, latitude, longitude)
+        }
 
         binding.addBtn.setOnClickListener {
             checkNotificationPermission()
@@ -75,50 +76,15 @@ class AlarmFragment : Fragment() {
                 My_NOTIFICATION_PERMISSION_ID)
             notificationPermission.showSettingDialog()
         } else {
-            showTimePicker()
+            notificationMaker.selectLocation(findNavController())
         }
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == My_NOTIFICATION_PERMISSION_ID) {
             if (!grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showTimePicker()
+                notificationMaker.selectLocation(findNavController())
             }
         }
-    }
-    private fun showTimePicker() {
-        val calendar = Calendar.getInstance()
-
-        val timePicker = MaterialTimePicker.Builder()
-            .setTimeFormat(TimeFormat.CLOCK_12H)
-            .setHour(calendar.get(Calendar.HOUR_OF_DAY))
-            .setMinute(calendar.get(Calendar.MINUTE))
-            .setTitleText("Select Time")
-            .build()
-
-        timePicker.addOnPositiveButtonClickListener {
-            val time = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, timePicker.hour)
-                set(Calendar.MINUTE, timePicker.minute)
-                set(Calendar.SECOND, 0)
-            }
-            setAlarm(time)
-        }
-
-        timePicker.show(childFragmentManager, "tag")
-    }
-    private fun setAlarm(time: Calendar){
-        alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP,
-            time.timeInMillis,
-            pendingIntent
-        )
-    }
-    private fun cancelAlarm(){
-        alarmManager.cancel(pendingIntent)
     }
 
     private fun setUpRecyclerView(context: Context){

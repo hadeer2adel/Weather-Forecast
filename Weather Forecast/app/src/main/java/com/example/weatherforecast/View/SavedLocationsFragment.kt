@@ -3,6 +3,7 @@ package com.example.weatherforecast.View
 import android.content.Context
 import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.LocationData
+import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.DayAdapter
@@ -56,11 +58,12 @@ class SavedLocationsFragment : Fragment() {
         binding.recycleView.layoutManager = manager
 
         val onCardClick: (location: LocationData) -> Unit = { location ->
-            val appSettings = AppSettings.getInstance(requireContext())
-            appSettings.latitude = location.latitude
-            appSettings.longitude = location.longitude
-            appSettings.locationMethod = "saved"
-            findNavController().navigate(R.id.action_savedLocationsFragment_to_settingFragment)
+            val screen = requireArguments().getSerializable("Screen") as Screen
+            when(screen){
+                Screen.SETTINGS -> toSettingScreen(location)
+                Screen.ALARM -> toAlarmScreen(location)
+                else -> Log.i("TAG", "onLocationResult: ")
+            }
         }
         adapter = LocationAdapter(context, View.GONE, {  }, onCardClick)
         adapter.submitList(emptyList())
@@ -79,5 +82,21 @@ class SavedLocationsFragment : Fragment() {
         }
     }
 
+    private fun toSettingScreen(location: LocationData){
+        val args = Bundle().apply {
+            putString("latitude", location.latitude.toString())
+            putString("longitude", location.longitude.toString())
+            putString("locationMethod", "saved")
+        }
+        findNavController().navigate(R.id.action_savedLocationsFragment_to_settingFragment, args)
+    }
+    private fun toAlarmScreen(location: LocationData){
+        val args = Bundle().apply {
+            putString("latitude", location.latitude.toString())
+            putString("longitude", location.longitude.toString())
+            putInt("tabNumber", 1)
+        }
+        findNavController().navigate(R.id.action_savedLocationsFragment_to_mainFragment, args)
+    }
 
 }

@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Helpers.isSharedPreferencesContains
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentLoadingBinding
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -31,6 +32,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class GPS : Fragment() {
 
@@ -66,6 +68,7 @@ class GPS : Fragment() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
                 My_LOCATION_PERMISSION_ID)
+            showSettingDialog(requireContext())
         }
     }
 
@@ -105,21 +108,50 @@ class GPS : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 location = locationResult.lastLocation
                 if (location != null){
-                    AppSettings.getInstance(requireContext()).latitude = location?.latitude!!
-                    AppSettings.getInstance(requireContext()).longitude = location?.longitude!!
                     fusedClient.removeLocationUpdates(this)
-                    val navController = findNavController()
-                    navController.navigate(R.id.action_GPS_to_settingFragment)
+                    val screen = requireArguments().getSerializable("Screen") as Screen
+                    when(screen){
+                        Screen.SETTINGS -> toSettingScreen()
+                        Screen.ALARM -> toAlarmScreen()
+                        else -> Log.i("TAG", "onLocationResult: ")
+                    }
                 }
             }
         }
 
         fusedClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
     }
-
+    private fun showSettingDialog(context: Context) {
+        MaterialAlertDialogBuilder(
+            context,
+            com.google.android.material.R.style.MaterialAlertDialog_Material3
+        )
+            .setTitle("Location Permission")
+            .setMessage("Location permission is required, Please allow location permission from setting")
+            .setPositiveButton("Allow") { _, _ -> enableLocationServices() }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
     private fun enableLocationServices(){
         Toast.makeText(requireContext(), "Turn on location", Toast.LENGTH_LONG)
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
+    }
+
+    private fun toSettingScreen(){
+        val args = Bundle().apply {
+            putString("latitude", location?.latitude.toString())
+            putString("longitude", location?.longitude.toString())
+            putString("locationMethod", "gps")
+        }
+        findNavController().navigate(R.id.action_GPS_to_settingFragment, args)
+    }
+    private fun toAlarmScreen(){
+        val args = Bundle().apply {
+            putString("latitude", location?.latitude.toString())
+            putString("longitude", location?.longitude.toString())
+            putInt("tabNumber", 1)
+        }
+        findNavController().navigate(R.id.action_GPS_to_mainFragment, args)
     }
 }

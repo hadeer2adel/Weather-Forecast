@@ -1,6 +1,5 @@
 package com.example.weatherforecast.View
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -14,6 +13,7 @@ import androidx.annotation.MenuRes
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 
@@ -33,6 +33,12 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         appSettings = AppSettings.getInstance(requireContext())
+
+        if(requireArguments().containsKey("locationMethod")) {
+            appSettings.locationMethod = requireArguments().getString("locationMethod", "gps")
+            appSettings.latitude = requireArguments().getString("latitude", "0").toDouble()
+            appSettings.longitude = requireArguments().getString("longitude", "0").toDouble()
+        }
 
         binding.location.setOnClickListener { v ->
             binding.location.setImageResource(R.drawable.ic_arrow_down)
@@ -54,18 +60,20 @@ class SettingFragment : Fragment() {
         popup.menuInflater.inflate(menuRes, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            val args = Bundle().apply {
+                putSerializable("Screen", Screen.SETTINGS)
+            }
             when (menuItem.itemId) {
                 R.id.gps -> {
-                    appSettings.locationMethod = "gps"
-                    findNavController().navigate(R.id.action_settingFragment_to_GPS)
+                    findNavController().navigate(R.id.action_settingFragment_to_GPS, args)
                     true
                 }
                 R.id.map -> {
-                    findNavController().navigate(R.id.action_settingFragment_to_mapFragment)
+                    findNavController().navigate(R.id.action_settingFragment_to_mapFragment, args)
                     true
                 }
                 R.id.saved -> {
-                    findNavController().navigate(R.id.action_settingFragment_to_savedLocationsFragment)
+                    findNavController().navigate(R.id.action_settingFragment_to_savedLocationsFragment, args)
                     true
                 }
                 else -> false
@@ -81,7 +89,7 @@ class SettingFragment : Fragment() {
             if (appSettings.notification)
                 notification.isChecked = true
 
-            if (appSettings.language.equals("eg"))
+            if (appSettings.language.equals("en"))
                 language1.isChecked = true
             else
                 language2.isChecked = true
@@ -121,7 +129,7 @@ class SettingFragment : Fragment() {
             val selectedText = selectedRadioButton.text.toString()
             when(selectedText) {
                 getString(R.string.language_2) -> appSettings.language = "ar"
-                else -> appSettings.language = "eg"
+                else -> appSettings.language = "en"
             }
         }
     }
