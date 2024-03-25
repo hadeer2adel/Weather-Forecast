@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
 
 
     <application
@@ -24,7 +30,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA7oH5dDTfx8KRT-DtvJhHrquNgRxOxCpE" />
         <receiver
-            android:name=".Helpers.NotificationReceiver"
+            android:name=".NotificationUtil.NotificationReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver android:name=".NotificationUtil.NotificationCancelReceiver"
             android:enabled="true"
             android:exported="true" />
         <activity

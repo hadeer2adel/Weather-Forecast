@@ -36,4 +36,7 @@
     <string name="map">Map</string>
     //Favourite page
     <string name="add_location">Add Location</string>
+    //Alarm page
+    <string name="location_0">Current Location</string>
+
 </resources>
