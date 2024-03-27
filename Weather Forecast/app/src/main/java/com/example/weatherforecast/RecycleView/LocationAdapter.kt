@@ -46,7 +46,7 @@ class LocationAdapter (
         holder.binding.apply {
             val imgUrl = getCountryFlagUrl(locationData.countryCode)
             Glide.with(context).load(imgUrl).transform(Rotate(90)).into(flagImg)
-            location.text = locationData.cityName
+                location.text = locationData.cityName
             deleteBtn.visibility = visibility
             deleteBtn.setOnClickListener { onClick(locationData) }
             card.setOnClickListener { onCardClick(locationData) }

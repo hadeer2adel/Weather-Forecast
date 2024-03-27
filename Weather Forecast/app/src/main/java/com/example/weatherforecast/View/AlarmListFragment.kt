@@ -2,10 +2,7 @@ package com.example.weatherforecast.View
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -23,18 +20,14 @@ import com.example.weatherforecast.NotificationUtil.NotificationPermission
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
-import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.NotificationData
-import com.example.weatherforecast.NotificationUtil.NotificationReceiver
+import com.example.weatherforecast.NotificationUtil.NotificationManagement
 import com.example.weatherforecast.R
-import com.example.weatherforecast.RecycleView.LocationAdapter
 import com.example.weatherforecast.RecycleView.NotificationAdapter
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
-import com.example.weatherforecast.ViewModel.LocationViewModel
-import com.example.weatherforecast.ViewModel.LocationViewModelFactory
 import com.example.weatherforecast.ViewModel.NotificationViewModel
 import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
 import com.example.weatherforecast.databinding.FragmentListBinding
@@ -101,7 +94,8 @@ class AlarmListFragment : Fragment() {
 
         val onClick: (notification: NotificationData) -> Unit = { notification ->
             viewModel.deleteNotification(notification)
-            cancelAlarm(requireContext(), notification)
+            val notificationManagement = NotificationManagement()
+            notificationManagement.cancelAlarm(requireContext(), notification)
         }
         adapter = NotificationAdapter(context, onClick)
         adapter.submitList(emptyList())
@@ -118,18 +112,6 @@ class AlarmListFragment : Fragment() {
                 notifications -> adapter.submitList(notifications)
             adapter.notifyDataSetChanged()
         }
-    }
-
-    private fun cancelAlarm(context: Context, notification: NotificationData){
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, NotificationReceiver::class.java)
-        intent.putExtra("id", notification.requestId)
-        intent.putExtra("notificationType", notification.notificationType)
-        intent.putExtra("latitude", notification.latitude.toString())
-        intent.putExtra("longitude", notification.longitude.toString())
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        alarmManager.cancel(pendingIntent)
     }
 
 }

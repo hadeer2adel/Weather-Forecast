@@ -31,20 +31,11 @@
         android:textColor="@color/dark_color_1"
         android:textSize="18sp"
         android:clickable="true"
+        android:drawableEnd="@drawable/ic_arrow"
+        android:drawableTint="@color/dark_color_1"
         app:layout_constraintStart_toStartOf="@+id/ltxt"
         app:layout_constraintEnd_toEndOf="@+id/ltxt"
         app:layout_constraintTop_toBottomOf="@+id/ltxt"/>
-    <ImageButton
-        android:id="@+id/lIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="20dp"
-        android:src="@drawable/ic_arrow"
-        android:backgroundTint="@color/noColor"
-        app:tint="@color/dark_color_1"
-        app:layout_constraintTop_toTopOf="@+id/location"
-        app:layout_constraintBottom_toBottomOf="@+id/location"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/dtxt"
@@ -70,20 +61,11 @@
         android:textColor="@color/dark_color_1"
         android:textSize="18sp"
         android:clickable="true"
+        android:drawableEnd="@drawable/ic_arrow"
+        android:drawableTint="@color/dark_color_1"
         app:layout_constraintStart_toStartOf="@+id/dtxt"
         app:layout_constraintEnd_toEndOf="@+id/dtxt"
         app:layout_constraintTop_toBottomOf="@+id/dtxt"/>
-    <ImageButton
-        android:id="@+id/dIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="20dp"
-        android:src="@drawable/ic_arrow"
-        android:backgroundTint="@color/noColor"
-        app:tint="@color/dark_color_1"
-        app:layout_constraintTop_toTopOf="@+id/date"
-        app:layout_constraintBottom_toBottomOf="@+id/date"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/ttxt"
@@ -109,20 +91,11 @@
         android:textColor="@color/dark_color_1"
         android:textSize="18sp"
         android:clickable="true"
+        android:drawableEnd="@drawable/ic_arrow"
+        android:drawableTint="@color/dark_color_1"
         app:layout_constraintStart_toStartOf="@+id/ttxt"
         app:layout_constraintEnd_toEndOf="@+id/ttxt"
         app:layout_constraintTop_toBottomOf="@+id/ttxt"/>
-    <ImageButton
-        android:id="@+id/tIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="20dp"
-        android:src="@drawable/ic_arrow"
-        android:backgroundTint="@color/noColor"
-        app:tint="@color/dark_color_1"
-        app:layout_constraintTop_toTopOf="@+id/time"
-        app:layout_constraintBottom_toBottomOf="@+id/time"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/ntxt"

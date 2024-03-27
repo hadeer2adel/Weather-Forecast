@@ -19,6 +19,7 @@ import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.Screen
+import com.example.weatherforecast.NotificationUtil.NotificationManagement
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
@@ -72,8 +73,7 @@ class SettingFragment : Fragment() {
         }
 
         binding.rvAlarm.setOnClickListener {
-            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            viewModel.deleteAllNotifications(alarmManager)
+            viewModel.getAllNotifications()
         }
 
     }
@@ -85,6 +85,13 @@ class SettingFragment : Fragment() {
 
         val factory = SettingViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(SettingViewModel::class.java)
+        viewModel.notificationList.observe(viewLifecycleOwner){ notifications ->
+            val notificationManagement = NotificationManagement()
+            for(notification in notifications){
+                notificationManagement.cancelAlarm(requireContext(), notification)
+            }
+            viewModel.deleteAllNotifications()
+        }
     }
     private fun showMenu(v: View, @MenuRes menuRes: Int) {
         val popup = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

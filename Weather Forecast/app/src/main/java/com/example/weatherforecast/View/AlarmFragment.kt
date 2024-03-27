@@ -1,11 +1,7 @@
 package com.example.weatherforecast.View
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,18 +16,14 @@ import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.Screen
-import com.example.weatherforecast.NotificationUtil.NotificationReceiver
+import com.example.weatherforecast.NotificationUtil.NotificationManagement
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
-import com.example.weatherforecast.ViewModel.LocationViewModel
-import com.example.weatherforecast.ViewModel.LocationViewModelFactory
 import com.example.weatherforecast.ViewModel.NotificationViewModel
 import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
-import com.example.weatherforecast.ViewModel.RemoteViewModel
-import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
 import com.example.weatherforecast.databinding.FragmentAlarmBinding
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -100,7 +92,9 @@ class AlarmFragment : Fragment() {
                     date.text.toString(),
                     time.text.toString(),
                     notificationType)
-                setAlarm(requireContext(), "${date.text},${time.text}", alarmCalendar, notificationType, latitude, longitude)
+
+                val notificationManagement = NotificationManagement()
+                notificationManagement.setAlarm(requireContext(), "${date.text},${time.text}", alarmCalendar, notificationType, latitude, longitude)
                 viewModel.insertNotification(notificationData)
                 val args = Bundle().apply {
                     putInt("tabNumber", 1)
@@ -223,22 +217,6 @@ class AlarmFragment : Fragment() {
         }
         timePicker.show(fragmentManager, "time")
 
-    }
-
-    private fun setAlarm(context: Context, requestId: String, time: Calendar, notificationType: String, latitude: String, longitude: String){
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, NotificationReceiver::class.java)
-        intent.putExtra("requestId", requestId)
-        intent.putExtra("notificationType", notificationType)
-        intent.putExtra("latitude", latitude)
-        intent.putExtra("longitude", longitude)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP,
-            time.timeInMillis,
-            pendingIntent
-        )
     }
 
 }
