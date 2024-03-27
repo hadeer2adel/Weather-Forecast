@@ -13,6 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.Helpers.getUnits
+import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
+import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -102,31 +104,53 @@ class FavouriteFragment : Fragment() {
 
         val localFactory = LocationViewModelFactory(repository)
         locationViewModel = ViewModelProvider(this, localFactory).get(LocationViewModel::class.java)
-        locationViewModel.locationList.observe(viewLifecycleOwner){
-                locations -> adapter.submitList(locations)
-            adapter.notifyDataSetChanged()
-        }
+        handleDaoLocationResponse()
     }
 
+    private fun handleDaoLocationResponse(){
+        lifecycleScope.launch {
+            locationViewModel.locationList.collectLatest { response ->
+                when(response){
+                    is DaoLocationResponse.Loading -> { onLoading() }
+                    is DaoLocationResponse.Success ->{
+                        onSuccess()
+                        adapter.submitList(response.data)
+                        adapter.notifyDataSetChanged()
+                    }
+                    is DaoLocationResponse.Failure ->{ onFailure(response.error.message) }
+                }
+            }
+        }
+    }
     private fun handleCurrentWeatherResponse(){
         lifecycleScope.launch {
             remoteViewModel.weather.collectLatest {response ->
                 when(response){
-                    is ApiCurrentWeatherResponse.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
+                    is ApiCurrentWeatherResponse.Loading -> { onLoading() }
                     is ApiCurrentWeatherResponse.Success ->{
-                        binding.progressBar.visibility = View.GONE
+                        onSuccess()
                         val location = getLocationData(response.data)
                         locationViewModel.insertLocation(location)
                     }
-                    is ApiCurrentWeatherResponse.Failure ->{
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
-                    }
+                    is ApiCurrentWeatherResponse.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
+    }
+
+    private fun onLoading(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.recycleView.visibility = View.GONE
+        binding.addBtn.visibility = View.GONE
+    }
+    private fun onSuccess(){
+        binding.progressBar.visibility = View.GONE
+        binding.recycleView.visibility = View.VISIBLE
+        binding.addBtn.visibility = View.VISIBLE
+    }
+    private fun onFailure(message: String?){
+        binding.progressBar.visibility = View.GONE
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 

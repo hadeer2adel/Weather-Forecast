@@ -7,337 +7,385 @@
     android:background="@drawable/bg_color_1"
     tools:context=".View.SettingFragment">
 
-    <ImageView
-        android:id="@+id/lIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:src="@drawable/ic_location"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <Button
-        android:id="@+id/lBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:text="@string/location"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        android:clickable="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toEndOf="@+id/lIcon"
-        app:layout_constraintTop_toTopOf="@+id/lIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/lIcon"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <TextView
-        android:id="@+id/locationMethod"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:alpha="0.7"
-        android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="@+id/lIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/lIcon"
-        app:layout_constraintEnd_toStartOf="@+id/location"/>
-    <ImageButton
-        android:id="@+id/location"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_gravity="top|end"
-        android:src="@drawable/ic_arrow"
-        android:backgroundTint="@color/noColor"
-        app:layout_constraintTop_toTopOf="@+id/lIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/lIcon"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/lBtn"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/nIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_notification"
-        app:layout_constraintStart_toStartOf="@+id/lIcon"
-        app:layout_constraintEnd_toEndOf="@+id/lIcon"
-        app:layout_constraintTop_toBottomOf="@+id/lIcon"/>
-    <Button
-        android:id="@+id/nBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/notification"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        android:clickable="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/lBtn"
-        app:layout_constraintTop_toTopOf="@+id/nIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/nIcon"
-        app:layout_constraintEnd_toEndOf="@+id/lBtn"/>
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/notification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        style="@style/Widget.App.Switch"
-        app:layout_constraintTop_toTopOf="@+id/nIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/nIcon"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <com.google.android.material.divider.MaterialDivider
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/screen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/notification"/>
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/gIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_language"
-        app:layout_constraintStart_toStartOf="@+id/nIcon"
-        app:layout_constraintEnd_toEndOf="@+id/nIcon"
-        app:layout_constraintTop_toBottomOf="@+id/nIcon"/>
-    <Button
-        android:id="@+id/gBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/language"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        android:clickable="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/nBtn"
-        app:layout_constraintTop_toTopOf="@+id/gIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/gIcon"
-        app:layout_constraintEnd_toEndOf="@+id/nBtn"/>
-    <RadioGroup
-        android:id="@+id/language"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/gBtn"
-        app:layout_constraintEnd_toEndOf="@+id/gBtn"
-        app:layout_constraintTop_toBottomOf="@+id/gBtn">
-        <RadioButton
-            android:id="@+id/language_1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/language_1"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-        <RadioButton
-            android:id="@+id/language_2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <ImageView
+            android:id="@+id/lIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
             android:layout_marginStart="20dp"
-            android:text="@string/language_2"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-    </RadioGroup>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/language"/>
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_location"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/tIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_temperature"
-        app:layout_constraintStart_toStartOf="@+id/gIcon"
-        app:layout_constraintEnd_toEndOf="@+id/gIcon"
-        app:layout_constraintTop_toBottomOf="@+id/language"/>
-    <Button
-        android:id="@+id/tBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/t_units"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        android:clickable="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/gBtn"
-        app:layout_constraintTop_toTopOf="@+id/tIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/tIcon"
-        app:layout_constraintEnd_toEndOf="@+id/gBtn"/>
-    <RadioGroup
-        android:id="@+id/temperature"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/tBtn"
-        app:layout_constraintEnd_toEndOf="@+id/tBtn"
-        app:layout_constraintTop_toBottomOf="@+id/tBtn">
-        <RadioButton
-            android:id="@+id/t_unit_1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/t_unit_1"
-            android:textSize="18dp"
+        <Button
+            android:id="@+id/lBtn"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:clickable="false"
+            android:gravity="start"
+            android:text="@string/location"
+            android:textAllCaps="false"
             android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-        <RadioButton
-            android:id="@+id/t_unit_2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:text="@string/t_unit_2"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-        <RadioButton
-            android:id="@+id/t_unit_3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:text="@string/t_unit_3"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-    </RadioGroup>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/temperature"/>
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/lIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lIcon"
+            app:layout_constraintTop_toTopOf="@+id/lIcon" />
 
-    <ImageView
-        android:id="@+id/wIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_wind"
-        app:layout_constraintStart_toStartOf="@+id/tIcon"
-        app:layout_constraintEnd_toEndOf="@+id/tIcon"
-        app:layout_constraintTop_toBottomOf="@+id/temperature"/>
-    <Button
-        android:id="@+id/wBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/w_units"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        android:clickable="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/tBtn"
-        app:layout_constraintTop_toTopOf="@+id/wIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/wIcon"
-        app:layout_constraintEnd_toEndOf="@+id/tBtn"/>
-    <RadioGroup
-        android:id="@+id/wind"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/wBtn"
-        app:layout_constraintEnd_toEndOf="@+id/wBtn"
-        app:layout_constraintTop_toBottomOf="@+id/wBtn">
-        <RadioButton
-            android:id="@+id/w_unit_1"
+        <TextView
+            android:id="@+id/locationMethod"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/w_unit_1"
-            android:textSize="18dp"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
             android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-        <RadioButton
-            android:id="@+id/w_unit_2"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/lIcon"
+            app:layout_constraintEnd_toStartOf="@+id/location"
+            app:layout_constraintTop_toTopOf="@+id/lIcon" />
+
+        <ImageButton
+            android:id="@+id/location"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_gravity="top|end"
+            android:backgroundTint="@color/noColor"
+            android:src="@drawable/ic_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/lIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/lIcon" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/lBtn" />
+
+        <ImageView
+            android:id="@+id/nIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_notification"
+            app:layout_constraintEnd_toEndOf="@+id/lIcon"
+            app:layout_constraintStart_toStartOf="@+id/lIcon"
+            app:layout_constraintTop_toBottomOf="@+id/lIcon" />
+
+        <Button
+            android:id="@+id/nBtn"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:gravity="start"
+            android:text="@string/notification"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/nIcon"
+            app:layout_constraintEnd_toEndOf="@+id/lBtn"
+            app:layout_constraintStart_toStartOf="@+id/lBtn"
+            app:layout_constraintTop_toTopOf="@+id/nIcon" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/notification"
+            style="@style/Widget.App.Switch"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:text="@string/w_unit_2"
-            android:textSize="18dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/nIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/nIcon" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/notification" />
+
+        <ImageView
+            android:id="@+id/gIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_language"
+            app:layout_constraintEnd_toEndOf="@+id/nIcon"
+            app:layout_constraintStart_toStartOf="@+id/nIcon"
+            app:layout_constraintTop_toBottomOf="@+id/nIcon" />
+
+        <Button
+            android:id="@+id/gBtn"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:gravity="start"
+            android:text="@string/language"
+            android:textAllCaps="false"
             android:textColor="@color/white"
-            style="@style/Widget.App.RadioButton"/>
-    </RadioGroup>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/wind"/>
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/gIcon"
+            app:layout_constraintEnd_toEndOf="@+id/nBtn"
+            app:layout_constraintStart_toStartOf="@+id/nBtn"
+            app:layout_constraintTop_toTopOf="@+id/gIcon" />
 
-    <ImageView
-        android:id="@+id/rIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_alarm"
-        app:layout_constraintStart_toStartOf="@+id/wIcon"
-        app:layout_constraintEnd_toEndOf="@+id/wIcon"
-        app:layout_constraintTop_toBottomOf="@+id/wind"/>
-    <Button
-        android:id="@+id/rvAlarm"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/rv_alarms"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/wBtn"
-        app:layout_constraintTop_toTopOf="@+id/rIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/rIcon"
-        app:layout_constraintEnd_toEndOf="@+id/wBtn"/>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/rvAlarm"/>
+        <RadioGroup
+            android:id="@+id/language"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/gBtn"
+            app:layout_constraintStart_toStartOf="@+id/gBtn"
+            app:layout_constraintTop_toBottomOf="@+id/gBtn">
 
-    <ImageView
-        android:id="@+id/sIcon"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_star"
-        app:layout_constraintStart_toStartOf="@+id/rIcon"
-        app:layout_constraintEnd_toEndOf="@+id/rIcon"
-        app:layout_constraintTop_toBottomOf="@+id/rIcon"/>
-    <Button
-        android:id="@+id/rvLocation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/rv_locations"
-        android:textSize="20dp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:textAllCaps="false"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-        app:layout_constraintStart_toStartOf="@+id/rvAlarm"
-        app:layout_constraintTop_toTopOf="@+id/sIcon"
-        app:layout_constraintBottom_toBottomOf="@+id/sIcon"
-        app:layout_constraintEnd_toEndOf="@+id/rvAlarm"/>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@+id/rvLocation"/>
+            <RadioButton
+                android:id="@+id/language_1"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/language_1"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <RadioButton
+                android:id="@+id/language_2"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:text="@string/language_2"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+        </RadioGroup>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/language" />
+
+        <ImageView
+            android:id="@+id/tIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_temperature"
+            app:layout_constraintEnd_toEndOf="@+id/gIcon"
+            app:layout_constraintStart_toStartOf="@+id/gIcon"
+            app:layout_constraintTop_toBottomOf="@+id/language" />
+
+        <Button
+            android:id="@+id/tBtn"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:gravity="start"
+            android:text="@string/t_units"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tIcon"
+            app:layout_constraintEnd_toEndOf="@+id/gBtn"
+            app:layout_constraintStart_toStartOf="@+id/gBtn"
+            app:layout_constraintTop_toTopOf="@+id/tIcon" />
+
+        <RadioGroup
+            android:id="@+id/temperature"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/tBtn"
+            app:layout_constraintStart_toStartOf="@+id/tBtn"
+            app:layout_constraintTop_toBottomOf="@+id/tBtn">
+
+            <RadioButton
+                android:id="@+id/t_unit_1"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/t_unit_1"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <RadioButton
+                android:id="@+id/t_unit_2"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:text="@string/t_unit_2"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <RadioButton
+                android:id="@+id/t_unit_3"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:text="@string/t_unit_3"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+        </RadioGroup>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/temperature" />
+
+        <ImageView
+            android:id="@+id/wIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_wind"
+            app:layout_constraintEnd_toEndOf="@+id/tIcon"
+            app:layout_constraintStart_toStartOf="@+id/tIcon"
+            app:layout_constraintTop_toBottomOf="@+id/temperature" />
+
+        <Button
+            android:id="@+id/wBtn"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:gravity="start"
+            android:text="@string/w_units"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/wIcon"
+            app:layout_constraintEnd_toEndOf="@+id/tBtn"
+            app:layout_constraintStart_toStartOf="@+id/tBtn"
+            app:layout_constraintTop_toTopOf="@+id/wIcon" />
+
+        <RadioGroup
+            android:id="@+id/wind"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/wBtn"
+            app:layout_constraintStart_toStartOf="@+id/wBtn"
+            app:layout_constraintTop_toBottomOf="@+id/wBtn">
+
+            <RadioButton
+                android:id="@+id/w_unit_1"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/w_unit_1"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <RadioButton
+                android:id="@+id/w_unit_2"
+                style="@style/Widget.App.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:text="@string/w_unit_2"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+        </RadioGroup>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/wind" />
+
+        <ImageView
+            android:id="@+id/rIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_alarm"
+            app:layout_constraintEnd_toEndOf="@+id/wIcon"
+            app:layout_constraintStart_toStartOf="@+id/wIcon"
+            app:layout_constraintTop_toBottomOf="@+id/wind" />
+
+        <Button
+            android:id="@+id/rvAlarm"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="@string/rv_alarms"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/rIcon"
+            app:layout_constraintEnd_toEndOf="@+id/wBtn"
+            app:layout_constraintStart_toStartOf="@+id/wBtn"
+            app:layout_constraintTop_toTopOf="@+id/rIcon" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/rvAlarm" />
+
+        <ImageView
+            android:id="@+id/sIcon"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_star"
+            app:layout_constraintEnd_toEndOf="@+id/rIcon"
+            app:layout_constraintStart_toStartOf="@+id/rIcon"
+            app:layout_constraintTop_toBottomOf="@+id/rIcon" />
+
+        <Button
+            android:id="@+id/rvLocation"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="@string/rv_locations"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/sIcon"
+            app:layout_constraintEnd_toEndOf="@+id/rvAlarm"
+            app:layout_constraintStart_toStartOf="@+id/rvAlarm"
+            app:layout_constraintTop_toTopOf="@+id/sIcon" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            app:layout_constraintTop_toBottomOf="@+id/rvLocation" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

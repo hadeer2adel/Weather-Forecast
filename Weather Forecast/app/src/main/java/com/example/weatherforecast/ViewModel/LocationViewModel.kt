@@ -5,16 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
+import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 
 class LocationViewModel(val repository: Repository) : ViewModel (){
 
-    private var _locationList = MutableLiveData<List<LocationData>>()
-    var locationList: LiveData<List<LocationData>> = _locationList
+    private var _locationList = MutableStateFlow<DaoLocationResponse>(DaoLocationResponse.Loading)
+    var locationList: StateFlow<DaoLocationResponse> = _locationList
 
     init {
         getAllLocations()
@@ -37,8 +42,10 @@ class LocationViewModel(val repository: Repository) : ViewModel (){
     fun getAllLocations(){
         viewModelScope.launch(Dispatchers.IO){
             repository.getAllLocations()
-                .collect {
-                    _locationList.postValue(it)
+                .catch {
+                    _locationList.value = DaoLocationResponse.Failure(it)
+                }.collect {
+                    _locationList.value = DaoLocationResponse.Success(it)
                 }
         }
     }

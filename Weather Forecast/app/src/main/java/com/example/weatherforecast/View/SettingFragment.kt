@@ -13,8 +13,11 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.annotation.MenuRes
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -30,6 +33,8 @@ import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
 import com.example.weatherforecast.ViewModel.SettingViewModel
 import com.example.weatherforecast.ViewModel.SettingViewModelFactory
 import com.example.weatherforecast.databinding.FragmentSettingBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class SettingFragment : Fragment() {
 
@@ -74,6 +79,7 @@ class SettingFragment : Fragment() {
 
         binding.rvAlarm.setOnClickListener {
             viewModel.getAllNotifications()
+            handleDaoNotificationResponse()
         }
 
     }
@@ -85,13 +91,36 @@ class SettingFragment : Fragment() {
 
         val factory = SettingViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(SettingViewModel::class.java)
-        viewModel.notificationList.observe(viewLifecycleOwner){ notifications ->
-            val notificationManagement = NotificationManagement()
-            for(notification in notifications){
-                notificationManagement.cancelAlarm(requireContext(), notification)
+    }
+    private fun handleDaoNotificationResponse(){
+        lifecycleScope.launch {
+            viewModel.notificationList.collectLatest { response ->
+                when(response){
+                    is DaoNotificationResponse.Loading -> { onLoading() }
+                    is DaoNotificationResponse.Success ->{
+                        onSuccess()
+                        val notificationManagement = NotificationManagement()
+                        for(notification in response.data){
+                            notificationManagement.cancelAlarm(requireContext(), notification)
+                        }
+                        viewModel.deleteAllNotifications()
+                    }
+                    is DaoNotificationResponse.Failure ->{ onFailure(response.error.message) }
+                }
             }
-            viewModel.deleteAllNotifications()
         }
+    }
+    private fun onLoading(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.screen.visibility = View.GONE
+    }
+    private fun onSuccess(){
+        binding.progressBar.visibility = View.GONE
+        binding.screen.visibility = View.VISIBLE
+    }
+    private fun onFailure(message: String?){
+        binding.progressBar.visibility = View.GONE
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
     private fun showMenu(v: View, @MenuRes menuRes: Int) {
         val popup = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

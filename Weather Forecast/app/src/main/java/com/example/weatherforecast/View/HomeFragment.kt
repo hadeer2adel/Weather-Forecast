@@ -2,6 +2,7 @@ package com.example.weatherforecast.View
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Message
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,9 @@ import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
 import com.example.weatherforecast.Helpers.isNetworkConnected
+import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
+import com.example.weatherforecast.LocalDataSource.DaoHourlyWeatherResponse
+import com.example.weatherforecast.LocalDataSource.DaoWeatherResponse
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -65,11 +69,19 @@ class HomeFragment : Fragment(){
 
         if(isNetworkConnected(requireContext())) {
             localViewModel.deleteLastWeather()
-            getRemoteData()
+
+            val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
+            remoteViewModel.getCurrentWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+            remoteViewModel.getForecastWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
+
+            handleCurrentWeatherResponse()
+            handleForecastWeatherResponse()
         }
         else {
-            getLocalData()
             localViewModel.getLastWeather()
+            handleDaoWeatherResponse()
+            handleDaoHourlyWeatherResponse()
+            handleDaoDailyWeatherResponse()
         }
     }
 
@@ -102,49 +114,63 @@ class HomeFragment : Fragment(){
         val localFactory = HomeLocalViewModelFactory(repository)
         localViewModel = ViewModelProvider(this, localFactory).get(HomeLocalViewModel::class.java)
     }
-    private fun getRemoteData(){
-        val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
-        remoteViewModel.getCurrentWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
-        remoteViewModel.getForecastWeather(appSettings.latitude, appSettings.longitude, units, appSettings.language)
 
-        handleCurrentWeatherResponse()
-        handleForecastWeatherResponse()
-    }
-
-    private fun getLocalData(){
-        localViewModel.weather.observe(viewLifecycleOwner){ weather ->
-            if (weather != null) {
-                setDataOnView(weather)
+    private fun handleDaoWeatherResponse(){
+        lifecycleScope.launch {
+            localViewModel.weather.collectLatest { response ->
+                when(response){
+                    is DaoWeatherResponse.Loading -> { onLoading() }
+                    is DaoWeatherResponse.Success ->{
+                        onSuccess()
+                        setDataOnView(response.data)
+                    }
+                    is DaoWeatherResponse.Failure ->{ onFailure(response.error.message) }
+                }
             }
         }
-        localViewModel.hourList.observe(viewLifecycleOwner){
-                list -> hourAdapter.submitList(list)
-            hourAdapter.notifyDataSetChanged()
+    }
+    private fun handleDaoHourlyWeatherResponse(){
+        lifecycleScope.launch {
+            localViewModel.hourList.collectLatest { response ->
+                when(response){
+                    is DaoHourlyWeatherResponse.Loading -> { onLoading() }
+                    is DaoHourlyWeatherResponse.Success ->{
+                        onSuccess()
+                        hourAdapter.submitList(response.data)
+                        hourAdapter.notifyDataSetChanged()
+                    }
+                    is DaoHourlyWeatherResponse.Failure ->{ onFailure(response.error.message) }
+                }
+            }
         }
-        localViewModel.dayList.observe(viewLifecycleOwner){
-                list -> dayAdapter.submitList(list)
-            dayAdapter.notifyDataSetChanged()
+    }
+    private fun handleDaoDailyWeatherResponse(){
+        lifecycleScope.launch {
+            localViewModel.dayList.collectLatest { response ->
+                when(response){
+                    is DaoDailyWeatherDataResponse.Loading -> { onLoading() }
+                    is DaoDailyWeatherDataResponse.Success ->{
+                        onSuccess()
+                        dayAdapter.submitList(response.data)
+                        dayAdapter.notifyDataSetChanged()
+                    }
+                    is DaoDailyWeatherDataResponse.Failure ->{ onFailure(response.error.message) }
+                }
+            }
         }
     }
     private fun handleCurrentWeatherResponse(){
         lifecycleScope.launch {
             remoteViewModel.weather.collectLatest { response ->
                 when(response){
-                    is ApiCurrentWeatherResponse.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.scrollView.visibility = View.GONE
-                    }
+                    is ApiCurrentWeatherResponse.Loading -> { onLoading() }
                     is ApiCurrentWeatherResponse.Success ->{
-                        binding.progressBar.visibility = View.GONE
-                        binding.scrollView.visibility = View.VISIBLE
+                        onSuccess()
                         val weather = getWeatherData(response.data)
                         setDataOnView(weather)
                         localViewModel.insertLastWeather(weather)
                     }
-                    is ApiCurrentWeatherResponse.Failure ->{
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
-                    }
+                    is ApiCurrentWeatherResponse.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
@@ -153,13 +179,9 @@ class HomeFragment : Fragment(){
         lifecycleScope.launch {
             remoteViewModel.weatherList.collectLatest { response ->
                 when(response){
-                    is ApiForecastWeatherResponse.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.scrollView.visibility = View.GONE
-                    }
+                    is ApiForecastWeatherResponse.Loading -> { onLoading() }
                     is ApiForecastWeatherResponse.Success ->{
-                        binding.progressBar.visibility = View.GONE
-                        binding.scrollView.visibility = View.VISIBLE
+                        onSuccess()
                         val hourlyWeatherData = getHourlyWeatherData(response.data)
                         hourAdapter.submitList(hourlyWeatherData)
                         hourAdapter.notifyDataSetChanged()
@@ -169,10 +191,7 @@ class HomeFragment : Fragment(){
                         localViewModel.insertLastWeatherHour(hourlyWeatherData)
                         localViewModel.insertLastWeatherDay(dailyWeatherData)
                     }
-                    is ApiForecastWeatherResponse.Failure ->{
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
-                    }
+                    is ApiForecastWeatherResponse.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
@@ -196,6 +215,19 @@ class HomeFragment : Fragment(){
             windUnit.text = appSettings.windUnit
             pressure.text = weather.pressure.toString()
         }
+    }
+
+    private fun onLoading(){
+        binding.progressBar.visibility = View.VISIBLE
+        binding.scrollView.visibility = View.GONE
+    }
+    private fun onSuccess(){
+        binding.progressBar.visibility = View.GONE
+        binding.scrollView.visibility = View.VISIBLE
+    }
+    private fun onFailure(message: String?){
+        binding.progressBar.visibility = View.GONE
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 }

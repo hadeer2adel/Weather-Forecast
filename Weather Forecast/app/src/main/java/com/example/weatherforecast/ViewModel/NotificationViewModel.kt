@@ -9,19 +9,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.WeatherData
+import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 
 class NotificationViewModel(val repository: Repository) : ViewModel (){
 
-    private var _notificationList = MutableLiveData<List<NotificationData>>()
-    var notificationList: LiveData<List<NotificationData>> = _notificationList
+    private var _notificationList = MutableStateFlow<DaoNotificationResponse>(DaoNotificationResponse.Loading)
+    var notificationList: StateFlow<DaoNotificationResponse> = _notificationList
 
     init {
         getAllNotifications()
@@ -43,8 +48,10 @@ class NotificationViewModel(val repository: Repository) : ViewModel (){
     fun getAllNotifications(){
         viewModelScope.launch(Dispatchers.IO){
             repository.getAllNotifications()
-                .collect {
-                    _notificationList.postValue(it)
+                .catch {
+                    _notificationList.value = DaoNotificationResponse.Failure(it)
+                }.collect {
+                    _notificationList.value = DaoNotificationResponse.Success(it)
                 }
         }
     }
