@@ -4,14 +4,21 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.Helpers.getUnits
+import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.getWeatherData
 import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
+import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
+import com.example.weatherforecast.ViewModel.NotificationViewModel
+import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +37,7 @@ class NotificationReceiver: BroadcastReceiver() {
         }
         notificationMaker = NotificationMaker(context)
         val notificationType = intent.getStringExtra("notificationType")!!
+        val requestId = intent.getStringExtra("requestId")!!
 
         val latitude = intent.getStringExtra("latitude")!!.toDouble()
         val longitude = intent.getStringExtra("longitude")!!.toDouble()
@@ -39,6 +47,7 @@ class NotificationReceiver: BroadcastReceiver() {
         repository = RepositoryImpl(RemoteDataSourceImpl.getInstance(), LocalDataSourceImpl.getInstance(context))
         getCurrentWeather(latitude, longitude, units, appSettings.language)
         handleCurrentWeatherResponse(notificationType, appSettings.language, appSettings.temperatureUnit)
+        deleteNotification(requestId)
     }
 
     private fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String){
@@ -73,5 +82,9 @@ class NotificationReceiver: BroadcastReceiver() {
             }
         }
     }
-
+    private fun deleteNotification(requestId: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            repository.deleteNotificationByRequestId(requestId)
+        }
+    }
 }

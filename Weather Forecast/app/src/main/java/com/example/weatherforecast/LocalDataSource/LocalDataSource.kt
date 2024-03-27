@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
+import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
@@ -27,5 +28,12 @@ interface LocalDataSource {
     suspend fun insertLastWeatherDay(dailyWeatherData: DailyWeatherData)
 
     suspend fun deleteLastWeather()
+
+    //Notification
+    fun getAllNotifications(): Flow<List<NotificationData>>
+    suspend fun insertNotification(notification: NotificationData)
+    suspend fun deleteNotification(notification: NotificationData)
+    suspend fun deleteNotificationByRequestId(requestId: String)
+    suspend fun deleteAllNotifications()
 
 }

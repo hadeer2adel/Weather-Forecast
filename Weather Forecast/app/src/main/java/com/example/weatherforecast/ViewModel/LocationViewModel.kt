@@ -1,19 +1,17 @@
 package com.example.weatherforecast.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class LocalViewModel(val repository: Repository) : ViewModel (){
+class LocationViewModel(val repository: Repository) : ViewModel (){
 
     private var _locationList = MutableLiveData<List<LocationData>>()
     var locationList: LiveData<List<LocationData>> = _locationList
@@ -36,12 +34,6 @@ class LocalViewModel(val repository: Repository) : ViewModel (){
         }
     }
 
-    fun deleteAllLocations(){
-        viewModelScope.launch(Dispatchers.IO){
-            repository.deleteAllLocations()
-        }
-    }
-
     fun getAllLocations(){
         viewModelScope.launch(Dispatchers.IO){
             repository.getAllLocations()
@@ -53,5 +45,15 @@ class LocalViewModel(val repository: Repository) : ViewModel (){
 
     override fun onCleared() {
         super.onCleared()
+    }
+}
+
+class LocationViewModelFactory (val repository: Repository): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(LocationViewModel::class.java)){
+            LocationViewModel(repository) as T
+        }else{
+            throw IllegalArgumentException("ViewModel Class Not Found")
+        }
     }
 }

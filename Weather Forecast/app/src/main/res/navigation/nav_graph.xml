@@ -16,17 +16,14 @@
             android:id="@+id/action_mainFragment_to_locationDetailsFragment"
             app:destination="@id/locationDetailsFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_GPS"
-            app:destination="@id/GPS" />
-        <action
-            android:id="@+id/action_mainFragment_to_savedLocationsFragment"
-            app:destination="@id/savedLocationsFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -69,6 +66,9 @@
             android:name="Screen"
             app:argType="com.example.weatherforecast.Model.Screen" />
         <action
+            android:id="@+id/action_mapFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+        <action
             android:id="@+id/action_mapFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
@@ -81,9 +81,6 @@
         <argument
             android:name="Screen"
             app:argType="com.example.weatherforecast.Model.Screen" />
-        <action
-            android:id="@+id/action_GPS_to_mainFragment"
-            app:destination="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/favouriteFragment"
@@ -93,7 +90,7 @@
     <fragment
         android:id="@+id/savedLocationsFragment"
         android:name="com.example.weatherforecast.View.SavedLocationsFragment"
-        android:label="SavedLocationsFragment" >
+        android:label="@string/locations" >
         <action
             android:id="@+id/action_savedLocationsFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
@@ -101,13 +98,13 @@
             android:name="Screen"
             app:argType="com.example.weatherforecast.Model.Screen" />
         <action
-            android:id="@+id/action_savedLocationsFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            android:id="@+id/action_savedLocationsFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
     </fragment>
     <fragment
         android:id="@+id/locationDetailsFragment"
         android:name="com.example.weatherforecast.View.LocationDetailsFragment"
-        android:label="LocationDetailsFragment" >
+        android:label="@string/location" >
         <action
             android:id="@+id/action_locationDetailsFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
@@ -117,6 +114,34 @@
         <argument
             android:name="longitude"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/alarmListFragment"
+        android:name="com.example.weatherforecast.View.AlarmListFragment"
+        android:label="AlarmListFragment" />
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.example.weatherforecast.View.AlarmFragment"
+        android:label="@string/setAlarm"
+        tools:layout="@layout/fragment_alarm" >
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+        <argument
+            android:name="locationMethod"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_alarmFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_alarmFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_alarmFragment_to_savedLocationsFragment"
+            app:destination="@id/savedLocationsFragment" />
     </fragment>
 
 </navigation>

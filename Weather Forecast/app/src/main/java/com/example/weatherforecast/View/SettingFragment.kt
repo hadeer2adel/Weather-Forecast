@@ -1,5 +1,7 @@
 package com.example.weatherforecast.View
 
+import android.app.AlarmManager
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -11,16 +13,28 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.annotation.MenuRes
 import android.widget.PopupMenu
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.weatherforecast.LocalDataSource.LocalDataSource
+import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.R
+import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
+import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Repository.Repository
+import com.example.weatherforecast.Repository.RepositoryImpl
+import com.example.weatherforecast.ViewModel.NotificationViewModel
+import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
+import com.example.weatherforecast.ViewModel.SettingViewModel
+import com.example.weatherforecast.ViewModel.SettingViewModelFactory
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
     private lateinit var appSettings: AppSettings
+    private lateinit var viewModel: SettingViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,16 +54,37 @@ class SettingFragment : Fragment() {
             appSettings.longitude = requireArguments().getString("longitude", "0").toDouble()
         }
 
-        binding.location.setOnClickListener { v ->
-            binding.location.setImageResource(R.drawable.ic_arrow_down)
-            showMenu(v, R.menu.location_options)
-        }
         setDataOnView()
+        initViewModel()
+
         setUpNotificationOptions()
         setUpLanguageOptions(view)
         setUpTemperatureOptions(view)
         setUpWindOptions(view)
-        //setUpRemoveBtn()
+
+        binding.location.setOnClickListener { v ->
+            binding.location.setImageResource(R.drawable.ic_arrow_down)
+            showMenu(v, R.menu.location_options)
+        }
+
+        binding.rvLocation.setOnClickListener {
+            viewModel.deleteAllLocations()
+        }
+
+        binding.rvAlarm.setOnClickListener {
+            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            viewModel.deleteAllNotifications(alarmManager)
+        }
+
+    }
+
+    private fun initViewModel(){
+        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
+        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+
+        val factory = SettingViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(SettingViewModel::class.java)
     }
     private fun showMenu(v: View, @MenuRes menuRes: Int) {
         val popup = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

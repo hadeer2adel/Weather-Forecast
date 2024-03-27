@@ -26,8 +26,8 @@ import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
-import com.example.weatherforecast.ViewModel.LocalViewModel
-import com.example.weatherforecast.ViewModel.LocalViewModelFactory
+import com.example.weatherforecast.ViewModel.LocationViewModel
+import com.example.weatherforecast.ViewModel.LocationViewModelFactory
 import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
 import com.example.weatherforecast.databinding.FragmentListBinding
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 class FavouriteFragment : Fragment() {
     private lateinit var binding: FragmentListBinding
     private lateinit var adapter: LocationAdapter
-    private lateinit var localViewModel: LocalViewModel
+    private lateinit var locationViewModel: LocationViewModel
     private lateinit var remoteViewModel: RemoteViewModel
 
 
@@ -67,7 +67,7 @@ class FavouriteFragment : Fragment() {
 
         binding.addBtn.setOnClickListener {
             val args = Bundle().apply {
-                putSerializable("Screen", Screen.FAVOURITE)
+                putSerializable("Screen", Screen.LOCATION_LIST)
             }
             findNavController().navigate(R.id.action_mainFragment_to_mapFragment, args)
         }
@@ -79,7 +79,7 @@ class FavouriteFragment : Fragment() {
         binding.recycleView.layoutManager = manager
 
         val onClick: (location: LocationData) -> Unit = { location ->
-            localViewModel.deleteLocation(location)
+            locationViewModel.deleteLocation(location)
         }
         val onCardClick: (location: LocationData) -> Unit = { location ->
             val args = Bundle().apply {
@@ -100,9 +100,9 @@ class FavouriteFragment : Fragment() {
         val remoteFactory = RemoteViewModelFactory(repository)
         remoteViewModel = ViewModelProvider(this, remoteFactory).get(RemoteViewModel::class.java)
 
-        val localFactory = LocalViewModelFactory(repository)
-        localViewModel = ViewModelProvider(this, localFactory).get(LocalViewModel::class.java)
-        localViewModel.locationList.observe(viewLifecycleOwner){
+        val localFactory = LocationViewModelFactory(repository)
+        locationViewModel = ViewModelProvider(this, localFactory).get(LocationViewModel::class.java)
+        locationViewModel.locationList.observe(viewLifecycleOwner){
                 locations -> adapter.submitList(locations)
             adapter.notifyDataSetChanged()
         }
@@ -118,7 +118,7 @@ class FavouriteFragment : Fragment() {
                     is ApiCurrentWeatherResponse.Success ->{
                         binding.progressBar.visibility = View.GONE
                         val location = getLocationData(response.data)
-                        localViewModel.insertLocation(location)
+                        locationViewModel.insertLocation(location)
                     }
                     is ApiCurrentWeatherResponse.Failure ->{
                         binding.progressBar.visibility = View.GONE

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.DailyWeatherData
@@ -73,5 +74,15 @@ class HomeLocalViewModel(val repository: Repository) : ViewModel (){
 
     override fun onCleared() {
         super.onCleared()
+    }
+}
+
+class HomeLocalViewModelFactory (val repository: Repository): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(HomeLocalViewModel::class.java)){
+            HomeLocalViewModel(repository) as T
+        }else{
+            throw IllegalArgumentException("ViewModel Class Not Found")
+        }
     }
 }

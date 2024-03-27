@@ -114,7 +114,7 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun enableLocationServices(){
-        Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG)
+        Toast.makeText(this, getString(R.string.turnon_location), Toast.LENGTH_LONG)
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
     }

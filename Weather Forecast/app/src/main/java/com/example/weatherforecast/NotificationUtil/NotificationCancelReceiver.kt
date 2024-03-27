@@ -15,7 +15,7 @@ class NotificationCancelReceiver : BroadcastReceiver() {
 
         NotificationMaker.ringtoneSound.stop()
 
-        val notificationId = intent?.getStringExtra("notificationId")!!.toInt()
+        val notificationId = intent?.getIntExtra("notificationId", 101)!!
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
     }

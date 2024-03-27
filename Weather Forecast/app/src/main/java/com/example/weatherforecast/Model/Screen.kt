@@ -3,8 +3,9 @@ package com.example.weatherforecast.Model
 enum class Screen {
     HOME,
     ALARM,
-    FAVOURITE,
+    ALARM_LIST,
+    LOCATION,
+    LOCATION_LIST,
     SETTINGS,
     MAP,
-    LOCATION_DETAILS
 }

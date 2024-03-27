@@ -34,10 +34,10 @@ class NotificationPermission(val context: Context) {
             context,
             com.google.android.material.R.style.MaterialAlertDialog_Material3
         )
-            .setTitle("Notification Permission")
-            .setMessage("Notification permission is required, Please allow notification permission from setting")
-            .setPositiveButton("Allow") { _, _ -> enableNotificationServices() }
-            .setNegativeButton("Cancel", null)
+            .setTitle(context.getString(R.string.notification_permission_title))
+            .setMessage(context.getString(R.string.notification_permission_body))
+            .setPositiveButton(context.getString(R.string.allow)) { _, _ -> enableNotificationServices() }
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
 
@@ -46,15 +46,15 @@ class NotificationPermission(val context: Context) {
             context,
             com.google.android.material.R.style.MaterialAlertDialog_Material3
         )
-            .setTitle("Notification Permission")
-            .setMessage("Notification permission is required, Please allow notification permission from setting")
-            .setPositiveButton("Allow") { _, _ -> navController.navigate(R.id.action_mainFragment_to_settingFragment) }
-            .setNegativeButton("Cancel", null)
+            .setTitle(context.getString(R.string.notification_permission_title))
+            .setMessage(context.getString(R.string.notification_permission_body))
+            .setPositiveButton(context.getString(R.string.allow)) { _, _ -> navController.navigate(R.id.action_mainFragment_to_settingFragment) }
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
 
     private fun enableNotificationServices() {
-        Toast.makeText(context, "Turn on notification", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, context.getString(R.string.turnon_notification), Toast.LENGTH_LONG).show()
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", context.packageName, null)
         intent.data = uri

@@ -1,11 +1,10 @@
 package com.example.weatherforecast.Helpers
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.weatherforecast.View.AlarmFragment
+import com.example.weatherforecast.View.AlarmListFragment
 import com.example.weatherforecast.View.FavouriteFragment
 import com.example.weatherforecast.View.HomeFragment
 
@@ -19,7 +18,7 @@ class TabLayoutAdapter(fragmentActivity: FragmentActivity, val bundle: Bundle) :
         when{
             position == 0 -> return HomeFragment()
             position == 1 -> {
-                val fragment = AlarmFragment()
+                val fragment = AlarmListFragment()
                 if(bundle.containsKey("latitude")){
                     fragment.arguments = bundle
                 }

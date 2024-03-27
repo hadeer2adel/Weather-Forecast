@@ -58,7 +58,7 @@ class GPS : Fragment() {
                 getFreshLocation()
             }
             else{
-                enableLocationServices()
+                enableLocationServices(requireContext())
             }
         }
         else{
@@ -112,7 +112,6 @@ class GPS : Fragment() {
                     val screen = requireArguments().getSerializable("Screen") as Screen
                     when(screen){
                         Screen.SETTINGS -> toSettingScreen()
-                        Screen.ALARM -> toAlarmScreen()
                         else -> Log.i("TAG", "onLocationResult: ")
                     }
                 }
@@ -126,14 +125,14 @@ class GPS : Fragment() {
             context,
             com.google.android.material.R.style.MaterialAlertDialog_Material3
         )
-            .setTitle("Location Permission")
-            .setMessage("Location permission is required, Please allow location permission from setting")
-            .setPositiveButton("Allow") { _, _ -> enableLocationServices() }
-            .setNegativeButton("Cancel", null)
+            .setTitle(context.getString(R.string.location_permission_title))
+            .setMessage(context.getString(R.string.location_permission_body))
+            .setPositiveButton(context.getString(R.string.allow)) { _, _ -> enableLocationServices(context) }
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
-    private fun enableLocationServices(){
-        Toast.makeText(requireContext(), "Turn on location", Toast.LENGTH_LONG)
+    private fun enableLocationServices(context: Context){
+        Toast.makeText(context, context.getString(R.string.turnon_location), Toast.LENGTH_LONG)
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
     }
@@ -145,13 +144,5 @@ class GPS : Fragment() {
             putString("locationMethod", "gps")
         }
         findNavController().navigate(R.id.action_GPS_to_settingFragment, args)
-    }
-    private fun toAlarmScreen(){
-        val args = Bundle().apply {
-            putString("latitude", location?.latitude.toString())
-            putString("longitude", location?.longitude.toString())
-            putInt("tabNumber", 1)
-        }
-        findNavController().navigate(R.id.action_GPS_to_mainFragment, args)
     }
 }

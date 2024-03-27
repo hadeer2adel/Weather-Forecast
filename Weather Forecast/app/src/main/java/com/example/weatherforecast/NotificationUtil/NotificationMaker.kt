@@ -65,7 +65,7 @@ class NotificationMaker(val context: Context) {
 
         val notification = NotificationCompat.Builder(context, Notification_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Weather Alarm")
+            .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(weatherDescription)
             .setStyle(NotificationCompat.BigTextStyle().bigText(weatherDescription))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -82,7 +82,7 @@ class NotificationMaker(val context: Context) {
         setAlarmChannel()
 
         val cancelIntent = Intent(context, NotificationCancelReceiver::class.java)
-        cancelIntent.putExtra("notificationId", notificationId.toString())
+        cancelIntent.putExtra("notificationId", notificationId)
         val cancelPendingIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val fullScreenIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
@@ -90,13 +90,13 @@ class NotificationMaker(val context: Context) {
 
         val notification = NotificationCompat.Builder(context, Alarm_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)
-            .setContentTitle("Weather Alarm")
+            .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(weatherDescription)
             .setStyle(NotificationCompat.BigTextStyle().bigText(weatherDescription))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setFullScreenIntent(fullScreenPendingIntent, true)
-            .addAction(R.drawable.ic_close, "Cancel", cancelPendingIntent)
+            .addAction(R.drawable.ic_close, context.getString(R.string.cancel), cancelPendingIntent)
             .build()
 
         val manager = NotificationManagerCompat.from(context)

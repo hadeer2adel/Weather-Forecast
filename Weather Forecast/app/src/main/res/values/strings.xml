@@ -15,6 +15,7 @@
     <string name="cloud">Cloudiness</string>
     //setting page
     <string name="location">Location</string>
+    <string name="location_0">Current Location</string>
     <string name="location_1">GPS</string>
     <string name="location_2">On Map</string>
     <string name="location_3">Saved Locations</string>
@@ -32,11 +33,33 @@
     <string name="rv_alarms">Remove All Alarms</string>
     <string name="rv_locations">Remove All Locations</string>
     //map page
-    <string name="save_location">Save Location</string>
+    <string name="save_location">Saved Locations</string>
+    <string name="locations">Locations</string>
     <string name="map">Map</string>
+    <string name="location_permission_title">Location Permission</string>
+    <string name="location_permission_body">Location permission is required, Please allow location permission from setting</string>
+    <string name="turnon_location">Turn On Location</string>
+
     //Favourite page
     <string name="add_location">Add Location</string>
     //Alarm page
-    <string name="location_0">Current Location</string>
+    <string name="setAlarm">Set Alarm</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="type">Type</string>
+    <string name="notification_1">Notification</string>
+    <string name="notification_2">Alarm</string>
+    <string name="save">Save</string>
+    <string name="dialog_location">Select Location</string>
+    <string name="dialog_date">Select Date</string>
+    <string name="dialog_time">Select Time</string>
+    <string name="dialog_notifcation">Select Notification Type</string>
+    <string name="notification_title">Weather Alarm</string>
+    <string name="notification_permission_title">Notification Permission</string>
+    <string name="notification_permission_body">Notification permission is required, Please allow notification permission from setting</string>
+    <string name="turnon_notification">Turn On Notification</string>
+    <string name="allow">Allow</string>
+    <string name="cancel">Cancel</string>
+
 
 </resources>

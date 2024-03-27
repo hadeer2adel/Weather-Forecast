@@ -1,10 +1,12 @@
 package com.example.weatherforecast.Model
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "Location")
+@Entity(tableName = "Location",
+    indices = [Index(value = ["latitude", "longitude"], unique = true)])
 data class LocationData(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

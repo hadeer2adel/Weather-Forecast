@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Model.AppSettings
@@ -49,5 +50,15 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
 
     override fun onCleared() {
         super.onCleared()
+    }
+}
+
+class RemoteViewModelFactory (val repository: Repository): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(RemoteViewModel::class.java)){
+            RemoteViewModel(repository) as T
+        }else{
+            throw IllegalArgumentException("ViewModel Class Not Found")
+        }
     }
 }

@@ -7,11 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.R
-import com.example.weatherforecast.ViewModel.LocalViewModel
+import com.example.weatherforecast.ViewModel.LocationViewModel
 import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.databinding.FragmentMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,7 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
-    private lateinit var localViewModel: LocalViewModel
+    private lateinit var locationViewModel: LocationViewModel
     private lateinit var remoteViewModel: RemoteViewModel
 
     private lateinit var googleMap: GoogleMap
@@ -53,7 +52,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val screen = requireArguments().getSerializable("Screen") as Screen
                 when(screen){
                     Screen.SETTINGS -> toSettingScreen()
-                    Screen.FAVOURITE -> toFavouriteScreen()
+                    Screen.LOCATION_LIST -> toFavouriteScreen()
                     Screen.ALARM -> toAlarmScreen()
                     else -> Log.i("TAG", "onLocationResult: ")
                 }
@@ -99,9 +98,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val args = Bundle().apply {
             putString("latitude", latitude.toString())
             putString("longitude", longitude.toString())
-            putInt("tabNumber", 1)
+            putString("locationMethod", requireContext().getString(R.string.location_2))
         }
-        findNavController().navigate(R.id.action_mapFragment_to_mainFragment, args)
+        findNavController().navigate(R.id.action_mapFragment_to_alarmFragment, args)
     }
 
 

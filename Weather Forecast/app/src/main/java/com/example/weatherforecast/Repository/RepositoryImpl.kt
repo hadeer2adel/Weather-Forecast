@@ -6,6 +6,7 @@ import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.ForecastWeatherResponse
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
+import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
@@ -68,5 +69,25 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
 
     override suspend fun deleteLastWeather() {
         localDataSource.deleteLastWeather()
+    }
+
+    override fun getAllNotifications(): Flow<List<NotificationData>> {
+        return localDataSource.getAllNotifications()
+    }
+
+    override suspend fun insertNotification(notification: NotificationData) {
+        localDataSource.insertNotification(notification)
+    }
+
+    override suspend fun deleteNotification(notification: NotificationData) {
+        localDataSource.deleteNotification(notification)
+    }
+
+    override suspend fun deleteNotificationByRequestId(requestId: String) {
+        localDataSource.deleteNotificationByRequestId(requestId)
+    }
+
+    override suspend fun deleteAllNotifications() {
+        localDataSource.deleteAllNotifications()
     }
 }

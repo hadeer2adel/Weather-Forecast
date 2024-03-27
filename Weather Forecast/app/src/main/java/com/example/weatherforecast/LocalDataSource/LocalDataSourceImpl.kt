@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
+import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
@@ -12,11 +13,13 @@ class LocalDataSourceImpl private constructor(val context: Context):LocalDataSou
 
     private val daoLocations: DAOLocations
     private val daoLastWeather: DAOLastWeather
+    private val daoNotifications: DAONotifications
 
     init {
         val dataBase:DataBase = DataBase.getInstance(context)
         daoLocations = dataBase.getDAOLocations()
         daoLastWeather = dataBase.getDAOLastWeather()
+        daoNotifications = dataBase.getDAONotifications()
     }
 
     companion object {
@@ -73,6 +76,26 @@ class LocalDataSourceImpl private constructor(val context: Context):LocalDataSou
         daoLastWeather.deleteLastWeather()
         daoLastWeather.deleteLastWeatherHours()
         daoLastWeather.deleteLastWeatherDays()
+    }
+
+    override fun getAllNotifications(): Flow<List<NotificationData>> {
+        return daoNotifications.getAllNotifications()
+    }
+
+    override suspend fun insertNotification(notification: NotificationData) {
+        daoNotifications.insertNotification(notification)
+    }
+
+    override suspend fun deleteNotification(notification: NotificationData) {
+        daoNotifications.deleteNotification(notification)
+    }
+
+    override suspend fun deleteNotificationByRequestId(requestId: String) {
+        daoNotifications.deleteNotificationByRequestId(requestId)
+    }
+
+    override suspend fun deleteAllNotifications() {
+        daoNotifications.deleteAllNotifications()
     }
 
 }
