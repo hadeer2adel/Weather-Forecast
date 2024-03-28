@@ -22,7 +22,7 @@ abstract class DataBase : RoomDatabase() {
         fun getInstance(ctx: Context): DataBase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    ctx.applicationContext, DataBase::class.java, "weatherDB_5")
+                    ctx.applicationContext, DataBase::class.java, "weatherDB_6")
                     .build()
                 INSTANCE = instance
                 instance

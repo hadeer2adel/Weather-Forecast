@@ -51,7 +51,7 @@ class NotificationAdapter (
 
 class NotificationDiffUtil : DiffUtil.ItemCallback<NotificationData>(){
     override fun areItemsTheSame(oldItem: NotificationData, newItem: NotificationData): Boolean {
-        return oldItem.id == newItem.id
+        return (oldItem.date == newItem.date && oldItem.time == newItem.time)
     }
 
     override fun areContentsTheSame(oldItem: NotificationData, newItem: NotificationData): Boolean {

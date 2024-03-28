@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
+import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -86,7 +87,8 @@ class SettingFragment : Fragment() {
 
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
-        val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
+        val dataBase: DataBase = DataBase.getInstance(requireContext())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val factory = SettingViewModelFactory(repository)

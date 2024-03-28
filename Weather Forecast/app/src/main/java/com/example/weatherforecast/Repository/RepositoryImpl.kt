@@ -75,6 +75,10 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
         return localDataSource.getAllNotifications()
     }
 
+    override suspend fun getNotificationById(date: String, time: String): NotificationData? {
+        return localDataSource.getNotificationById(date, time)
+    }
+
     override suspend fun insertNotification(notification: NotificationData) {
         localDataSource.insertNotification(notification)
     }
@@ -83,8 +87,8 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
         localDataSource.deleteNotification(notification)
     }
 
-    override suspend fun deleteNotificationByRequestId(requestId: String) {
-        localDataSource.deleteNotificationByRequestId(requestId)
+    override suspend fun deleteNotificationById(date: String, time: String) {
+        localDataSource.deleteNotificationById(date, time)
     }
 
     override suspend fun deleteAllNotifications() {

@@ -13,14 +13,17 @@ interface DAONotifications {
     @Query("SELECT * FROM Notification")
     fun getAllNotifications(): Flow<List<NotificationData>>
 
+    @Query("SELECT * FROM Notification WHERE date = :date AND time = :time")
+    suspend fun getNotificationById(date: String, time: String): NotificationData?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNotification(notification: NotificationData)
 
     @Delete
     suspend fun deleteNotification(notification: NotificationData)
 
-    @Query("DELETE FROM Notification WHERE requestId = :requestId")
-    suspend fun deleteNotificationByRequestId(requestId: String)
+    @Query("DELETE FROM Notification WHERE date = :date AND time = :time")
+    suspend fun deleteNotificationById(date: String, time: String)
 
     @Query("DELETE FROM Notification")
     suspend fun deleteAllNotifications()

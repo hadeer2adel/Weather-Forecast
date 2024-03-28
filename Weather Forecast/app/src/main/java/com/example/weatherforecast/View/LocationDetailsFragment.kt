@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -85,7 +86,8 @@ class LocationDetailsFragment : Fragment(){
     }
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
-        val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
+        val dataBase: DataBase = DataBase.getInstance(requireContext())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val factory = RemoteViewModelFactory(repository)

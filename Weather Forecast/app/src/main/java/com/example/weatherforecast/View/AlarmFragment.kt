@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -85,16 +86,14 @@ class AlarmFragment : Fragment() {
             }
             save.setOnClickListener {
                 val notificationData = NotificationData(
-                    0,
-                    latitude.toDouble(),
-                    longitude.toDouble(),
-                    "${date.text},${time.text}",
                     date.text.toString(),
                     time.text.toString(),
+                    latitude.toDouble(),
+                    longitude.toDouble(),
                     notificationType)
 
                 val notificationManagement = NotificationManagement()
-                notificationManagement.setAlarm(requireContext(), "${date.text},${time.text}", alarmCalendar, notificationType, latitude, longitude)
+                notificationManagement.setAlarm(requireContext(),  alarmCalendar, notificationData)
                 viewModel.insertNotification(notificationData)
                 val args = Bundle().apply {
                     putInt("tabNumber", 1)
@@ -106,7 +105,8 @@ class AlarmFragment : Fragment() {
 
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
-        val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
+        val dataBase: DataBase = DataBase.getInstance(requireContext())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val factory = NotificationViewModelFactory(repository)

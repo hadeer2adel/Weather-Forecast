@@ -7,15 +7,13 @@ import androidx.room.PrimaryKey
 import java.util.Calendar
 
 
-@Entity(tableName = "Notification",
-        indices = [Index(value = ["date", "time"], unique = true)])
+@Entity(tableName = "Notification", primaryKeys = ["date", "time"])
 data class NotificationData(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @NonNull
+    val date: String,
+    @NonNull
+    val time: String,
     val latitude: Double,
     val longitude: Double,
-    val requestId: String,
-    val date: String,
-    val time: String,
     val notificationType: String,
 )

@@ -30,8 +30,9 @@ interface Repository {
     suspend fun deleteLastWeather()
 
     fun getAllNotifications(): Flow<List<NotificationData>>
+    suspend fun getNotificationById(date: String, time: String): NotificationData?
     suspend fun insertNotification(notification: NotificationData)
     suspend fun deleteNotification(notification: NotificationData)
-    suspend fun deleteNotificationByRequestId(requestId: String)
+    suspend fun deleteNotificationById(date: String, time: String)
     suspend fun deleteAllNotifications()
 }

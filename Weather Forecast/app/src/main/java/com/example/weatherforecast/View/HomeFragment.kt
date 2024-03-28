@@ -20,6 +20,7 @@ import com.example.weatherforecast.Helpers.isNetworkConnected
 import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
 import com.example.weatherforecast.LocalDataSource.DaoHourlyWeatherResponse
 import com.example.weatherforecast.LocalDataSource.DaoWeatherResponse
+import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -105,7 +106,8 @@ class HomeFragment : Fragment(){
     }
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
-        val localDataSource: LocalDataSource = LocalDataSourceImpl.getInstance(requireContext())
+        val dataBase: DataBase = DataBase.getInstance(requireContext())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val remoteFactory = RemoteViewModelFactory(repository)

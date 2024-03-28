@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.Helpers.getUnits
+import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -37,17 +38,21 @@ class NotificationReceiver: BroadcastReceiver() {
         }
         notificationMaker = NotificationMaker(context)
         val notificationType = intent.getStringExtra("notificationType")!!
-        val requestId = intent.getStringExtra("requestId")!!
+        val date = intent.getStringExtra("date")!!
+        val time = intent.getStringExtra("time")!!
 
         val latitude = intent.getStringExtra("latitude")!!.toDouble()
         val longitude = intent.getStringExtra("longitude")!!.toDouble()
         val appSettings = AppSettings.getInstance(context)
         val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
 
-        repository = RepositoryImpl(RemoteDataSourceImpl.getInstance(), LocalDataSourceImpl.getInstance(context))
+        val dataBase: DataBase = DataBase.getInstance(context)
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        repository = RepositoryImpl(RemoteDataSourceImpl.getInstance(), localDataSource)
+
         getCurrentWeather(latitude, longitude, units, appSettings.language)
         handleCurrentWeatherResponse(notificationType, appSettings.language, appSettings.temperatureUnit)
-        deleteNotification(requestId)
+        deleteNotification(date, time)
     }
 
     private fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String){
@@ -82,9 +87,9 @@ class NotificationReceiver: BroadcastReceiver() {
             }
         }
     }
-    private fun deleteNotification(requestId: String){
+    private fun deleteNotification(data: String, time: String){
         CoroutineScope(Dispatchers.IO).launch {
-            repository.deleteNotificationByRequestId(requestId)
+            repository.deleteNotificationById(data, time)
         }
     }
 }
