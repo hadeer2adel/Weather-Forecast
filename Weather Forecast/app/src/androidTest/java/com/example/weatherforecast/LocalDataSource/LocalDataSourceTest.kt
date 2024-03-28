@@ -18,6 +18,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.core.IsEqual
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -118,15 +119,32 @@ class LocalDataSourceTest {
     @Test
     fun getAllNotificationsTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
         //Given
-        localDataSource.getAllNotifications()
-        localDataSource.insertNotification(notification)
+        val notification1 = NotificationData(
+            "1 Mar, 2024",
+            "01:00",
+            10.5,
+            15.6,
+            "notification"
+        )
+        val notification2 = NotificationData(
+            "2 Mar, 2024",
+            "02:00",
+            10.5,
+            15.6,
+            "alarm"
+        )
+        val notificationList = listOf(notification1, notification2)
+        localDataSource.deleteAllNotifications()
+        localDataSource.insertNotification(notification1)
+        localDataSource.insertNotification(notification2)
+
 
         //When
         val resultFlow = localDataSource.getAllNotifications()
-        var result: NotificationData? = null
+        var result: List<NotificationData> = emptyList()
         val job = launch {
             resultFlow.collect {
-                result = it.get(0)
+                result = it
             }
         }
 
@@ -134,10 +152,6 @@ class LocalDataSourceTest {
         job.cancelAndJoin()
 
         //Given
-        assertThat(result, not(nullValue()))
-        assertThat(result?.latitude, `is`(10.5))
-        assertThat(result?.longitude, `is`(15.6))
-        assertThat(result?.notificationType, `is`("notification"))
-
+        assertThat(result, IsEqual(notificationList))
     }
 }
