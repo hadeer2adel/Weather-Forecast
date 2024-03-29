@@ -15,14 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.Screen
-import com.example.weatherforecast.Model.getLocationData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.LocationAdapter
-import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
@@ -125,7 +122,7 @@ class SavedLocationsFragment : Fragment() {
             putString("longitude", location.longitude.toString())
             putString("locationMethod", requireContext().getString(R.string.location_3))
         }
-        findNavController().navigate(R.id.action_savedLocationsFragment_to_alarmFragment, args)
+        findNavController().navigate(R.id.action_savedLocationsFragment_to_alertFragment, args)
     }
 
 }

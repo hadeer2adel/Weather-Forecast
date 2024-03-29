@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_color_1"
-    tools:context=".View.AlarmFragment">
+    tools:context=".View.AlertFragment">
 
     <TextView
         android:id="@+id/ltxt"

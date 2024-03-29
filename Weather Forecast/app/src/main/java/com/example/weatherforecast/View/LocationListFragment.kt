@@ -13,10 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.Helpers.getUnits
-import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
+import com.example.weatherforecast.Helpers.isNetworkConnected
+import com.example.weatherforecast.Helpers.showDialog
+import com.example.weatherforecast.Helpers.showNetworkDialog
 import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.LocationData
@@ -37,7 +38,7 @@ import com.example.weatherforecast.databinding.FragmentListBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class FavouriteFragment : Fragment() {
+class LocationListFragment : Fragment() {
     private lateinit var binding: FragmentListBinding
     private lateinit var adapter: LocationAdapter
     private lateinit var locationViewModel: LocationViewModel
@@ -69,10 +70,15 @@ class FavouriteFragment : Fragment() {
         }
 
         binding.addBtn.setOnClickListener {
-            val args = Bundle().apply {
-                putSerializable("Screen", Screen.LOCATION_LIST)
+            if (isNetworkConnected(requireContext())) {
+                val args = Bundle().apply {
+                    putSerializable("Screen", Screen.LOCATION_LIST)
+                }
+                findNavController().navigate(R.id.action_mainFragment_to_mapFragment, args)
             }
-            findNavController().navigate(R.id.action_mainFragment_to_mapFragment, args)
+            else{
+                showNetworkDialog(requireContext())
+            }
         }
     }
 
@@ -82,14 +88,18 @@ class FavouriteFragment : Fragment() {
         binding.recycleView.layoutManager = manager
 
         val onClick: (location: LocationData) -> Unit = { location ->
-            locationViewModel.deleteLocation(location)
+            val onAllow: () -> Unit = {
+                locationViewModel.deleteLocation(location)
+            }
+            showDialog(requireContext(), R.string.delete_location_title, R.string.delete_location_body, onAllow)
         }
+
         val onCardClick: (location: LocationData) -> Unit = { location ->
             val args = Bundle().apply {
                 putString("latitude", location.latitude.toString())
                 putString("longitude", location.longitude.toString())
             }
-            findNavController().navigate(R.id.action_mainFragment_to_locationDetailsFragment, args)
+            findNavController().navigate(R.id.action_mainFragment_to_locationFragment, args)
         }
         adapter = LocationAdapter(context, View.VISIBLE, onClick, onCardClick)
         adapter.submitList(emptyList())

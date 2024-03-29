@@ -1,7 +1,5 @@
 package com.example.weatherforecast.View
 
-import android.app.AlarmManager
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -17,20 +15,20 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.weatherforecast.Helpers.showDialog
 import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.Screen
-import com.example.weatherforecast.NotificationUtil.NotificationManagement
+import com.example.weatherforecast.AlertUtil.AlertManagement
+import com.example.weatherforecast.Helpers.isNetworkConnected
+import com.example.weatherforecast.Helpers.showNetworkDialog
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
-import com.example.weatherforecast.ViewModel.NotificationViewModel
-import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
 import com.example.weatherforecast.ViewModel.SettingViewModel
 import com.example.weatherforecast.ViewModel.SettingViewModelFactory
 import com.example.weatherforecast.databinding.FragmentSettingBinding
@@ -55,7 +53,7 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         appSettings = AppSettings.getInstance(requireContext())
 
-        if(requireArguments().containsKey("locationMethod")) {
+        if (requireArguments().containsKey("locationMethod")) {
             appSettings.locationMethod = requireArguments().getString("locationMethod", "gps")
             appSettings.latitude = requireArguments().getString("latitude", "0").toDouble()
             appSettings.longitude = requireArguments().getString("longitude", "0").toDouble()
@@ -70,17 +68,38 @@ class SettingFragment : Fragment() {
         setUpWindOptions(view)
 
         binding.location.setOnClickListener { v ->
-            binding.location.setImageResource(R.drawable.ic_arrow_down)
-            showMenu(v, R.menu.location_options)
+            if (isNetworkConnected(requireContext())) {
+                binding.location.setImageResource(R.drawable.ic_arrow_down)
+                showMenu(v, R.menu.location_options)
+            }
+            else{
+                showNetworkDialog(requireContext())
+            }
         }
 
         binding.rvLocation.setOnClickListener {
-            viewModel.deleteAllLocations()
+            val onAllow: () -> Unit = {
+                viewModel.deleteAllLocations()
+            }
+            showDialog(
+                requireContext(),
+                R.string.delete_all_location_title,
+                R.string.delete_all_location_body,
+                onAllow
+            )
         }
 
         binding.rvAlarm.setOnClickListener {
-            viewModel.getAllNotifications()
-            handleDaoNotificationResponse()
+            val onAllow: () -> Unit = {
+                viewModel.getAllNotifications()
+                handleDaoNotificationResponse()
+            }
+            showDialog(
+                requireContext(),
+                R.string.delete_all_alert_title,
+                R.string.delete_all_alert_body,
+                onAllow
+            )
         }
 
     }
@@ -101,9 +120,9 @@ class SettingFragment : Fragment() {
                     is DaoNotificationResponse.Loading -> { onLoading() }
                     is DaoNotificationResponse.Success ->{
                         onSuccess()
-                        val notificationManagement = NotificationManagement()
+                        val alertManagement = AlertManagement()
                         for(notification in response.data){
-                            notificationManagement.cancelAlarm(requireContext(), notification)
+                            alertManagement.cancelAlarm(requireContext(), notification)
                         }
                         viewModel.deleteAllNotifications()
                     }
@@ -189,6 +208,17 @@ class SettingFragment : Fragment() {
             else{
                 locationMethod.text = getString(R.string.location_1)
             }
+
+            if(!isNetworkConnected(requireContext())){
+                language1.isClickable = false
+                language2.isClickable = false
+                tUnit1.isClickable = false
+                tUnit2.isClickable = false
+                tUnit3.isClickable = false
+                wUnit1.isClickable = false
+                wUnit2.isClickable = false
+                showNetworkDialog(requireContext())
+            }
         }
     }
     private fun setUpNotificationOptions(){
@@ -208,26 +238,47 @@ class SettingFragment : Fragment() {
     }
     private fun setUpTemperatureOptions(view: View){
         binding.temperature.setOnCheckedChangeListener { group, checkedId ->
-            val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
-            val selectedText = selectedRadioButton.text.toString()
-            when(selectedText) {
-                getString(R.string.t_unit_3) -> { binding.wUnit2.isChecked = true; appSettings.temperatureUnit = "F" }
-                getString(R.string.t_unit_2) -> { binding.wUnit1.isChecked = true; appSettings.temperatureUnit = "C" }
-                else -> { binding.wUnit1.isChecked = true; appSettings.temperatureUnit = "K" }
+            if (isNetworkConnected(requireContext())) {
+                val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
+                val selectedText = selectedRadioButton.text.toString()
+                when (selectedText) {
+                    getString(R.string.t_unit_3) -> {
+                        binding.wUnit2.isChecked = true; appSettings.temperatureUnit = "F"
+                    }
+
+                    getString(R.string.t_unit_2) -> {
+                        binding.wUnit1.isChecked = true; appSettings.temperatureUnit = "C"
+                    }
+
+                    else -> {
+                        binding.wUnit1.isChecked = true; appSettings.temperatureUnit = "K"
+                    }
+                }
+            }
+            else{
+                showNetworkDialog(requireContext())
             }
         }
     }
     private fun setUpWindOptions(view: View){
         binding.wind.setOnCheckedChangeListener { group, checkedId ->
-            val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
-            val selectedText = selectedRadioButton.text.toString()
-            when(selectedText) {
-                getString(R.string.w_unit_2) -> { binding.tUnit3.isChecked = true; appSettings.windUnit = "mi/hr" }
-                else -> {
-                    if(!binding.tUnit1.isChecked)
-                        binding.tUnit2.isChecked = true
-                    appSettings.windUnit = "m/s"
+            if (isNetworkConnected(requireContext())) {
+                val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
+                val selectedText = selectedRadioButton.text.toString()
+                when (selectedText) {
+                    getString(R.string.w_unit_2) -> {
+                        binding.tUnit3.isChecked = true; appSettings.windUnit = "mi/hr"
+                    }
+
+                    else -> {
+                        if (!binding.tUnit1.isChecked)
+                            binding.tUnit2.isChecked = true
+                        appSettings.windUnit = "m/s"
+                    }
                 }
+            }
+            else{
+                showNetworkDialog(requireContext())
             }
         }
     }

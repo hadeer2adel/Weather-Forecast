@@ -13,14 +13,14 @@
             android:name="tabNumber"
             app:argType="integer" />
         <action
-            android:id="@+id/action_mainFragment_to_locationDetailsFragment"
-            app:destination="@id/locationDetailsFragment" />
+            android:id="@+id/action_mainFragment_to_locationFragment"
+            app:destination="@id/locationFragment" />
         <action
             android:id="@+id/action_mainFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_alarmFragment"
-            app:destination="@id/alarmFragment" />
+            android:id="@+id/action_mainFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
         <action
             android:id="@+id/action_mainFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
@@ -66,8 +66,8 @@
             android:name="Screen"
             app:argType="com.example.weatherforecast.Model.Screen" />
         <action
-            android:id="@+id/action_mapFragment_to_alarmFragment"
-            app:destination="@id/alarmFragment" />
+            android:id="@+id/action_mapFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
         <action
             android:id="@+id/action_mapFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
@@ -83,8 +83,8 @@
             app:argType="com.example.weatherforecast.Model.Screen" />
     </fragment>
     <fragment
-        android:id="@+id/favouriteFragment"
-        android:name="com.example.weatherforecast.View.FavouriteFragment"
+        android:id="@+id/locationListFragment"
+        android:name="com.example.weatherforecast.View.LocationListFragment"
         android:label="fragment_favourite"
         tools:layout="@layout/fragment_list" />
     <fragment
@@ -98,12 +98,12 @@
             android:name="Screen"
             app:argType="com.example.weatherforecast.Model.Screen" />
         <action
-            android:id="@+id/action_savedLocationsFragment_to_alarmFragment"
-            app:destination="@id/alarmFragment" />
+            android:id="@+id/action_savedLocationsFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
     </fragment>
     <fragment
-        android:id="@+id/locationDetailsFragment"
-        android:name="com.example.weatherforecast.View.LocationDetailsFragment"
+        android:id="@+id/locationFragment"
+        android:name="com.example.weatherforecast.View.LocationFragment"
         android:label="@string/location" >
         <action
             android:id="@+id/action_locationDetailsFragment_to_mainFragment"
@@ -116,14 +116,13 @@
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/alarmListFragment"
-        android:name="com.example.weatherforecast.View.AlarmListFragment"
-        android:label="AlarmListFragment" />
+        android:id="@+id/alertListFragment"
+        android:name="com.example.weatherforecast.View.AlertListFragment" />
     <fragment
-        android:id="@+id/alarmFragment"
-        android:name="com.example.weatherforecast.View.AlarmFragment"
-        android:label="@string/setAlarm"
-        tools:layout="@layout/fragment_alarm" >
+        android:id="@+id/alertFragment"
+        android:name="com.example.weatherforecast.View.AlertFragment"
+        android:label="@string/setAlert"
+        tools:layout="@layout/fragment_alert" >
         <argument
             android:name="latitude"
             app:argType="string" />

@@ -21,7 +21,7 @@ sealed class DaoNotificationResponse {
 }
 
 sealed class DaoWeatherResponse {
-    class Success(val data: WeatherData): DaoWeatherResponse()
+    class Success(val data: WeatherData?): DaoWeatherResponse()
     class Failure(val error:Throwable): DaoWeatherResponse()
     object Loading: DaoWeatherResponse()
 }

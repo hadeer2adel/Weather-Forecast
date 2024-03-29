@@ -18,19 +18,16 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
+import com.example.weatherforecast.Helpers.showDialog
 import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.NotificationUtil.NotificationPermission
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
+import com.example.weatherforecast.AlertUtil.AlertPermission
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.NotificationData
-import com.example.weatherforecast.Model.getLocationData
-import com.example.weatherforecast.NotificationUtil.NotificationManagement
+import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.NotificationAdapter
-import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
@@ -41,11 +38,11 @@ import com.example.weatherforecast.databinding.FragmentListBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class AlarmListFragment : Fragment() {
+class AlertListFragment : Fragment() {
     lateinit var binding: FragmentListBinding
     lateinit var adapter: NotificationAdapter
     lateinit var viewModel: NotificationViewModel
-    lateinit var notificationPermission: NotificationPermission
+    lateinit var alertPermission: AlertPermission
     private val My_NOTIFICATION_PERMISSION_ID = 202
 
     override fun onCreateView(
@@ -60,7 +57,7 @@ class AlarmListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView(requireContext())
         initViewModel()
-        notificationPermission = NotificationPermission(requireContext())
+        alertPermission = AlertPermission(requireContext())
 
         binding.addBtn.setOnClickListener {
             checkNotificationDevicePermission(requireContext(), requireActivity(), findNavController())
@@ -76,11 +73,11 @@ class AlarmListFragment : Fragment() {
             ActivityCompat.requestPermissions(activity,
                 arrayOf( Manifest.permission.POST_NOTIFICATIONS ),
                 My_NOTIFICATION_PERMISSION_ID)
-            notificationPermission.showDeviceSettingDialog()
+            alertPermission.showDeviceSettingDialog()
         } else if(!AppSettings.getInstance(context).notification){
-            notificationPermission.showMyAppSettingDialog(navController)
+            alertPermission.showMyAppSettingDialog(navController)
         }else {
-            findNavController().navigate(R.id.action_mainFragment_to_alarmFragment)
+            findNavController().navigate(R.id.action_mainFragment_to_alertFragment)
         }
     }
 
@@ -88,9 +85,9 @@ class AlarmListFragment : Fragment() {
         if (requestCode == My_NOTIFICATION_PERMISSION_ID) {
             if (!grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if(!AppSettings.getInstance(requireContext()).notification){
-                    notificationPermission.showMyAppSettingDialog(findNavController())
+                    alertPermission.showMyAppSettingDialog(findNavController())
                 }else {
-                    findNavController().navigate(R.id.action_mainFragment_to_alarmFragment)
+                    findNavController().navigate(R.id.action_mainFragment_to_alertFragment)
                 }
             }
         }
@@ -102,10 +99,14 @@ class AlarmListFragment : Fragment() {
         binding.recycleView.layoutManager = manager
 
         val onClick: (notification: NotificationData) -> Unit = { notification ->
-            viewModel.deleteNotification(notification)
-            val notificationManagement = NotificationManagement()
-            notificationManagement.cancelAlarm(requireContext(), notification)
+            val onAllow: () -> Unit = {
+                viewModel.deleteNotification(notification)
+                val alertManagement = AlertManagement()
+                alertManagement.cancelAlarm(requireContext(), notification)
+            }
+            showDialog(requireContext(), R.string.delete_alert_title, R.string.delete_alert_body, onAllow)
         }
+
         adapter = NotificationAdapter(context, onClick)
         adapter.submitList(emptyList())
         binding.recycleView.adapter = adapter

@@ -30,10 +30,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA7oH5dDTfx8KRT-DtvJhHrquNgRxOxCpE" />
         <receiver
-            android:name=".NotificationUtil.NotificationReceiver"
+            android:name=".AlertUtil.AlertReceiver"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name=".NotificationUtil.NotificationCancelReceiver"
+        <receiver android:name=".AlertUtil.AlertCancelReceiver"
             android:enabled="true"
             android:exported="true" />
         <activity

@@ -124,7 +124,8 @@ class HomeFragment : Fragment(){
                     is DaoWeatherResponse.Loading -> { onLoading() }
                     is DaoWeatherResponse.Success ->{
                         onSuccess()
-                        setDataOnView(response.data)
+                        if(response.data != null)
+                            setDataOnView(response.data)
                     }
                     is DaoWeatherResponse.Failure ->{ onFailure(response.error.message) }
                 }

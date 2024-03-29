@@ -1,4 +1,4 @@
-package com.example.weatherforecast.NotificationUtil
+package com.example.weatherforecast.AlertUtil
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -11,15 +11,13 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.weatherforecast.R
 import com.example.weatherforecast.View.MainActivity
 
 
-class NotificationMaker(val context: Context) {
+class AlertMaker(val context: Context) {
     companion object {
         lateinit var ringtoneSound: Ringtone
     }
@@ -65,7 +63,7 @@ class NotificationMaker(val context: Context) {
 
         val notification = NotificationCompat.Builder(context, Notification_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentTitle(context.getString(R.string.alert_title))
             .setContentText(weatherDescription)
             .setStyle(NotificationCompat.BigTextStyle().bigText(weatherDescription))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -81,7 +79,7 @@ class NotificationMaker(val context: Context) {
     fun makeAlarm(weatherDescription: String) {
         setAlarmChannel()
 
-        val cancelIntent = Intent(context, NotificationCancelReceiver::class.java)
+        val cancelIntent = Intent(context, AlertCancelReceiver::class.java)
         cancelIntent.putExtra("notificationId", notificationId)
         val cancelPendingIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -90,7 +88,7 @@ class NotificationMaker(val context: Context) {
 
         val notification = NotificationCompat.Builder(context, Alarm_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)
-            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentTitle(context.getString(R.string.alert_title))
             .setContentText(weatherDescription)
             .setStyle(NotificationCompat.BigTextStyle().bigText(weatherDescription))
             .setPriority(NotificationCompat.PRIORITY_HIGH)

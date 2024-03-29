@@ -338,7 +338,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:text="@string/rv_alarms"
+            android:text="@string/rv_alerts"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="20dp"

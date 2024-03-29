@@ -2,16 +2,13 @@ package com.example.weatherforecast.View
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,14 +16,12 @@ import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Model.getDailyWeatherData
 import com.example.weatherforecast.Model.getHourlyWeatherData
 import com.example.weatherforecast.Model.getWeatherData
-import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.DayAdapter
 import com.example.weatherforecast.RecycleView.HourAdapter
 import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
@@ -41,7 +36,7 @@ import com.example.weatherforecast.databinding.FragmentHomeBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class LocationDetailsFragment : Fragment(){
+class LocationFragment : Fragment(){
 
     lateinit var binding: FragmentHomeBinding
     lateinit var hourAdapter: HourAdapter

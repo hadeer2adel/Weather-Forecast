@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.weatherforecast.View.AlarmListFragment
-import com.example.weatherforecast.View.FavouriteFragment
+import com.example.weatherforecast.View.AlertListFragment
+import com.example.weatherforecast.View.LocationListFragment
 import com.example.weatherforecast.View.HomeFragment
 
 class TabLayoutAdapter(fragmentActivity: FragmentActivity, val bundle: Bundle) : FragmentStateAdapter(fragmentActivity) {
@@ -18,14 +18,14 @@ class TabLayoutAdapter(fragmentActivity: FragmentActivity, val bundle: Bundle) :
         when{
             position == 0 -> return HomeFragment()
             position == 1 -> {
-                val fragment = AlarmListFragment()
+                val fragment = AlertListFragment()
                 if(bundle.containsKey("latitude")){
                     fragment.arguments = bundle
                 }
                 return fragment
             }
             position == 2 -> {
-                val fragment = FavouriteFragment()
+                val fragment = LocationListFragment()
                 if(bundle.containsKey("latitude")){
                     fragment.arguments = bundle
                 }

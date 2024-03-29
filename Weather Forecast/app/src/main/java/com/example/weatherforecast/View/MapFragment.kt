@@ -100,7 +100,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             putString("longitude", longitude.toString())
             putString("locationMethod", requireContext().getString(R.string.location_2))
         }
-        findNavController().navigate(R.id.action_mapFragment_to_alarmFragment, args)
+        findNavController().navigate(R.id.action_mapFragment_to_alertFragment, args)
     }
 
 

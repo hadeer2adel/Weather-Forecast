@@ -12,12 +12,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.Screen
-import com.example.weatherforecast.NotificationUtil.NotificationManagement
+import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
@@ -25,7 +24,7 @@ import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.NotificationViewModel
 import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
-import com.example.weatherforecast.databinding.FragmentAlarmBinding
+import com.example.weatherforecast.databinding.FragmentAlertBinding
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -37,8 +36,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class AlarmFragment : Fragment() {
-    lateinit var binding: FragmentAlarmBinding
+class AlertFragment : Fragment() {
+    lateinit var binding: FragmentAlertBinding
     lateinit var alarmCalendar: Calendar
     lateinit var viewModel: NotificationViewModel
 
@@ -50,7 +49,7 @@ class AlarmFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAlarmBinding.inflate(inflater, container, false)
+        binding = FragmentAlertBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -92,8 +91,8 @@ class AlarmFragment : Fragment() {
                     longitude.toDouble(),
                     notificationType)
 
-                val notificationManagement = NotificationManagement()
-                notificationManagement.setAlarm(requireContext(),  alarmCalendar, notificationData)
+                val alertManagement = AlertManagement()
+                alertManagement.setAlarm(requireContext(),  alarmCalendar, notificationData)
                 viewModel.insertNotification(notificationData)
                 val args = Bundle().apply {
                     putInt("tabNumber", 1)
