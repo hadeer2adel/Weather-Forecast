@@ -8,8 +8,14 @@ import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-class FakeRepositoryImpl: Repository {
+class FakeRepositoryImpl(
+    private var notificationList: MutableList<NotificationData>? = mutableListOf(),
+    private var locationList: MutableList<LocationData>? = mutableListOf()
+
+): Repository {
+
     override suspend fun getCurrentWeather(
         latitude: Double,
         longitude: Double,
@@ -29,19 +35,18 @@ class FakeRepositoryImpl: Repository {
     }
 
     override fun getAllLocations(): Flow<List<LocationData>> {
-        TODO("Not yet implemented")
+        return MutableStateFlow(locationList ?: emptyList())
     }
 
     override suspend fun insertLocation(location: LocationData) {
-        TODO("Not yet implemented")
+        locationList?.add(location)
     }
 
     override suspend fun deleteLocation(location: LocationData) {
-        TODO("Not yet implemented")
+        locationList?.remove(location)
     }
-
     override suspend fun deleteAllLocations() {
-        TODO("Not yet implemented")
+        locationList?.clear()
     }
 
     override fun getLastWeather(): Flow<WeatherData> {
@@ -73,26 +78,40 @@ class FakeRepositoryImpl: Repository {
     }
 
     override fun getAllNotifications(): Flow<List<NotificationData>> {
-        TODO("Not yet implemented")
+        return MutableStateFlow(notificationList ?: emptyList())
     }
 
     override suspend fun getNotificationById(date: String, time: String): NotificationData? {
-        TODO("Not yet implemented")
+        if (notificationList == null)
+            return null
+
+        for (notification in notificationList!!){
+            if (notification.date.equals(date) && notification.time.equals(time))
+                return notification
+        }
+        return null
     }
 
     override suspend fun insertNotification(notification: NotificationData) {
-        TODO("Not yet implemented")
+        notificationList?.add(notification)
     }
 
     override suspend fun deleteNotification(notification: NotificationData) {
-        TODO("Not yet implemented")
+        notificationList?.remove(notification)
     }
 
     override suspend fun deleteNotificationById(date: String, time: String) {
-        TODO("Not yet implemented")
+        if (notificationList != null) {
+            for (notification in notificationList!!) {
+                if (notification.date.equals(date) && notification.time.equals(time)) {
+                    notificationList?.remove(notification)
+                    break
+                }
+            }
+        }
     }
 
     override suspend fun deleteAllNotifications() {
-        TODO("Not yet implemented")
+        notificationList?.clear()
     }
 }

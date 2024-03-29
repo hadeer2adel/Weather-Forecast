@@ -59,13 +59,12 @@ class DAONotificationsTest {
 
     @Test
     fun insertNotificationTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
-        //Given
+        //When
         dao.insertNotification(notification)
 
-        //When
+        //Then
         val result = dao.getNotificationById(date, time)
 
-        //Given
         assertThat(result , not(nullValue()))
         assertThat(result?.latitude, `is`(10.5))
         assertThat(result?.longitude, `is`(15.6))
@@ -76,43 +75,30 @@ class DAONotificationsTest {
     fun deleteNotificationTest_TakeNotificationData_RequestNull() = runBlockingTest {
         //Given
         dao.insertNotification(notification)
+
+        //When
         dao.deleteNotification(notification)
 
-        //When
+        //Then
         val result = dao.getNotificationById(date, time)
-
-        //Given
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteNotificationByIdTest_TakeNotificationData_RequestNull() = runBlockingTest {
+    fun deleteNotificationByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
         //Given
         dao.insertNotification(notification)
+
+        //When
         dao.deleteNotificationById(date, time)
 
-        //When
+        //Then
         val result = dao.getNotificationById(date, time)
-
-        //Given
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteAllNotificationsTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
-        //Given
-        dao.insertNotification(notification)
-        dao.deleteAllNotifications()
-
-        //When
-        val result = dao.getNotificationById(date, time)
-
-        //Given
-        assertThat(result , nullValue())
-    }
-
-    @Test
-    fun getAllNotificationsTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
+    fun getAllNotificationsTest_RequestSameNotificationList() = runBlockingTest {
         //Given
         val notification1 = NotificationData(
             "1 Mar, 2024",
@@ -129,7 +115,6 @@ class DAONotificationsTest {
             "alarm"
         )
         val notificationList = listOf(notification1, notification2)
-        dao.deleteAllNotifications()
         dao.insertNotification(notification1)
         dao.insertNotification(notification2)
 
@@ -146,8 +131,38 @@ class DAONotificationsTest {
         advanceUntilIdle()
         job.cancelAndJoin()
 
-        //Given
+        //Then
         assertThat(result, IsEqual(notificationList))
+    }
+
+    @Test
+    fun deleteAllNotificationsTest_RequestNull() = runBlockingTest {
+        //Given
+        val notification1 = NotificationData(
+            "1 Mar, 2024",
+            "01:00",
+            10.5,
+            15.6,
+            "notification"
+        )
+        val notification2 = NotificationData(
+            "2 Mar, 2024",
+            "02:00",
+            10.5,
+            15.6,
+            "alarm"
+        )
+        dao.insertNotification(notification1)
+        dao.insertNotification(notification2)
+
+        //When
+        dao.deleteAllNotifications()
+
+        //Then
+        val result1 = dao.getNotificationById("1 Mar, 2024", "01:00")
+        assertThat(result1 , nullValue())
+        val result2 = dao.getNotificationById("2 Mar, 2024", "02:00")
+        assertThat(result2 , nullValue())
     }
 
 

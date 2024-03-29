@@ -64,13 +64,12 @@ class LocalDataSourceTest {
 
     @Test
     fun insertNotificationTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
-        //Given
+        //When
         localDataSource.insertNotification(notification)
 
-        //When
+        //Then
         val result = localDataSource.getNotificationById(date, time)
 
-        //Given
         assertThat(result , not(nullValue()))
         assertThat(result?.latitude, `is`(10.5))
         assertThat(result?.longitude, `is`(15.6))
@@ -81,43 +80,30 @@ class LocalDataSourceTest {
     fun deleteNotificationTest_TakeNotificationData_RequestNull() = runBlockingTest {
         //Given
         localDataSource.insertNotification(notification)
+
+        //When
         localDataSource.deleteNotification(notification)
 
-        //When
+        //Then
         val result = localDataSource.getNotificationById(date, time)
-
-        //Given
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteNotificationByIdTest_TakeNotificationData_RequestNull() = runBlockingTest {
+    fun deleteNotificationByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
         //Given
         localDataSource.insertNotification(notification)
+
+        //When
         localDataSource.deleteNotificationById(date, time)
 
-        //When
+        //Then
         val result = localDataSource.getNotificationById(date, time)
-
-        //Given
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteAllNotificationsTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
-        //Given
-        localDataSource.insertNotification(notification)
-        localDataSource.deleteAllNotifications()
-
-        //When
-        val result = localDataSource.getNotificationById(date, time)
-
-        //Given
-        assertThat(result , nullValue())
-    }
-
-    @Test
-    fun getAllNotificationsTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
+    fun getAllNotificationsTest_RequestSameNotificationList() = runBlockingTest {
         //Given
         val notification1 = NotificationData(
             "1 Mar, 2024",
@@ -134,7 +120,6 @@ class LocalDataSourceTest {
             "alarm"
         )
         val notificationList = listOf(notification1, notification2)
-        localDataSource.deleteAllNotifications()
         localDataSource.insertNotification(notification1)
         localDataSource.insertNotification(notification2)
 
@@ -151,7 +136,38 @@ class LocalDataSourceTest {
         advanceUntilIdle()
         job.cancelAndJoin()
 
-        //Given
+        //Then
         assertThat(result, IsEqual(notificationList))
     }
+
+    @Test
+    fun deleteAllNotificationsTest_RequestNull() = runBlockingTest {
+        //Given
+        val notification1 = NotificationData(
+            "1 Mar, 2024",
+            "01:00",
+            10.5,
+            15.6,
+            "notification"
+        )
+        val notification2 = NotificationData(
+            "2 Mar, 2024",
+            "02:00",
+            10.5,
+            15.6,
+            "alarm"
+        )
+        localDataSource.insertNotification(notification1)
+        localDataSource.insertNotification(notification2)
+
+        //When
+        localDataSource.deleteAllNotifications()
+
+        //Then
+        val result1 = localDataSource.getNotificationById("1 Mar, 2024", "01:00")
+        assertThat(result1 , nullValue())
+        val result2 = localDataSource.getNotificationById("2 Mar, 2024", "02:00")
+        assertThat(result2 , nullValue())
+    }
+
 }
