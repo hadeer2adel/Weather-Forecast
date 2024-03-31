@@ -92,11 +92,16 @@ class LocationListFragment : Fragment() {
         }
 
         val onCardClick: (location: LocationData) -> Unit = { location ->
-            val args = Bundle().apply {
-                putString("latitude", location.latitude.toString())
-                putString("longitude", location.longitude.toString())
+            if (isNetworkConnected(requireContext())) {
+                val args = Bundle().apply {
+                    putString("latitude", location.latitude.toString())
+                    putString("longitude", location.longitude.toString())
+                }
+                findNavController().navigate(R.id.action_mainFragment_to_locationFragment, args)
             }
-            findNavController().navigate(R.id.action_mainFragment_to_locationFragment, args)
+            else{
+                showNetworkDialog(requireContext())
+            }
         }
         adapter = LocationAdapter(context, View.VISIBLE, onClick, onCardClick)
         adapter.submitList(emptyList())

@@ -62,7 +62,7 @@ class AlertFragment : Fragment() {
         if(arguments != null && requireArguments().containsKey("locationMethod")) {
             latitude = requireArguments().getString("latitude", "0")
             longitude = requireArguments().getString("longitude", "0")
-            binding.location.text = requireArguments().getString("locationMethod", "Current Location")
+            binding.location.text = requireArguments().getString("locationMethod", getString(R.string.location_0))
         }
 
         binding.apply {
@@ -162,7 +162,7 @@ class AlertFragment : Fragment() {
                     0 -> {
                         latitude = AppSettings.getInstance(context).latitude.toString()
                         longitude = AppSettings.getInstance(context).longitude.toString()
-                        binding.location.text = "Current Location"
+                        binding.location.text = getString(R.string.location_0)
                         true
                     }
                     1 -> {
