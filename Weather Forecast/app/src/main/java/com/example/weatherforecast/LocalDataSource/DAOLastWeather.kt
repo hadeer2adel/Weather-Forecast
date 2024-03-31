@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DAOLastWeather {
 
-    @Query("SELECT * FROM Weather Where id = 0")
+    @Query("SELECT * FROM Weather")
     fun getLastWeather(): Flow<WeatherData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/mainFragment">
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.weatherforecast.View.MainFragment"
@@ -85,7 +86,6 @@
     <fragment
         android:id="@+id/locationListFragment"
         android:name="com.example.weatherforecast.View.LocationListFragment"
-        android:label="fragment_favourite"
         tools:layout="@layout/fragment_list" />
     <fragment
         android:id="@+id/savedLocationsFragment"
