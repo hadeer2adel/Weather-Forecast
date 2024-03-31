@@ -2,7 +2,6 @@ package com.example.weatherforecast.View
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
-import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.Helpers.getWeatherIcon
 import com.example.weatherforecast.Helpers.isNetworkConnected
 import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
 import com.example.weatherforecast.LocalDataSource.DaoHourlyWeatherResponse
@@ -206,8 +205,8 @@ class HomeFragment : Fragment(){
 
             val flagUrl = getCountryFlagUrl(city.countryCode)
             Glide.with(requireContext()).load(flagUrl).into(flagImg)
-            val imgUrl = getWeatherIconUrl(weather.weatherIcon)
-            Glide.with(requireContext()).load(imgUrl).into(image)
+            val imgUrl = getWeatherIcon(weather.weatherIcon)
+            image.setImageResource(imgUrl)
 
             date.text = weather.Date
             cityName.text = city.cityName

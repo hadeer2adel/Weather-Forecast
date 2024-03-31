@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
-import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.Helpers.getWeatherIcon
 import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -154,8 +154,8 @@ class LocationFragment : Fragment(){
 
             val flagUrl = getCountryFlagUrl(city.countryCode)
             Glide.with(requireContext()).load(flagUrl).into(flagImg)
-            val imgUrl = getWeatherIconUrl(weather.weatherIcon)
-            Glide.with(requireContext()).load(imgUrl).into(image)
+            val imgUrl = getWeatherIcon(weather.weatherIcon)
+            image.setImageResource(imgUrl)
 
             date.text = weather.Date
             cityName.text = city.cityName

@@ -1,16 +1,13 @@
 package com.example.weatherforecast.RecycleView
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.weatherforecast.Helpers.getWeatherIconUrl
+import com.example.weatherforecast.Helpers.getWeatherIcon
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.databinding.CardTodayWeatherBinding
@@ -31,8 +28,8 @@ class HourAdapter (
     override fun onBindViewHolder(holder: HourViewHolder, position: Int) {
         val hourWeather = getItem(position)
         holder.binding.apply {
-            val imgUrl = getWeatherIconUrl(hourWeather.weatherIcon)
-            Glide.with(context).load(imgUrl).into(image)
+            val imgUrl = getWeatherIcon(hourWeather.weatherIcon)
+            image.setImageResource(imgUrl)
             time.text = hourWeather.time
             val unit = AppSettings.getInstance(context).temperatureUnit
             temperature.text = hourWeather.temperature.toString() + " º$unit"

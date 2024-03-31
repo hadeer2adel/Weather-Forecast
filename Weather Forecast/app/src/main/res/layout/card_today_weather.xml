@@ -32,7 +32,7 @@
             android:layout_marginEnd="10dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/bg_img_1"
-            android:scaleType="center" />
+            android:scaleType="fitCenter" />
 
         <TextView
             android:id="@+id/temperature"

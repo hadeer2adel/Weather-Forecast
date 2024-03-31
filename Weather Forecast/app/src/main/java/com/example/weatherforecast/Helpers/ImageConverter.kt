@@ -1,11 +1,21 @@
 package com.example.weatherforecast.Helpers
 
-fun getWeatherIconUrl(icon: String):String{
-    return "http://openweathermap.org/img/w/$icon.png"
-}
+import com.example.weatherforecast.R
 
-fun getWeatherImageUrl(icon: String):String{
-    return "http://openweathermap.org/img/wn/$icon@4x.png"
+fun getWeatherIcon(icon: String): Int{
+    return when (icon) {
+        "01d" -> R.drawable.w01d
+        "01n" -> R.drawable.w01n
+        "02d" -> R.drawable.w02d
+        "02n" -> R.drawable.w02n
+        "03d", "03n" -> R.drawable.w03
+        "04d", "04n" -> R.drawable.w04
+        "09d", "09n", "10d", "10n"  -> R.drawable.w09
+        "11d", "11n" -> R.drawable.w11
+        "13d", "13n" -> R.drawable.w13
+        "50d", "50n" -> R.drawable.w50
+        else -> R.drawable.w03
+    }
 }
 
 fun getCountryFlagUrl(countryCode: String):String {
