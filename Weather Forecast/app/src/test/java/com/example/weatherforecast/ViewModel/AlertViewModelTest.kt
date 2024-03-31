@@ -2,7 +2,7 @@ package com.example.weatherforecast.ViewModel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
+import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Repository.FakeRepositoryImpl
@@ -19,7 +19,7 @@ import org.hamcrest.core.IsEqual
 import org.junit.Test
 
 @RunWith(AndroidJUnit4::class)
-class LocationViewModelTest {
+class AlertViewModelTest {
 
     @get:Rule
     val myRule = InstantTaskExecutorRule()
@@ -39,14 +39,14 @@ class LocationViewModelTest {
         "alarm"
     )
     private val location1 = LocationData(
-        1,
+        0,
         10.5,
         15.6,
         "Cairo",
         "EG"
     )
     private val location2 = LocationData(
-        2,
+        0,
         202.0,
         185.7,
         "Roma",
@@ -56,42 +56,42 @@ class LocationViewModelTest {
     private val alertList = listOf(alert1, alert2)
     private val locationList = listOf(location1, location2)
 
-    private lateinit var viewModel: LocationViewModel
+    private lateinit var viewModel: AlertViewModel
     private lateinit var repository: FakeRepositoryImpl
 
-    private val latitude = 123.4
-    private val longitude = 567.8
-    private lateinit var location: LocationData
+    private val date = "28 Mar, 2024"
+    private val time = "05:05 PM"
+    private lateinit var alert: AlertData
 
     @Before
     fun CreateRepository(){
         repository = FakeRepositoryImpl(alertList.toMutableList(), locationList.toMutableList())
-        viewModel = LocationViewModel(repository)
+        viewModel = AlertViewModel(repository)
 
-        location = LocationData(
-            0,
-            latitude,
-            longitude,
-            "Tokyo",
-            "JP"
+        alert = AlertData(
+            date,
+            time,
+            10.5,
+            15.6,
+            "notification"
         )
     }
 
     @Test
-    fun getAllLocationsTest_RequestSameLocationList() = runBlockingTest {
+    fun getAllAlertsTest_RequestSameAlertList() = runBlockingTest {
 
         //When
-        viewModel.getAllLocations()
-        var result: List<LocationData> = emptyList()
+        viewModel.getAllAlerts()
+        var result: List<AlertData> = emptyList()
 
         val job = launch {
-            viewModel.locationList.collectLatest { response ->
+            viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoLocationResponse.Loading -> { }
-                    is DaoLocationResponse.Success ->{
+                    is DaoAlertResponse.Loading -> { }
+                    is DaoAlertResponse.Success ->{
                         result = response.data
                     }
-                    is DaoLocationResponse.Failure ->{  }
+                    is DaoAlertResponse.Failure ->{  }
                 }
             }
         }
@@ -100,28 +100,28 @@ class LocationViewModelTest {
         job.cancelAndJoin()
 
         //Then
-        assertThat(result, IsEqual(locationList))
+        assertThat(result, IsEqual(alertList))
     }
 
     @Test
-    fun insertLocationTest_RequestNewLocationList() = runBlockingTest {
+    fun insertAlertTest_RequestNewAlertList() = runBlockingTest {
         //When
-        viewModel.insertLocation(location)
-        val newLocationList = locationList.toMutableList()
-        newLocationList.add(location)
+        viewModel.insertAlert(alert)
+        val newAlertList = alertList.toMutableList()
+        newAlertList.add(alert)
 
         //Then
-        viewModel.getAllLocations()
-        var result: List<LocationData> = emptyList()
+        viewModel.getAllAlerts()
+        var result: List<AlertData> = emptyList()
 
         val job = launch {
-            viewModel.locationList.collectLatest { response ->
+            viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoLocationResponse.Loading -> { }
-                    is DaoLocationResponse.Success ->{
+                    is DaoAlertResponse.Loading -> { }
+                    is DaoAlertResponse.Success ->{
                         result = response.data
                     }
-                    is DaoLocationResponse.Failure ->{  }
+                    is DaoAlertResponse.Failure ->{  }
                 }
             }
         }
@@ -130,28 +130,28 @@ class LocationViewModelTest {
         job.cancelAndJoin()
 
         //Then
-        assertThat(result, IsEqual(newLocationList))
+        assertThat(result, IsEqual(newAlertList))
     }
 
     @Test
-    fun deleteLocationTest_RequestNewLocationList() = runBlockingTest {
+    fun deleteAlertTest_RequestNewAlertList() = runBlockingTest {
         //When
-        viewModel.insertLocation(location2)
-        val newLocationList = locationList.toMutableList()
-        newLocationList.add(location2)
+        viewModel.deleteAlert(alert2)
+        val newAlertList = alertList.toMutableList()
+        newAlertList.remove(alert2)
 
         //Then
-        viewModel.getAllLocations()
-        var result: List<LocationData> = emptyList()
+        viewModel.getAllAlerts()
+        var result: List<AlertData> = emptyList()
 
         val job = launch {
-            viewModel.locationList.collectLatest { response ->
+            viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoLocationResponse.Loading -> { }
-                    is DaoLocationResponse.Success ->{
+                    is DaoAlertResponse.Loading -> { }
+                    is DaoAlertResponse.Success ->{
                         result = response.data
                     }
-                    is DaoLocationResponse.Failure ->{  }
+                    is DaoAlertResponse.Failure ->{  }
                 }
             }
         }
@@ -160,7 +160,7 @@ class LocationViewModelTest {
         job.cancelAndJoin()
 
         //Then
-        assertThat(result, IsEqual(newLocationList))
+        assertThat(result, IsEqual(newAlertList))
     }
 
 }

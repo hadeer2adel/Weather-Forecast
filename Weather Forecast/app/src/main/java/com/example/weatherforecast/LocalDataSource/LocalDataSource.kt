@@ -1,13 +1,9 @@
 package com.example.weatherforecast.LocalDataSource
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.NotificationData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
@@ -29,12 +25,12 @@ interface LocalDataSource {
 
     suspend fun deleteLastWeather()
 
-    //Notification
-    fun getAllNotifications(): Flow<List<NotificationData>>
-    suspend fun getNotificationById(date: String, time: String): NotificationData?
-    suspend fun insertNotification(notification: NotificationData)
-    suspend fun deleteNotification(notification: NotificationData)
-    suspend fun deleteNotificationById(date: String, time: String)
-    suspend fun deleteAllNotifications()
+    //Alert
+    fun getAllAlerts(): Flow<List<AlertData>>
+    suspend fun getAlertById(date: String, time: String): AlertData?
+    suspend fun insertAlert(alert: AlertData)
+    suspend fun deleteAlert(alert: AlertData)
+    suspend fun deleteAlertById(date: String, time: String)
+    suspend fun deleteAllAlerts()
 
 }

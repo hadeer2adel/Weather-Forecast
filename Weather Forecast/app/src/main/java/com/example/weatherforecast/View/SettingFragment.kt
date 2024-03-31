@@ -1,5 +1,6 @@
 package com.example.weatherforecast.View
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -16,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Helpers.showDialog
-import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
+import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
@@ -34,6 +35,7 @@ import com.example.weatherforecast.ViewModel.SettingViewModelFactory
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class SettingFragment : Fragment() {
 
@@ -91,8 +93,8 @@ class SettingFragment : Fragment() {
 
         binding.rvAlarm.setOnClickListener {
             val onAllow: () -> Unit = {
-                viewModel.getAllNotifications()
-                handleDaoNotificationResponse()
+                viewModel.getAllAlerts()
+                handleDaoAlertResponse()
             }
             showDialog(
                 requireContext(),
@@ -107,26 +109,26 @@ class SettingFragment : Fragment() {
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
-        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val factory = SettingViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(SettingViewModel::class.java)
     }
-    private fun handleDaoNotificationResponse(){
+    private fun handleDaoAlertResponse(){
         lifecycleScope.launch {
-            viewModel.notificationList.collectLatest { response ->
+            viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoNotificationResponse.Loading -> { onLoading() }
-                    is DaoNotificationResponse.Success ->{
+                    is DaoAlertResponse.Loading -> { onLoading() }
+                    is DaoAlertResponse.Success ->{
                         onSuccess()
                         val alertManagement = AlertManagement()
-                        for(notification in response.data){
-                            alertManagement.cancelAlarm(requireContext(), notification)
+                        for(alert in response.data){
+                            alertManagement.cancelAlarm(requireContext(), alert)
                         }
-                        viewModel.deleteAllNotifications()
+                        viewModel.deleteAllAlerts()
                     }
-                    is DaoNotificationResponse.Failure ->{ onFailure(response.error.message) }
+                    is DaoAlertResponse.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
@@ -210,8 +212,6 @@ class SettingFragment : Fragment() {
             }
 
             if(!isNetworkConnected(requireContext())){
-                language1.isClickable = false
-                language2.isClickable = false
                 tUnit1.isClickable = false
                 tUnit2.isClickable = false
                 tUnit3.isClickable = false
@@ -230,11 +230,22 @@ class SettingFragment : Fragment() {
         binding.language.setOnCheckedChangeListener { group, checkedId ->
             val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
             val selectedText = selectedRadioButton.text.toString()
+            var selectedLanguage: String
             when(selectedText) {
-                getString(R.string.language_2) -> appSettings.language = "ar"
-                else -> appSettings.language = "en"
+                getString(R.string.language_2) -> selectedLanguage = "ar"
+                else -> selectedLanguage = "en"
             }
+            appSettings.language = selectedLanguage
+            setLocale(selectedLanguage)
         }
+    }
+    private fun setLocale(languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.locale = locale
+        resources.updateConfiguration(config, resources.displayMetrics)
+        requireActivity().recreate()
     }
     private fun setUpTemperatureOptions(view: View){
         binding.temperature.setOnCheckedChangeListener { group, checkedId ->

@@ -20,18 +20,6 @@ fun convertTimestampToDate(timestamp: Long, timezone: Long): String {
     return sdf.format(date)
 }
 
-fun convertTimestampToTime(timestamp: Long, timezone: Long): String {
-    val date = Date(timestamp * 1000)
-    val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
-    sdf.timeZone = TimeZone.getTimeZone("UTC")
-
-    val localTimeZone = TimeZone.getDefault()
-    val offset = localTimeZone.getOffset(timestamp * 1000) + timezone * 1000
-    sdf.timeZone = TimeZone.getTimeZone("GMT${if (offset >= 0) "+" else "-"}${(Math.abs(offset) / 3600000).toString().padStart(2, '0')}:${(Math.abs(offset) % 3600000 / 60000).toString().padStart(2, '0')}")
-
-    return sdf.format(date)
-}
-
 fun convertTimeTo12HourFormat(timeString: String): String {
     val inputFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     val outputFormat = SimpleDateFormat("h a", Locale.getDefault())
@@ -72,4 +60,24 @@ fun getDayOfWeek(date: String, language: String):String{
         else -> ""
     }
     return dayOfWeekString
+}
+
+fun getTimeInMillis(dateString: String, timeString: String): Int {
+    val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+    val date = dateFormat.parse(dateString)
+    val time = timeFormat.parse(timeString)
+
+    val calendar = Calendar.getInstance()
+    calendar.time = date!!
+
+    val timeCalendar = Calendar.getInstance()
+    timeCalendar.time = time!!
+
+    calendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY))
+    calendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE))
+    calendar.set(Calendar.SECOND, 0)
+
+    return calendar.timeInMillis.toInt()
 }

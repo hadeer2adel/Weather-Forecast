@@ -36,9 +36,8 @@ class DayAdapter (
             val imgUrl = getWeatherIconUrl(dayWeather.weatherIcon)
             Glide.with(context).load(imgUrl).into(image)
             day.text = dayWeather.date
-            temperature.text = dayWeather.minTemperature.toString() + " / " + dayWeather.maxTemperature.toString()
             val unit = AppSettings.getInstance(context).temperatureUnit
-            temperatureUnit.text = "º$unit"
+            temperature.text = dayWeather.minTemperature.toString() + " / " + dayWeather.maxTemperature.toString() + "  º$unit"
         }
     }
 }

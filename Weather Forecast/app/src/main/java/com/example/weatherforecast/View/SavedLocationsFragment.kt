@@ -71,7 +71,7 @@ class SavedLocationsFragment : Fragment() {
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
-        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val factory = LocationViewModelFactory(repository)

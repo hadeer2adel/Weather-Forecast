@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">توقعات الطقس</string>
+
+    <!-- menu -->
+    <string name="home">الرئيسية</string>
+    <string name="alert">التنبيات</string>
+    <string name="favourites">المفضلة</string>
+    <string name="search">البحث</string>
+    <string name="settings">الإعدادات</string>
+
+    <!-- home page -->
+    <string name="today">اليوم</string>
+    <string name="week">التوقعات القادمة</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind">سرعة الرياح</string>
+    <string name="pressure">الضغط</string>
+    <string name="cloud">نسبة الغيوم</string>
+
+    <!-- setting page -->
+    <string name="location">الموقع</string>
+    <string name="location_0">الموقع الحالي</string>
+    <string name="location_1">GPS</string>
+    <string name="location_2">على الخريطة</string>
+    <string name="location_3">المواقع المحفوظة</string>
+    <string name="notification">الإشعارات</string>
+    <string name="language">اللغة</string>
+    <string name="language_1">الإنجليزية</string>
+    <string name="language_2">العربية</string>
+    <string name="t_units">درجة الحرارة</string>
+    <string name="t_unit_1">كلفن</string>
+    <string name="t_unit_2">مئوية</string>
+    <string name="t_unit_3">فهرنهايت</string>
+    <string name="w_units">سرعة الرياح</string>
+    <string name="w_unit_1">م/ث</string>
+    <string name="w_unit_2">ميل/ساعة</string>
+    <string name="rv_alerts">حذف جميع التنبيهات</string>
+    <string name="rv_locations">حذف جميع المواقع</string>
+
+    <!-- map page -->
+    <string name="save_location">المواقع المحفوظة</string>
+    <string name="locations">المواقع</string>
+    <string name="map">الخريطة</string>
+    <string name="location_permission_title">إذن الموقع</string>
+    <string name="location_permission_body">إذن الموقع مطلوب، يرجى السماح بإذن الموقع من الإعدادات</string>
+    <string name="turnon_location">تشغيل الموقع</string>
+
+    <!-- Favourite page -->
+    <string name="add_location">إضافة موقع</string>
+
+    <!-- Alarm page -->
+    <string name="setAlert">تعيين التنبية</string>
+    <string name="date">التاريخ</string>
+    <string name="time">الوقت</string>
+    <string name="type">النوع</string>
+    <string name="notification_1">إشعار</string>
+    <string name="notification_2">منبة</string>
+    <string name="save">حفظ</string>
+    <string name="dialog_location">اختر الموقع</string>
+    <string name="dialog_date">اختر التاريخ</string>
+    <string name="dialog_time">اختر الوقت</string>
+    <string name="select_alert_type">اختر نوع التنبيه</string>
+    <string name="alert_title">تنبيه الطقس</string>
+    <string name="notification_permission_title">إذن الإشعارات</string>
+    <string name="notification_permission_body">إذن الإشعارات مطلوب، يرجى السماح بإظهار الإشعارات من الإعدادات</string>
+    <string name="turnon_notification">تشغيل الإشعارات</string>
+    <string name="allow">السماح</string>
+    <string name="sure">متأكد</string>
+    <string name="cancel">إلغاء</string>
+
+    <!-- action dialog -->
+    <string name="delete_alert_title">حذف التنبيه</string>
+    <string name="delete_alert_body">هل أنت متأكد أنك تريد حذف هذا التنبيه؟</string>
+    <string name="delete_location_title">حذف الموقع</string>
+    <string name="delete_location_body">هل أنت متأكد أنك تريد حذف هذا الموقع؟</string>
+    <string name="delete_all_alert_title">حذف كل التنبيهات</string>
+    <string name="delete_all_alert_body">هل أنت متأكد أنك تريد حذف كل التنبيهات؟</string>
+    <string name="delete_all_location_title">حذف كل المواقع</string>
+    <string name="delete_all_location_body">هل أنت متأكد أنك تريد حذف كل المواقع المحفوظة؟</string>
+    <string name="connection_title">لا يوجد اتصال بالشبكة</string>
+    <string name="connection_body">تأكد من الاتصال بالإنترنت لاستخدام هذه الميزة</string>
+    <string name="no_connection_notification">نعتذر عن عدم قدرتنا على عرض تنبيه الطقس. يرجى الاتصال بالإنترنت.</string>
+</resources>

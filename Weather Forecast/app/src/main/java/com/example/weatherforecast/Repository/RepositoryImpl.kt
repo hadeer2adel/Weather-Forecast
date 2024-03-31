@@ -6,12 +6,11 @@ import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.ForecastWeatherResponse
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import retrofit2.Response
 
 class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSource: LocalDataSource):
     Repository {
@@ -71,27 +70,27 @@ class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSourc
         localDataSource.deleteLastWeather()
     }
 
-    override fun getAllNotifications(): Flow<List<NotificationData>> {
-        return localDataSource.getAllNotifications()
+    override fun getAllAlerts(): Flow<List<AlertData>> {
+        return localDataSource.getAllAlerts()
     }
 
-    override suspend fun getNotificationById(date: String, time: String): NotificationData? {
-        return localDataSource.getNotificationById(date, time)
+    override suspend fun getAlertById(date: String, time: String): AlertData? {
+        return localDataSource.getAlertById(date, time)
     }
 
-    override suspend fun insertNotification(notification: NotificationData) {
-        localDataSource.insertNotification(notification)
+    override suspend fun insertAlert(alert: AlertData) {
+        localDataSource.insertAlert(alert)
     }
 
-    override suspend fun deleteNotification(notification: NotificationData) {
-        localDataSource.deleteNotification(notification)
+    override suspend fun deleteAlert(alert: AlertData) {
+        localDataSource.deleteAlert(alert)
     }
 
-    override suspend fun deleteNotificationById(date: String, time: String) {
-        localDataSource.deleteNotificationById(date, time)
+    override suspend fun deleteAlertById(date: String, time: String) {
+        localDataSource.deleteAlertById(date, time)
     }
 
-    override suspend fun deleteAllNotifications() {
-        localDataSource.deleteAllNotifications()
+    override suspend fun deleteAllAlerts() {
+        localDataSource.deleteAllAlerts()
     }
 }

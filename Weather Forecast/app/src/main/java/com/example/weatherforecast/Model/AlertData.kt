@@ -2,13 +2,10 @@ package com.example.weatherforecast.Model
 
 import androidx.annotation.NonNull
 import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import java.util.Calendar
 
 
-@Entity(tableName = "Notification", primaryKeys = ["date", "time"])
-data class NotificationData(
+@Entity(tableName = "Alert", primaryKeys = ["date", "time"])
+data class AlertData(
     @NonNull
     val date: String,
     @NonNull

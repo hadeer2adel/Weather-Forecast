@@ -19,7 +19,7 @@ class AlertPermission(val context: Context) {
         )
             .setTitle(context.getString(R.string.notification_permission_title))
             .setMessage(context.getString(R.string.notification_permission_body))
-            .setPositiveButton(context.getString(R.string.allow)) { _, _ -> enableNotificationServices() }
+            .setPositiveButton(context.getString(R.string.allow)) { _, _ -> enableAlertServices() }
             .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
@@ -36,7 +36,7 @@ class AlertPermission(val context: Context) {
             .show()
     }
 
-    private fun enableNotificationServices() {
+    private fun enableAlertServices() {
         Toast.makeText(context, context.getString(R.string.turnon_notification), Toast.LENGTH_LONG).show()
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", context.packageName, null)

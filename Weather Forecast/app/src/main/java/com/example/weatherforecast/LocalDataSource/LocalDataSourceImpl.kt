@@ -1,18 +1,16 @@
 package com.example.weatherforecast.LocalDataSource
 
-import android.content.Context
-import android.util.Log
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSourceImpl constructor(
     val daoLastWeather: DAOLastWeather,
     val daoLocations: DAOLocations,
-    val daoNotifications: DAONotifications
+    val daoAlerts: DAOAlerts
 ):LocalDataSource {
 
     override fun getAllLocations(): Flow<List<LocationData>> {
@@ -61,28 +59,28 @@ class LocalDataSourceImpl constructor(
         daoLastWeather.deleteLastWeatherDays()
     }
 
-    override fun getAllNotifications(): Flow<List<NotificationData>> {
-        return daoNotifications.getAllNotifications()
+    override fun getAllAlerts(): Flow<List<AlertData>> {
+        return daoAlerts.getAllAlerts()
     }
 
-    override suspend fun getNotificationById(date: String, time: String): NotificationData? {
-        return daoNotifications.getNotificationById(date, time)
+    override suspend fun getAlertById(date: String, time: String): AlertData? {
+        return daoAlerts.getAlertById(date, time)
     }
 
-    override suspend fun insertNotification(notification: NotificationData) {
-        daoNotifications.insertNotification(notification)
+    override suspend fun insertAlert(alert: AlertData) {
+        daoAlerts.insertAlert(alert)
     }
 
-    override suspend fun deleteNotification(notification: NotificationData) {
-        daoNotifications.deleteNotification(notification)
+    override suspend fun deleteAlert(alert: AlertData) {
+        daoAlerts.deleteAlert(alert)
     }
 
-    override suspend fun deleteNotificationById(date: String, time: String){
-        daoNotifications.deleteNotificationById(date, time)
+    override suspend fun deleteAlertById(date: String, time: String){
+        daoAlerts.deleteAlertById(date, time)
     }
 
-    override suspend fun deleteAllNotifications() {
-        daoNotifications.deleteAllNotifications()
+    override suspend fun deleteAllAlerts() {
+        daoAlerts.deleteAllAlerts()
     }
 
 }

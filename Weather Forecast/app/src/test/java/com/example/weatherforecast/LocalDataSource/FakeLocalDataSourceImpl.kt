@@ -3,14 +3,13 @@ package com.example.weatherforecast.LocalDataSource
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asFlow
 
 class FakeLocalDataSourceImpl (
-    private var notificationList: MutableList<NotificationData>? = mutableListOf()
+    private var alertList: MutableList<AlertData>? = mutableListOf()
 ): LocalDataSource {
     override fun getAllLocations(): Flow<List<LocationData>> {
         TODO("Not yet implemented")
@@ -56,41 +55,41 @@ class FakeLocalDataSourceImpl (
         TODO("Not yet implemented")
     }
 
-    override fun getAllNotifications(): Flow<List<NotificationData>> {
-        return MutableStateFlow(notificationList ?: emptyList())
+    override fun getAllAlerts(): Flow<List<AlertData>> {
+        return MutableStateFlow(alertList ?: emptyList())
     }
 
-    override suspend fun getNotificationById(date: String, time: String): NotificationData? {
-        if (notificationList == null)
+    override suspend fun getAlertById(date: String, time: String): AlertData? {
+        if (alertList == null)
             return null
 
-        for (notification in notificationList!!){
-            if (notification.date.equals(date) && notification.time.equals(time))
-                return notification
+        for (alert in alertList!!){
+            if (alert.date.equals(date) && alert.time.equals(time))
+                return alert
         }
         return null
     }
 
-    override suspend fun insertNotification(notification: NotificationData) {
-        notificationList?.add(notification)
+    override suspend fun insertAlert(alert: AlertData) {
+        alertList?.add(alert)
     }
 
-    override suspend fun deleteNotification(notification: NotificationData) {
-        notificationList?.remove(notification)
+    override suspend fun deleteAlert(alert: AlertData) {
+        alertList?.remove(alert)
     }
 
-    override suspend fun deleteNotificationById(date: String, time: String) {
-        if (notificationList != null) {
-            for (notification in notificationList!!) {
-                if (notification.date.equals(date) && notification.time.equals(time)) {
-                    notificationList?.remove(notification)
+    override suspend fun deleteAlertById(date: String, time: String) {
+        if (alertList != null) {
+            for (alert in alertList!!) {
+                if (alert.date.equals(date) && alert.time.equals(time)) {
+                    alertList?.remove(alert)
                     break
                 }
             }
         }
     }
 
-    override suspend fun deleteAllNotifications() {
-        notificationList?.clear()
+    override suspend fun deleteAllAlerts() {
+        alertList?.clear()
     }
 }

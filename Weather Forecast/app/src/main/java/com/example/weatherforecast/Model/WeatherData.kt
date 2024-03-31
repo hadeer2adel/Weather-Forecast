@@ -3,7 +3,6 @@ package com.example.weatherforecast.Model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.weatherforecast.Helpers.convertTimestampToDate
-import com.example.weatherforecast.Helpers.convertTimestampToTime
 
 @Entity(tableName = "Weather")
 data class WeatherData(
@@ -12,7 +11,6 @@ data class WeatherData(
     val latitude: Double,
     val longitude: Double,
     val Date: String,
-    val Time: String,
     val weatherDescription: String,
     val weatherIcon: String,
     val temperature: Long,
@@ -20,8 +18,6 @@ data class WeatherData(
     val pressure: Long,
     val wind: Double,
     val cloudiness: Int,
-    val cityName: String,
-    val countryCode: String,
 )
 
 fun getWeatherData(weather: CurrentWeatherResponse): WeatherData{
@@ -30,15 +26,12 @@ fun getWeatherData(weather: CurrentWeatherResponse): WeatherData{
         weather.coordinates.latitude,
         weather.coordinates.longitude,
         convertTimestampToDate(weather.timestamp, weather.timezone),
-        convertTimestampToTime(weather.timestamp, weather.timezone),
         weather.weather.get(0).description,
         weather.weather.get(0).icon,
         weather.main.temperature.toLong(),
         weather.main.humidity,
         weather.main.pressure.toLong(),
         weather.wind.speed,
-        weather.clouds.cloudiness,
-        weather.cityName,
-        weather.country.code
+        weather.clouds.cloudiness
     )
 }

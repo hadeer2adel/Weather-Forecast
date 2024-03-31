@@ -5,7 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -23,16 +23,16 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-class DAONotificationsTest {
+class DAOAlertsTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     lateinit var database: DataBase
-    lateinit var dao: DAONotifications
+    lateinit var dao: DAOAlerts
 
     val date = "28 Mar, 2024"
     val time = "05:05 PM"
-    lateinit var notification: NotificationData
+    lateinit var alert: AlertData
 
     @Before
     fun setUp(){
@@ -40,9 +40,9 @@ class DAONotificationsTest {
             ApplicationProvider.getApplicationContext(),
             DataBase::class.java
         ).build()
-        dao = database.getDAONotifications()
+        dao = database.getDAOAlerts()
 
-        notification = NotificationData(
+        alert = AlertData(
             date,
             time,
             10.5,
@@ -58,12 +58,12 @@ class DAONotificationsTest {
 
 
     @Test
-    fun insertNotificationTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
+    fun insertAlertTest_TakeAlertData_RequestSameAlert() = runBlockingTest {
         //When
-        dao.insertNotification(notification)
+        dao.insertAlert(alert)
 
         //Then
-        val result = dao.getNotificationById(date, time)
+        val result = dao.getAlertById(date, time)
 
         assertThat(result , not(nullValue()))
         assertThat(result?.latitude, `is`(10.5))
@@ -72,56 +72,56 @@ class DAONotificationsTest {
     }
 
     @Test
-    fun deleteNotificationTest_TakeNotificationData_RequestNull() = runBlockingTest {
+    fun deleteAlertTest_TakeAlertData_RequestNull() = runBlockingTest {
         //Given
-        dao.insertNotification(notification)
+        dao.insertAlert(alert)
 
         //When
-        dao.deleteNotification(notification)
+        dao.deleteAlert(alert)
 
         //Then
-        val result = dao.getNotificationById(date, time)
+        val result = dao.getAlertById(date, time)
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteNotificationByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
+    fun deleteAlertByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
         //Given
-        dao.insertNotification(notification)
+        dao.insertAlert(alert)
 
         //When
-        dao.deleteNotificationById(date, time)
+        dao.deleteAlertById(date, time)
 
         //Then
-        val result = dao.getNotificationById(date, time)
+        val result = dao.getAlertById(date, time)
         assertThat(result , nullValue())
     }
 
     @Test
-    fun getAllNotificationsTest_RequestSameNotificationList() = runBlockingTest {
+    fun getAllAlertsTest_RequestSameAlertList() = runBlockingTest {
         //Given
-        val notification1 = NotificationData(
+        val alert1 = AlertData(
             "1 Mar, 2024",
             "01:00",
             10.5,
             15.6,
             "notification"
         )
-        val notification2 = NotificationData(
+        val alert2 = AlertData(
             "2 Mar, 2024",
             "02:00",
             10.5,
             15.6,
             "alarm"
         )
-        val notificationList = listOf(notification1, notification2)
-        dao.insertNotification(notification1)
-        dao.insertNotification(notification2)
+        val alertList = listOf(alert1, alert2)
+        dao.insertAlert(alert1)
+        dao.insertAlert(alert2)
 
 
         //When
-        val resultFlow = dao.getAllNotifications()
-        var result: List<NotificationData> = emptyList()
+        val resultFlow = dao.getAllAlerts()
+        var result: List<AlertData> = emptyList()
         val job = launch {
             resultFlow.collect {
                 result = it
@@ -132,36 +132,36 @@ class DAONotificationsTest {
         job.cancelAndJoin()
 
         //Then
-        assertThat(result, IsEqual(notificationList))
+        assertThat(result, IsEqual(alertList))
     }
 
     @Test
-    fun deleteAllNotificationsTest_RequestNull() = runBlockingTest {
+    fun deleteAllAlertsTest_RequestNull() = runBlockingTest {
         //Given
-        val notification1 = NotificationData(
+        val alert1 = AlertData(
             "1 Mar, 2024",
             "01:00",
             10.5,
             15.6,
             "notification"
         )
-        val notification2 = NotificationData(
+        val alert2 = AlertData(
             "2 Mar, 2024",
             "02:00",
             10.5,
             15.6,
             "alarm"
         )
-        dao.insertNotification(notification1)
-        dao.insertNotification(notification2)
+        dao.insertAlert(alert1)
+        dao.insertAlert(alert2)
 
         //When
-        dao.deleteAllNotifications()
+        dao.deleteAllAlerts()
 
         //Then
-        val result1 = dao.getNotificationById("1 Mar, 2024", "01:00")
+        val result1 = dao.getAlertById("1 Mar, 2024", "01:00")
         assertThat(result1 , nullValue())
-        val result2 = dao.getNotificationById("2 Mar, 2024", "02:00")
+        val result2 = dao.getAlertById("2 Mar, 2024", "02:00")
         assertThat(result2 , nullValue())
     }
 

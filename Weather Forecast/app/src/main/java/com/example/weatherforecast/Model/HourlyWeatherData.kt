@@ -1,6 +1,7 @@
 package com.example.weatherforecast.Model
 
 import android.os.Build
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.weatherforecast.Helpers.convertTimeTo12HourFormat
@@ -30,7 +31,7 @@ fun getHourlyWeatherData(forecastWeather: ForecastWeatherResponse): List<HourlyW
             var startTime = LocalTime.parse(hour[1], formatter)
             val endTime = LocalTime.parse(nextHour[1], formatter)
             var i = 1
-            while (startTime.isBefore(endTime)) {
+            while (!startTime.equals(endTime)) {
                 hourlyWeather.add(
                     HourlyWeatherData(
                         0,
@@ -41,6 +42,16 @@ fun getHourlyWeatherData(forecastWeather: ForecastWeatherResponse): List<HourlyW
                 )
                 startTime = startTime.plusHours(1)
                 i++
+            }
+            if (nextHour[1].equals("00:00:00")){
+                hourlyWeather.add(
+                    HourlyWeatherData(
+                        0,
+                        convertTimeTo12HourFormat(endTime.format(formatter)),
+                        nextHourlyData.main.temperature.toLong(),
+                        nextHourlyData.weather.get(0).icon
+                    )
+                )
             }
         }
         else

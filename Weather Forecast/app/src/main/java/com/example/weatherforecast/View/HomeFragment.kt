@@ -2,7 +2,7 @@ package com.example.weatherforecast.View
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Message
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
@@ -21,13 +22,13 @@ import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
 import com.example.weatherforecast.LocalDataSource.DaoHourlyWeatherResponse
 import com.example.weatherforecast.LocalDataSource.DaoWeatherResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Model.getDailyWeatherData
 import com.example.weatherforecast.Model.getHourlyWeatherData
 import com.example.weatherforecast.Model.getWeatherData
+import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.DayAdapter
 import com.example.weatherforecast.RecycleView.HourAdapter
 import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
@@ -107,7 +108,7 @@ class HomeFragment : Fragment(){
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
-        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
         val remoteFactory = RemoteViewModelFactory(repository)
@@ -201,21 +202,27 @@ class HomeFragment : Fragment(){
     }
     private fun setDataOnView(weather: WeatherData){
         binding.apply {
-            val flagUrl = weather.countryCode?.let { getCountryFlagUrl(it) }
+            val city = getCity(requireContext(), weather.latitude, weather.longitude)
+
+            val flagUrl = getCountryFlagUrl(city.countryCode)
             Glide.with(requireContext()).load(flagUrl).into(flagImg)
             val imgUrl = getWeatherIconUrl(weather.weatherIcon)
             Glide.with(requireContext()).load(imgUrl).into(image)
 
-            time.text = weather.Time
             date.text = weather.Date
-            cityName.text = weather.cityName
+            cityName.text = city.cityName
             temperature.text = weather.temperature.toString()
             temperatureUnit.text = "º${appSettings.temperatureUnit}"
             description.text = weather.weatherDescription
             humidity.text = weather.humidity.toString()
             cloud.text = weather.cloudiness.toString()
             wind.text = weather.wind.toString()
-            windUnit.text = appSettings.windUnit
+            if (appSettings.windUnit.equals("m/s")){
+                windUnit.text = getString(R.string.w_unit_1)
+            }
+            else {
+                windUnit.text = getString(R.string.w_unit_2)
+            }
             pressure.text = weather.pressure.toString()
         }
     }

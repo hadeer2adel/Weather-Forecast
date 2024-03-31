@@ -1,12 +1,9 @@
 package com.example.weatherforecast.ViewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
-import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers

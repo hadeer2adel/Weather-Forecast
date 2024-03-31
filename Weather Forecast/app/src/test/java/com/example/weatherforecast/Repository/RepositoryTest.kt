@@ -2,16 +2,14 @@ package com.example.weatherforecast.Repository
 
 import com.example.weatherforecast.LocalDataSource.FakeLocalDataSourceImpl
 import com.example.weatherforecast.LocalDataSource.LocalDataSource
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.RemoteDataSource.FakeRemoteDataSourceImpl
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.core.IsEqual
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
@@ -20,28 +18,28 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 
 class RepositoryTest {
-    private val notification1 = NotificationData(
+    private val alert1 = AlertData(
         "1 Mar, 2024",
         "01:00",
         10.5,
         15.6,
         "notification"
     )
-    private val notification2 = NotificationData(
+    private val alert2 = AlertData(
         "2 Mar, 2024",
         "02:00",
         10.5,
         15.6,
         "alarm"
     )
-    private val notification3 = NotificationData(
+    private val alert3 = AlertData(
         "3 Mar, 2024",
         "03:00",
         10.5,
         15.6,
         "notification"
     )
-    private val notification4 = NotificationData(
+    private val alert4 = AlertData(
         "4 Mar, 2024",
         "04:00",
         10.5,
@@ -49,7 +47,7 @@ class RepositoryTest {
         "alarm"
     )
 
-    private val localList = listOf(notification1, notification2, notification3, notification4)
+    private val localList = listOf(alert1, alert2, alert3, alert4)
 
     private lateinit var remoteDataSource: RemoteDataSource
     private lateinit var localDataSource: LocalDataSource
@@ -57,7 +55,7 @@ class RepositoryTest {
 
     val date = "28 Mar, 2024"
     val time = "05:05 PM"
-    lateinit var notification: NotificationData
+    lateinit var alert: AlertData
 
     @Before
     fun CreateRepository(){
@@ -65,7 +63,7 @@ class RepositoryTest {
         localDataSource = FakeLocalDataSourceImpl(localList.toMutableList())
         repository = RepositoryImpl(remoteDataSource, localDataSource)
 
-        notification = NotificationData(
+        alert = AlertData(
             date,
             time,
             10.5,
@@ -75,12 +73,12 @@ class RepositoryTest {
     }
 
     @Test
-    fun insertNotificationTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
+    fun insertAlertTest_TakeAlertData_RequestSameAlert() = runBlockingTest {
         //When
-        repository.insertNotification(notification)
+        repository.insertAlert(alert)
 
         //Then
-        val result = repository.getNotificationById(date, time)
+        val result = repository.getAlertById(date, time)
 
         assertThat(result , not(nullValue()))
         assertThat(result?.latitude, `is`(10.5))
@@ -89,37 +87,37 @@ class RepositoryTest {
     }
 
     @Test
-    fun deleteNotificationTest_TakeNotificationData_RequestNull() = runBlockingTest {
+    fun deleteAlertTest_TakeAlertData_RequestNull() = runBlockingTest {
         //Given
-        repository.insertNotification(notification)
+        repository.insertAlert(alert)
 
         //When
-        repository.deleteNotification(notification)
+        repository.deleteAlert(alert)
 
         //Then
-        val result = repository.getNotificationById(date, time)
+        val result = repository.getAlertById(date, time)
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteNotificationByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
+    fun deleteAlertByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
         //Given
-        repository.insertNotification(notification)
+        repository.insertAlert(alert)
 
         //When
-        repository.deleteNotificationById(date, time)
+        repository.deleteAlertById(date, time)
 
         //Then
-        val result = repository.getNotificationById(date, time)
+        val result = repository.getAlertById(date, time)
         assertThat(result , nullValue())
     }
 
     @Test
-    fun getAllNotificationsTest_RequestSameNotificationList() = runBlockingTest {
+    fun getAllAlertsTest_RequestSameAlertList() = runBlockingTest {
 
         //When
-        val resultFlow = repository.getAllNotifications()
-        var result: List<NotificationData> = emptyList()
+        val resultFlow = repository.getAllAlerts()
+        var result: List<AlertData> = emptyList()
         val job = launch {
             resultFlow.collect {
                 result = it
@@ -134,32 +132,32 @@ class RepositoryTest {
     }
 
     @Test
-    fun deleteAllNotificationsTest_RequestNull() = runBlockingTest {
+    fun deleteAllAlertsTest_RequestNull() = runBlockingTest {
         //Given
-        val notification1 = NotificationData(
+        val alert1 = AlertData(
             "1 Mar, 2024",
             "01:00",
             10.5,
             15.6,
             "notification"
         )
-        val notification2 = NotificationData(
+        val alert2 = AlertData(
             "2 Mar, 2024",
             "02:00",
             10.5,
             15.6,
             "alarm"
         )
-        repository.insertNotification(notification1)
-        repository.insertNotification(notification2)
+        repository.insertAlert(alert1)
+        repository.insertAlert(alert2)
 
         //When
-        repository.deleteAllNotifications()
+        repository.deleteAllAlerts()
 
         //Then
-        val result1 = repository.getNotificationById("1 Mar, 2024", "01:00")
+        val result1 = repository.getAlertById("1 Mar, 2024", "01:00")
         assertThat(result1 , nullValue())
-        val result2 = repository.getNotificationById("2 Mar, 2024", "02:00")
+        val result2 = repository.getAlertById("2 Mar, 2024", "02:00")
         assertThat(result2 , nullValue())
     }
 }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.Rotate
+import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getWeatherIconUrl
 import com.example.weatherforecast.Model.AppSettings
@@ -44,9 +45,10 @@ class LocationAdapter (
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         val locationData = getItem(position)
         holder.binding.apply {
-            val imgUrl = getCountryFlagUrl(locationData.countryCode)
+            val city = getCity(context, locationData.latitude, locationData.longitude)
+            val imgUrl = getCountryFlagUrl(city.countryCode)
             Glide.with(context).load(imgUrl).transform(Rotate(90)).into(flagImg)
-                location.text = locationData.cityName
+                location.text = city.cityName
             deleteBtn.visibility = visibility
             deleteBtn.setOnClickListener { onClick(locationData) }
             card.setOnClickListener { onCardClick(locationData) }

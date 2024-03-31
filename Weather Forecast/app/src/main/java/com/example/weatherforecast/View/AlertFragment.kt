@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.R
@@ -22,8 +22,8 @@ import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
-import com.example.weatherforecast.ViewModel.NotificationViewModel
-import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
+import com.example.weatherforecast.ViewModel.AlertViewModel
+import com.example.weatherforecast.ViewModel.AlertViewModelFactory
 import com.example.weatherforecast.databinding.FragmentAlertBinding
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -39,7 +39,7 @@ import java.util.Locale
 class AlertFragment : Fragment() {
     lateinit var binding: FragmentAlertBinding
     lateinit var alarmCalendar: Calendar
-    lateinit var viewModel: NotificationViewModel
+    lateinit var viewModel: AlertViewModel
 
     var latitude: String = ""
     var longitude: String = ""
@@ -84,7 +84,7 @@ class AlertFragment : Fragment() {
                 }
             }
             save.setOnClickListener {
-                val notificationData = NotificationData(
+                val alertData = AlertData(
                     date.text.toString(),
                     time.text.toString(),
                     latitude.toDouble(),
@@ -92,8 +92,8 @@ class AlertFragment : Fragment() {
                     notificationType)
 
                 val alertManagement = AlertManagement()
-                alertManagement.setAlarm(requireContext(),  alarmCalendar, notificationData)
-                viewModel.insertNotification(notificationData)
+                alertManagement.setAlarm(requireContext(),  alarmCalendar, alertData)
+                viewModel.insertAlert(alertData)
                 val args = Bundle().apply {
                     putInt("tabNumber", 1)
                 }
@@ -105,11 +105,11 @@ class AlertFragment : Fragment() {
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
-        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
-        val factory = NotificationViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory).get(NotificationViewModel::class.java)
+        val factory = AlertViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(AlertViewModel::class.java)
     }
 
     private fun setDataOnView(context: Context){

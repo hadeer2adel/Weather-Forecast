@@ -19,29 +19,29 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.Helpers.showDialog
-import com.example.weatherforecast.LocalDataSource.DaoNotificationResponse
+import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
 import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.AlertUtil.AlertPermission
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.R
-import com.example.weatherforecast.RecycleView.NotificationAdapter
+import com.example.weatherforecast.RecycleView.AlertAdapter
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
 import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
-import com.example.weatherforecast.ViewModel.NotificationViewModel
-import com.example.weatherforecast.ViewModel.NotificationViewModelFactory
+import com.example.weatherforecast.ViewModel.AlertViewModel
+import com.example.weatherforecast.ViewModel.AlertViewModelFactory
 import com.example.weatherforecast.databinding.FragmentListBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class AlertListFragment : Fragment() {
     lateinit var binding: FragmentListBinding
-    lateinit var adapter: NotificationAdapter
-    lateinit var viewModel: NotificationViewModel
+    lateinit var adapter: AlertAdapter
+    lateinit var viewModel: AlertViewModel
     lateinit var alertPermission: AlertPermission
     private val My_NOTIFICATION_PERMISSION_ID = 202
 
@@ -98,41 +98,41 @@ class AlertListFragment : Fragment() {
         manager.orientation = RecyclerView.VERTICAL
         binding.recycleView.layoutManager = manager
 
-        val onClick: (notification: NotificationData) -> Unit = { notification ->
+        val onClick: (alert: AlertData) -> Unit = { alert ->
             val onAllow: () -> Unit = {
-                viewModel.deleteNotification(notification)
+                viewModel.deleteAlert(alert)
                 val alertManagement = AlertManagement()
-                alertManagement.cancelAlarm(requireContext(), notification)
+                alertManagement.cancelAlarm(requireContext(), alert)
             }
             showDialog(requireContext(), R.string.delete_alert_title, R.string.delete_alert_body, onAllow)
         }
 
-        adapter = NotificationAdapter(context, onClick)
+        adapter = AlertAdapter(context, onClick)
         adapter.submitList(emptyList())
         binding.recycleView.adapter = adapter
     }
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
-        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
-        val factory = NotificationViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory).get(NotificationViewModel::class.java)
-        handleDaoNotificationResponse()
+        val factory = AlertViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(AlertViewModel::class.java)
+        handleDaoAlertResponse()
     }
 
-    private fun handleDaoNotificationResponse(){
+    private fun handleDaoAlertResponse(){
         lifecycleScope.launch {
-            viewModel.notificationList.collectLatest { response ->
+            viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoNotificationResponse.Loading -> { onLoading() }
-                    is DaoNotificationResponse.Success ->{
+                    is DaoAlertResponse.Loading -> { onLoading() }
+                    is DaoAlertResponse.Success ->{
                         onSuccess()
                         adapter.submitList(response.data)
                         adapter.notifyDataSetChanged()
                     }
-                    is DaoNotificationResponse.Failure ->{ onFailure(response.error.message) }
+                    is DaoAlertResponse.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }

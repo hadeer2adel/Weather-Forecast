@@ -3,6 +3,8 @@ package com.example.weatherforecast.AlertUtil
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.weatherforecast.Helpers.City
+import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.isNetworkConnected
 import com.example.weatherforecast.LocalDataSource.DataBase
@@ -37,7 +39,7 @@ class AlertReceiver: BroadcastReceiver() {
         val localDataSource = LocalDataSourceImpl(
             dataBase.getDAOLastWeather(),
             dataBase.getDAOLocations(),
-            dataBase.getDAONotifications()
+            dataBase.getDAOAlerts()
         )
         repository = RepositoryImpl(RemoteDataSourceImpl.getInstance(), localDataSource)
 
@@ -49,7 +51,7 @@ class AlertReceiver: BroadcastReceiver() {
 
         val date = intent.getStringExtra("date")!!
         val time = intent.getStringExtra("time")!!
-        deleteNotification(date, time)
+        deleteAlert(date, time)
     }
 
     private fun showWeatherAlert(context: Context, intent: Intent) {
@@ -59,12 +61,14 @@ class AlertReceiver: BroadcastReceiver() {
         val longitude = intent.getStringExtra("longitude")!!.toDouble()
         val appSettings = AppSettings.getInstance(context)
         val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
+        val cityName = getCity(context, latitude, longitude).cityName
 
         getCurrentWeather(latitude, longitude, units, appSettings.language)
         handleCurrentWeatherResponse(
             notificationType,
             appSettings.language,
-            appSettings.temperatureUnit
+            appSettings.temperatureUnit,
+            cityName
         )
     }
 
@@ -87,7 +91,8 @@ class AlertReceiver: BroadcastReceiver() {
     private fun handleCurrentWeatherResponse(
         notificationType: String,
         language: String,
-        temperatureUnit: String
+        temperatureUnit: String,
+        cityName: String
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             weather.collectLatest { response ->
@@ -96,11 +101,9 @@ class AlertReceiver: BroadcastReceiver() {
                     is ApiCurrentWeatherResponse.Success -> {
                         val weatherData = getWeatherData(response.data)
 
-                        var weatherDescription =
-                            "It's ${weatherData.weatherDescription} now in ${weatherData.cityName}. The temperature forecast for today is ${weatherData.temperature} º$temperatureUnit."
+                        var weatherDescription = "It's ${weatherData.weatherDescription} now in ${cityName}. The temperature forecast for today is ${weatherData.temperature} º$temperatureUnit."
                         if (language.equals("ar"))
-                            weatherDescription =
-                                "الجو ${weatherData.weatherDescription} الآن في ${weatherData.cityName}. توقعات درجة الحرارة لليوم هي ${weatherData.temperature} º$temperatureUnit."
+                            weatherDescription = "الجو ${weatherData.weatherDescription} الآن في ${cityName}. توقعات درجة الحرارة لليوم هي ${weatherData.temperature} º$temperatureUnit."
 
                         if (notificationType.equals(Context.NOTIFICATION_SERVICE))
                             alertMaker.makeNotification(weatherDescription)
@@ -113,9 +116,9 @@ class AlertReceiver: BroadcastReceiver() {
         }
     }
 
-    private fun deleteNotification(data: String, time: String) {
+    private fun deleteAlert(data: String, time: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            repository.deleteNotificationById(data, time)
+            repository.deleteAlertById(data, time)
         }
     }
 }

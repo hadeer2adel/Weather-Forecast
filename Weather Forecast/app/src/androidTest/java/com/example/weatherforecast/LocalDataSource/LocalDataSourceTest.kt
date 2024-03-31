@@ -5,15 +5,11 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.example.weatherforecast.Model.NotificationData
-import kotlinx.coroutines.Dispatchers
+import com.example.weatherforecast.Model.AlertData
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.CoreMatchers.nullValue
@@ -36,7 +32,7 @@ class LocalDataSourceTest {
 
     val date = "28 Mar, 2024"
     val time = "05:05 PM"
-    lateinit var notification: NotificationData
+    lateinit var alert: AlertData
 
     @Before
     fun setUp(){
@@ -46,9 +42,9 @@ class LocalDataSourceTest {
         ).allowMainThreadQueries()
             .build()
 
-        localDataSource = LocalDataSourceImpl(database.getDAOLastWeather(), database.getDAOLocations(), database.getDAONotifications())
+        localDataSource = LocalDataSourceImpl(database.getDAOLastWeather(), database.getDAOLocations(), database.getDAOAlerts())
 
-        notification = NotificationData(
+        alert = AlertData(
             date,
             time,
             10.5,
@@ -63,12 +59,12 @@ class LocalDataSourceTest {
     }
 
     @Test
-    fun insertNotificationTest_TakeNotificationData_RequestSameNotification() = runBlockingTest {
+    fun insertAlertTest_TakeAlertData_RequestSameAlert() = runBlockingTest {
         //When
-        localDataSource.insertNotification(notification)
+        localDataSource.insertAlert(alert)
 
         //Then
-        val result = localDataSource.getNotificationById(date, time)
+        val result = localDataSource.getAlertById(date, time)
 
         assertThat(result , not(nullValue()))
         assertThat(result?.latitude, `is`(10.5))
@@ -77,56 +73,56 @@ class LocalDataSourceTest {
     }
 
     @Test
-    fun deleteNotificationTest_TakeNotificationData_RequestNull() = runBlockingTest {
+    fun deleteAlertTest_TakeAlertData_RequestNull() = runBlockingTest {
         //Given
-        localDataSource.insertNotification(notification)
+        localDataSource.insertAlert(alert)
 
         //When
-        localDataSource.deleteNotification(notification)
+        localDataSource.deleteAlert(alert)
 
         //Then
-        val result = localDataSource.getNotificationById(date, time)
+        val result = localDataSource.getAlertById(date, time)
         assertThat(result , nullValue())
     }
 
     @Test
-    fun deleteNotificationByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
+    fun deleteAlertByIdTest_TakeDataAndTime_RequestNull() = runBlockingTest {
         //Given
-        localDataSource.insertNotification(notification)
+        localDataSource.insertAlert(alert)
 
         //When
-        localDataSource.deleteNotificationById(date, time)
+        localDataSource.deleteAlertById(date, time)
 
         //Then
-        val result = localDataSource.getNotificationById(date, time)
+        val result = localDataSource.getAlertById(date, time)
         assertThat(result , nullValue())
     }
 
     @Test
-    fun getAllNotificationsTest_RequestSameNotificationList() = runBlockingTest {
+    fun getAllAlertsTest_RequestSameAlertList() = runBlockingTest {
         //Given
-        val notification1 = NotificationData(
+        val alert1 = AlertData(
             "1 Mar, 2024",
             "01:00",
             10.5,
             15.6,
             "notification"
         )
-        val notification2 = NotificationData(
+        val alert2 = AlertData(
             "2 Mar, 2024",
             "02:00",
             10.5,
             15.6,
             "alarm"
         )
-        val notificationList = listOf(notification1, notification2)
-        localDataSource.insertNotification(notification1)
-        localDataSource.insertNotification(notification2)
+        val alertList = listOf(alert1, alert2)
+        localDataSource.insertAlert(alert1)
+        localDataSource.insertAlert(alert2)
 
 
         //When
-        val resultFlow = localDataSource.getAllNotifications()
-        var result: List<NotificationData> = emptyList()
+        val resultFlow = localDataSource.getAllAlerts()
+        var result: List<AlertData> = emptyList()
         val job = launch {
             resultFlow.collect {
                 result = it
@@ -137,36 +133,36 @@ class LocalDataSourceTest {
         job.cancelAndJoin()
 
         //Then
-        assertThat(result, IsEqual(notificationList))
+        assertThat(result, IsEqual(alertList))
     }
 
     @Test
-    fun deleteAllNotificationsTest_RequestNull() = runBlockingTest {
+    fun deleteAllAlertsTest_RequestNull() = runBlockingTest {
         //Given
-        val notification1 = NotificationData(
+        val alert1 = AlertData(
             "1 Mar, 2024",
             "01:00",
             10.5,
             15.6,
             "notification"
         )
-        val notification2 = NotificationData(
+        val alert2 = AlertData(
             "2 Mar, 2024",
             "02:00",
             10.5,
             15.6,
             "alarm"
         )
-        localDataSource.insertNotification(notification1)
-        localDataSource.insertNotification(notification2)
+        localDataSource.insertAlert(alert1)
+        localDataSource.insertAlert(alert2)
 
         //When
-        localDataSource.deleteAllNotifications()
+        localDataSource.deleteAllAlerts()
 
         //Then
-        val result1 = localDataSource.getNotificationById("1 Mar, 2024", "01:00")
+        val result1 = localDataSource.getAlertById("1 Mar, 2024", "01:00")
         assertThat(result1 , nullValue())
-        val result2 = localDataSource.getNotificationById("2 Mar, 2024", "02:00")
+        val result2 = localDataSource.getAlertById("2 Mar, 2024", "02:00")
         assertThat(result2 , nullValue())
     }
 

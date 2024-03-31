@@ -1,11 +1,9 @@
 package com.example.weatherforecast.LocalDataSource
 
-import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.DailyWeatherData
-import com.example.weatherforecast.Model.ForecastWeatherResponse
 import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.NotificationData
+import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.WeatherData
 
 sealed class DaoLocationResponse {
@@ -14,10 +12,10 @@ sealed class DaoLocationResponse {
     object Loading: DaoLocationResponse()
 }
 
-sealed class DaoNotificationResponse {
-    class Success(val data: List<NotificationData>): DaoNotificationResponse()
-    class Failure(val error:Throwable): DaoNotificationResponse()
-    object Loading: DaoNotificationResponse()
+sealed class DaoAlertResponse {
+    class Success(val data: List<AlertData>): DaoAlertResponse()
+    class Failure(val error:Throwable): DaoAlertResponse()
+    object Loading: DaoAlertResponse()
 }
 
 sealed class DaoWeatherResponse {

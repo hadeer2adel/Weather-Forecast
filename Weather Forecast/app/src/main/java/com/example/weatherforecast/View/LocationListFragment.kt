@@ -2,6 +2,7 @@ package com.example.weatherforecast.View
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -42,7 +43,6 @@ class LocationListFragment : Fragment() {
     private lateinit var binding: FragmentListBinding
     private lateinit var adapter: LocationAdapter
     private lateinit var locationViewModel: LocationViewModel
-    private lateinit var remoteViewModel: RemoteViewModel
 
 
     override fun onCreateView(
@@ -60,13 +60,10 @@ class LocationListFragment : Fragment() {
         initViewModel()
 
         if(arguments != null && requireArguments().containsKey("latitude")) {
-            val appSettings = AppSettings.getInstance(requireContext())
             val latitude = requireArguments().getString("latitude", "0").toDouble()
             val longitude = requireArguments().getString("longitude", "0").toDouble()
-
-            val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
-            remoteViewModel.getCurrentWeather(latitude, longitude, units, appSettings.language)
-            handleCurrentWeatherResponse()
+            val location = LocationData(0, latitude, longitude)
+            locationViewModel.insertLocation(location)
         }
 
         binding.addBtn.setOnClickListener {
@@ -108,11 +105,8 @@ class LocationListFragment : Fragment() {
     private fun initViewModel(){
         val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
-        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAONotifications())
+        val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
         val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
-
-        val remoteFactory = RemoteViewModelFactory(repository)
-        remoteViewModel = ViewModelProvider(this, remoteFactory).get(RemoteViewModel::class.java)
 
         val localFactory = LocationViewModelFactory(repository)
         locationViewModel = ViewModelProvider(this, localFactory).get(LocationViewModel::class.java)
@@ -134,22 +128,6 @@ class LocationListFragment : Fragment() {
             }
         }
     }
-    private fun handleCurrentWeatherResponse(){
-        lifecycleScope.launch {
-            remoteViewModel.weather.collectLatest {response ->
-                when(response){
-                    is ApiCurrentWeatherResponse.Loading -> { onLoading() }
-                    is ApiCurrentWeatherResponse.Success ->{
-                        onSuccess()
-                        val location = getLocationData(response.data)
-                        locationViewModel.insertLocation(location)
-                    }
-                    is ApiCurrentWeatherResponse.Failure ->{ onFailure(response.error.message) }
-                }
-            }
-        }
-    }
-
     private fun onLoading(){
         binding.progressBar.visibility = View.VISIBLE
         binding.recycleView.visibility = View.GONE

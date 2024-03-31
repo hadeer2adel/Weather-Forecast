@@ -1,17 +1,18 @@
 package com.example.weatherforecast.View
 
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.R
-import com.example.weatherforecast.ViewModel.LocationViewModel
-import com.example.weatherforecast.ViewModel.RemoteViewModel
 import com.example.weatherforecast.databinding.FragmentMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -19,11 +20,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.io.IOException
+import java.util.Locale
 
 class MapFragment : Fragment(), OnMapReadyCallback {
-
-    private lateinit var locationViewModel: LocationViewModel
-    private lateinit var remoteViewModel: RemoteViewModel
 
     private lateinit var googleMap: GoogleMap
     private lateinit var binding: FragmentMapBinding
@@ -52,7 +52,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val screen = requireArguments().getSerializable("Screen") as Screen
                 when(screen){
                     Screen.SETTINGS -> toSettingScreen()
-                    Screen.LOCATION_LIST -> toFavouriteScreen()
+                    Screen.LOCATION_LIST -> toLocationListScreen()
                     Screen.ALARM -> toAlarmScreen()
                     else -> Log.i("TAG", "onLocationResult: ")
                 }
@@ -75,7 +75,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         longitude = appSettings.longitude
         val currentLocation = LatLng(latitude!!, longitude!!)
         googleMap.addMarker(MarkerOptions().position(currentLocation).title("Your Location"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 8f))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 5f))
     }
 
     private fun toSettingScreen(){
@@ -86,7 +86,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         findNavController().navigate(R.id.action_mapFragment_to_settingFragment, args)
     }
-    private fun toFavouriteScreen(){
+    private fun toLocationListScreen(){
         val args = Bundle().apply {
             putString("latitude", latitude.toString())
             putString("longitude", longitude.toString())
