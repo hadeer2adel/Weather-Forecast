@@ -75,7 +75,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         longitude = appSettings.longitude
         val currentLocation = LatLng(latitude!!, longitude!!)
         googleMap.addMarker(MarkerOptions().position(currentLocation).title("Your Location"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 5f))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 2f))
     }
 
     private fun toSettingScreen(){

@@ -43,6 +43,7 @@ import com.example.weatherforecast.ViewModel.RemoteViewModelFactory
 import com.example.weatherforecast.databinding.FragmentHomeBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class HomeFragment : Fragment(){
 
@@ -201,15 +202,18 @@ class HomeFragment : Fragment(){
     }
     private fun setDataOnView(weather: WeatherData){
         binding.apply {
-            val city = getCity(requireContext(), weather.latitude, weather.longitude)
 
-            val flagUrl = getCountryFlagUrl(city.countryCode)
+            val flagUrl = weather.countryCode?.let { getCountryFlagUrl(it) }
             Glide.with(requireContext()).load(flagUrl).into(flagImg)
-            val imgUrl = getWeatherIcon(weather.weatherIcon)
+
+            val calendar = Calendar.getInstance()
+            val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val isMorning = (currentHour in 6..17)
+            val imgUrl = getWeatherIcon(weather.weatherIcon, isMorning)
             image.setImageResource(imgUrl)
 
             date.text = weather.Date
-            cityName.text = city.cityName
+            cityName.text = weather.cityName
             temperature.text = weather.temperature.toString()
             temperatureUnit.text = "º${appSettings.temperatureUnit}"
             description.text = weather.weatherDescription

@@ -7,6 +7,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -54,7 +56,7 @@ class AlertMaker(val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun makeNotification(weatherDescription: String) {
+    fun makeNotification(weatherDescription: String, largeIcon: Bitmap) {
         setNotificationChannel()
 
         val intent = Intent(context, MainActivity::class.java)
@@ -63,6 +65,7 @@ class AlertMaker(val context: Context) {
 
         val notification = NotificationCompat.Builder(context, Notification_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
+            .setLargeIcon(largeIcon)
             .setContentTitle(context.getString(R.string.alert_title))
             .setContentText(weatherDescription)
             .setStyle(NotificationCompat.BigTextStyle().bigText(weatherDescription))
@@ -76,7 +79,7 @@ class AlertMaker(val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun makeAlarm(weatherDescription: String) {
+    fun makeAlarm(weatherDescription: String, largeIcon: Bitmap) {
         setAlarmChannel()
 
         val cancelIntent = Intent(context, AlertCancelReceiver::class.java)
@@ -88,6 +91,7 @@ class AlertMaker(val context: Context) {
 
         val notification = NotificationCompat.Builder(context, Alarm_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)
+            .setLargeIcon(largeIcon)
             .setContentTitle(context.getString(R.string.alert_title))
             .setContentText(weatherDescription)
             .setStyle(NotificationCompat.BigTextStyle().bigText(weatherDescription))

@@ -28,7 +28,7 @@ class DayAdapter (
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
         val dayWeather = getItem(position)
         holder.binding.apply {
-            val imgUrl = getWeatherIcon(dayWeather.weatherIcon)
+            val imgUrl = getWeatherIcon(dayWeather.weatherIcon, true)
             image.setImageResource(imgUrl)
             day.text = dayWeather.date
             val unit = AppSettings.getInstance(context).temperatureUnit

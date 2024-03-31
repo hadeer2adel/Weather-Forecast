@@ -1,13 +1,22 @@
 package com.example.weatherforecast.Helpers
 
 import com.example.weatherforecast.R
+import java.util.Calendar
 
-fun getWeatherIcon(icon: String): Int{
+fun getWeatherIcon(icon: String, isMorning: Boolean): Int{
     return when (icon) {
-        "01d" -> R.drawable.w01d
-        "01n" -> R.drawable.w01n
-        "02d" -> R.drawable.w02d
-        "02n" -> R.drawable.w02n
+        "01d", "01n" -> {
+            if(isMorning)
+                R.drawable.w01d
+            else
+                R.drawable.w01n
+        }
+        "02d", "02n" -> {
+            if(isMorning)
+                R.drawable.w02d
+            else
+                R.drawable.w02n
+        }
         "03d", "03n" -> R.drawable.w03
         "04d", "04n" -> R.drawable.w04
         "09d", "09n", "10d", "10n"  -> R.drawable.w09

@@ -3,9 +3,12 @@ package com.example.weatherforecast.AlertUtil
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.example.weatherforecast.Helpers.City
 import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getUnits
+import com.example.weatherforecast.Helpers.getWeatherIcon
 import com.example.weatherforecast.Helpers.isNetworkConnected
 import com.example.weatherforecast.LocalDataSource.DataBase
 import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
@@ -46,7 +49,8 @@ class AlertReceiver: BroadcastReceiver() {
         if (isNetworkConnected(context)) {
             showWeatherAlert(context, intent)
         } else {
-            alertMaker.makeNotification(context.getString(R.string.no_connection_notification))
+            val weatherIcon = BitmapFactory.decodeResource(context.resources, R.drawable.w03)
+            alertMaker.makeNotification(context.getString(R.string.no_connection_notification), weatherIcon)
         }
 
         val date = intent.getStringExtra("date")!!
@@ -61,14 +65,13 @@ class AlertReceiver: BroadcastReceiver() {
         val longitude = intent.getStringExtra("longitude")!!.toDouble()
         val appSettings = AppSettings.getInstance(context)
         val units = getUnits(appSettings.temperatureUnit, appSettings.windUnit)
-        val cityName = getCity(context, latitude, longitude).cityName
 
         getCurrentWeather(latitude, longitude, units, appSettings.language)
         handleCurrentWeatherResponse(
+            context,
             notificationType,
             appSettings.language,
-            appSettings.temperatureUnit,
-            cityName
+            appSettings.temperatureUnit
         )
     }
 
@@ -89,10 +92,10 @@ class AlertReceiver: BroadcastReceiver() {
     }
 
     private fun handleCurrentWeatherResponse(
+        context: Context,
         notificationType: String,
         language: String,
-        temperatureUnit: String,
-        cityName: String
+        temperatureUnit: String
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             weather.collectLatest { response ->
@@ -100,15 +103,19 @@ class AlertReceiver: BroadcastReceiver() {
                     is ApiCurrentWeatherResponse.Loading -> {}
                     is ApiCurrentWeatherResponse.Success -> {
                         val weatherData = getWeatherData(response.data)
+                        val cityName = getCity(context, weatherData.latitude, weatherData.longitude).cityName
+
 
                         var weatherDescription = "It's ${weatherData.weatherDescription} now in ${cityName}. The temperature forecast for today is ${weatherData.temperature} º$temperatureUnit."
                         if (language.equals("ar"))
                             weatherDescription = "الجو ${weatherData.weatherDescription} الآن في ${cityName}. توقعات درجة الحرارة لليوم هي ${weatherData.temperature} º$temperatureUnit."
 
+                        val weatherIcon = BitmapFactory.decodeResource(context.resources, getWeatherIcon(weatherData.weatherIcon, false))
+
                         if (notificationType.equals(Context.NOTIFICATION_SERVICE))
-                            alertMaker.makeNotification(weatherDescription)
+                            alertMaker.makeNotification(weatherDescription, weatherIcon)
                         else
-                            alertMaker.makeAlarm(weatherDescription)
+                            alertMaker.makeAlarm(weatherDescription, weatherIcon)
                     }
                     is ApiCurrentWeatherResponse.Failure -> {}
                 }

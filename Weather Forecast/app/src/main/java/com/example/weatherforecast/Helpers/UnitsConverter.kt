@@ -3,6 +3,7 @@ package com.example.weatherforecast.Helpers
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
+import android.util.Log
 import android.widget.Toast
 import java.io.IOException
 import java.util.Locale
@@ -31,9 +32,13 @@ fun getCity(context: Context, latitude: Double, longitude: Double): City {
         val addresses = geocoder.getFromLocation(latitude, longitude, 1)
         if (addresses!!.isNotEmpty()) {
             val address: Address = addresses[0]
-            var cityName = "${address.locality}, ${address.adminArea}, ${address.countryName}"
-            if (address.locality == null)
-                cityName = "${address.adminArea}, ${address.countryName}"
+            var cityName = ""
+            if (address.locality != null)
+                cityName += address.locality + ", "
+            if (address.adminArea != null)
+                cityName += address.adminArea + ", "
+            if (address.countryName != null)
+                cityName += address.countryName
             val countryCode = address.countryCode
             return City(cityName, countryCode)
         }
