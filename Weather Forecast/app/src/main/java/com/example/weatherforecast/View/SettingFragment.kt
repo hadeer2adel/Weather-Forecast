@@ -32,6 +32,7 @@ import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.SettingViewModel
 import com.example.weatherforecast.ViewModel.SettingViewModelFactory
+import com.example.weatherforecast.ViewModel.SharedFlowViewModel
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,6 +43,7 @@ class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
     private lateinit var appSettings: AppSettings
     private lateinit var viewModel: SettingViewModel
+    private lateinit var sharedFlowViewModel: SharedFlowViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -114,6 +116,8 @@ class SettingFragment : Fragment() {
 
         val factory = SettingViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(SettingViewModel::class.java)
+
+        sharedFlowViewModel = ViewModelProvider(requireActivity()).get(SharedFlowViewModel::class.java)
     }
     private fun handleDaoAlertResponse(){
         lifecycleScope.launch {
@@ -236,16 +240,8 @@ class SettingFragment : Fragment() {
                 else -> selectedLanguage = "en"
             }
             appSettings.language = selectedLanguage
-            setLocale(selectedLanguage)
+            sharedFlowViewModel.setLanguage(selectedLanguage)
         }
-    }
-    private fun setLocale(languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val config = Configuration()
-        config.locale = locale
-        resources.updateConfiguration(config, resources.displayMetrics)
-        requireActivity().recreate()
     }
     private fun setUpTemperatureOptions(view: View){
         binding.temperature.setOnCheckedChangeListener { group, checkedId ->
