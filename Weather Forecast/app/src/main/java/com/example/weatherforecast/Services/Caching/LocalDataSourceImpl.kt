@@ -1,4 +1,4 @@
-package com.example.weatherforecast.LocalDataSource
+package com.example.weatherforecast.Services.Caching
 
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
@@ -11,7 +11,7 @@ class LocalDataSourceImpl constructor(
     val daoLastWeather: DAOLastWeather,
     val daoLocations: DAOLocations,
     val daoAlerts: DAOAlerts
-):LocalDataSource {
+): LocalDataSource {
 
     override fun getAllLocations(): Flow<List<LocationData>> {
         return daoLocations.getAllLocations()

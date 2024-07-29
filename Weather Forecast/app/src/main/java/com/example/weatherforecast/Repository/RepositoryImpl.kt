@@ -1,6 +1,6 @@
 package com.example.weatherforecast.Repository
 
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
+import com.example.weatherforecast.Services.Caching.LocalDataSource
 import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.ForecastWeatherResponse
@@ -8,22 +8,22 @@ import com.example.weatherforecast.Model.HourlyWeatherData
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.WeatherData
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
+import com.example.weatherforecast.Services.Networking.NetworkManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class RepositoryImpl (val remoteDataSource: RemoteDataSource, val localDataSource: LocalDataSource):
+class RepositoryImpl (val networkManager: NetworkManager, val localDataSource: LocalDataSource):
     Repository {
 
     override suspend fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String
     ): Flow<CurrentWeatherResponse?> {
-        return  flowOf(remoteDataSource.getCurrentWeather(latitude, longitude, units, language).body())
+        return  flowOf(networkManager.getCurrentWeather(latitude, longitude, units, language).body())
     }
 
 
     override suspend fun getForecastWeather(latitude: Double, longitude: Double, units: String, language: String
     ): Flow<ForecastWeatherResponse?> {
-        return  flowOf(remoteDataSource.getForecastWeather(latitude, longitude, units, language).body())
+        return  flowOf(networkManager.getForecastWeather(latitude, longitude, units, language).body())
     }
 
     override fun getAllLocations(): Flow<List<LocationData>> {

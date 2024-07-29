@@ -1,6 +1,5 @@
 package com.example.weatherforecast.View
 
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -17,17 +16,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.Helpers.showDialog
-import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.ResponseState
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.Helpers.isNetworkConnected
 import com.example.weatherforecast.Helpers.showNetworkDialog
 import com.example.weatherforecast.R
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.Networking.NetworkManager
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.SettingViewModel
@@ -36,7 +35,6 @@ import com.example.weatherforecast.ViewModel.SharedFlowViewModel
 import com.example.weatherforecast.databinding.FragmentSettingBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class SettingFragment : Fragment() {
 
@@ -96,7 +94,7 @@ class SettingFragment : Fragment() {
         binding.rvAlarm.setOnClickListener {
             val onAllow: () -> Unit = {
                 viewModel.getAllAlerts()
-                handleDaoAlertResponse()
+                handleResponseState()
             }
             showDialog(
                 requireContext(),
@@ -109,22 +107,22 @@ class SettingFragment : Fragment() {
     }
 
     private fun initViewModel(){
-        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val networkManager: NetworkManager = NetworkManagerImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
         val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
-        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+        val repository: Repository = RepositoryImpl(networkManager, localDataSource)
 
         val factory = SettingViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(SettingViewModel::class.java)
 
         sharedFlowViewModel = ViewModelProvider(requireActivity()).get(SharedFlowViewModel::class.java)
     }
-    private fun handleDaoAlertResponse(){
+    private fun handleResponseState(){
         lifecycleScope.launch {
             viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoAlertResponse.Loading -> { onLoading() }
-                    is DaoAlertResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         val alertManagement = AlertManagement()
                         for(alert in response.data){
@@ -132,7 +130,7 @@ class SettingFragment : Fragment() {
                         }
                         viewModel.deleteAllAlerts()
                     }
-                    is DaoAlertResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }

@@ -1,10 +1,10 @@
 package com.example.weatherforecast.Repository
 
 import com.example.weatherforecast.LocalDataSource.FakeLocalDataSourceImpl
-import com.example.weatherforecast.LocalDataSource.LocalDataSource
+import com.example.weatherforecast.Services.Caching.LocalDataSource
 import com.example.weatherforecast.Model.AlertData
-import com.example.weatherforecast.RemoteDataSource.FakeRemoteDataSourceImpl
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
+import com.example.weatherforecast.Networking.FakeNetworkManagerImpl
+import com.example.weatherforecast.Services.Networking.NetworkManager
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -49,7 +49,7 @@ class RepositoryTest {
 
     private val localList = listOf(alert1, alert2, alert3, alert4)
 
-    private lateinit var remoteDataSource: RemoteDataSource
+    private lateinit var networkManager: NetworkManager
     private lateinit var localDataSource: LocalDataSource
     private lateinit var repository: Repository
 
@@ -59,9 +59,9 @@ class RepositoryTest {
 
     @Before
     fun CreateRepository(){
-        remoteDataSource = FakeRemoteDataSourceImpl()
+        networkManager = FakeNetworkManagerImpl()
         localDataSource = FakeLocalDataSourceImpl(localList.toMutableList())
-        repository = RepositoryImpl(remoteDataSource, localDataSource)
+        repository = RepositoryImpl(networkManager, localDataSource)
 
         alert = AlertData(
             date,

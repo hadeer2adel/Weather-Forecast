@@ -13,15 +13,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.ResponseState
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.LocationAdapter
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.Networking.NetworkManager
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.LocationViewModel
@@ -69,27 +69,27 @@ class SavedLocationsFragment : Fragment() {
         binding.recycleView.adapter = adapter
     }
     private fun initViewModel(){
-        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val networkManager: NetworkManager = NetworkManagerImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
         val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
-        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+        val repository: Repository = RepositoryImpl(networkManager, localDataSource)
 
         val factory = LocationViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(LocationViewModel::class.java)
-        handleDaoLocationResponse()
+        handleResponseState()
     }
 
-    private fun handleDaoLocationResponse(){
+    private fun handleResponseState(){
         lifecycleScope.launch {
             viewModel.locationList.collectLatest { response ->
                 when(response){
-                    is DaoLocationResponse.Loading -> { onLoading() }
-                    is DaoLocationResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         adapter.submitList(response.data)
                         adapter.notifyDataSetChanged()
                     }
-                    is DaoLocationResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }

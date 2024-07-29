@@ -1,16 +1,11 @@
 package com.example.weatherforecast.ViewModel
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.Helpers.getUnits
-import com.example.weatherforecast.Model.AppSettings
-import com.example.weatherforecast.Model.DailyWeatherData
-import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
-import com.example.weatherforecast.RemoteDataSource.ApiForecastWeatherResponse
+import com.example.weatherforecast.Model.CurrentWeatherResponse
+import com.example.weatherforecast.Model.ForecastWeatherResponse
+import com.example.weatherforecast.Services.ResponseState
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,19 +16,20 @@ import kotlinx.coroutines.launch
 
 class RemoteViewModel(private var repository: Repository) : ViewModel (){
 
-    private var _weather = MutableStateFlow<ApiCurrentWeatherResponse>(ApiCurrentWeatherResponse.Loading)
-    var weather: StateFlow<ApiCurrentWeatherResponse> = _weather
+    private var _weather = MutableStateFlow<ResponseState<CurrentWeatherResponse>>(ResponseState.Loading)
+    var weather: StateFlow<ResponseState<CurrentWeatherResponse>> = _weather
 
-    private var _weatherList = MutableStateFlow<ApiForecastWeatherResponse>(ApiForecastWeatherResponse.Loading)
-    var weatherList: StateFlow<ApiForecastWeatherResponse> = _weatherList
+    private var _weatherList = MutableStateFlow<ResponseState<ForecastWeatherResponse>>(
+        ResponseState.Loading)
+    var weatherList: StateFlow<ResponseState<ForecastWeatherResponse>> = _weatherList
 
     fun getCurrentWeather(latitude: Double, longitude: Double, units: String, language: String){
         viewModelScope.launch(Dispatchers.IO){
             repository.getCurrentWeather(latitude, longitude, units, language)
                 .catch {
-                    _weather.value = ApiCurrentWeatherResponse.Failure(it)
+                    _weather.value = ResponseState.Failure(it)
                 }.collect {
-                    _weather.value = ApiCurrentWeatherResponse.Success(it!!)
+                    _weather.value = ResponseState.Success(it!!)
                 }
         }
     }
@@ -42,9 +38,9 @@ class RemoteViewModel(private var repository: Repository) : ViewModel (){
         viewModelScope.launch(Dispatchers.IO){
             repository.getForecastWeather(latitude, longitude, units, language)
                 .catch {
-                    _weatherList.value = ApiForecastWeatherResponse.Failure(it)
+                    _weatherList.value = ResponseState.Failure(it)
                 }.collect {
-                    _weatherList.value = ApiForecastWeatherResponse.Success(it!!)
+                    _weatherList.value = ResponseState.Success(it!!)
                 }
         }
     }

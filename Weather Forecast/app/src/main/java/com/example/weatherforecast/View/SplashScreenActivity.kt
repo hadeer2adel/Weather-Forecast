@@ -7,8 +7,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.example.weatherforecast.R
+import com.example.weatherforecast.base.BaseActivity
 
-class SplashScreenActivity : AppCompatActivity() {
+class SplashScreenActivity : BaseActivity() {
     private lateinit var lottie_1: LottieAnimationView
 
     override fun onCreate(savedInstanceState: Bundle?) {

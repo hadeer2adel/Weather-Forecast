@@ -1,4 +1,4 @@
-package com.example.weatherforecast.LocalDataSource
+package com.example.weatherforecast.Services.Caching
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,9 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherforecast.Model.LocationData
-import com.example.weatherforecast.Model.WeatherData
 import kotlinx.coroutines.flow.Flow
-import org.intellij.lang.annotations.Language
 
 @Dao
 interface DAOLocations {

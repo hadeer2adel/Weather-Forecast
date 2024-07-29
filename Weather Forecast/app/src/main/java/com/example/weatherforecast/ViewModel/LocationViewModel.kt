@@ -3,7 +3,7 @@ package com.example.weatherforecast.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
+import com.example.weatherforecast.Services.ResponseState
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class LocationViewModel(val repository: Repository) : ViewModel (){
 
-    private var _locationList = MutableStateFlow<DaoLocationResponse>(DaoLocationResponse.Loading)
-    var locationList: StateFlow<DaoLocationResponse> = _locationList
+    private var _locationList = MutableStateFlow<ResponseState<List<LocationData>>>(ResponseState.Loading)
+    var locationList: StateFlow<ResponseState<List<LocationData>>> = _locationList
 
     init {
         getAllLocations()
@@ -40,9 +40,9 @@ class LocationViewModel(val repository: Repository) : ViewModel (){
         viewModelScope.launch(Dispatchers.IO){
             repository.getAllLocations()
                 .catch {
-                    _locationList.value = DaoLocationResponse.Failure(it)
+                    _locationList.value = ResponseState.Failure(it)
                 }.collect {
-                    _locationList.value = DaoLocationResponse.Success(it)
+                    _locationList.value = ResponseState.Success(it)
                 }
         }
     }

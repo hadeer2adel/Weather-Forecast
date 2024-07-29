@@ -6,6 +6,9 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.example.weatherforecast.Model.AlertData
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSource
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle

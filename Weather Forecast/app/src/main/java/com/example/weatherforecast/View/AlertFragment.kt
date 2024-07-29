@@ -11,15 +11,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Model.Screen
 import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.R
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.Networking.NetworkManager
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.AlertViewModel
@@ -103,10 +103,10 @@ class AlertFragment : Fragment() {
     }
 
     private fun initViewModel(){
-        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val networkManager: NetworkManager = NetworkManagerImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
         val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
-        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+        val repository: Repository = RepositoryImpl(networkManager, localDataSource)
 
         val factory = AlertViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(AlertViewModel::class.java)

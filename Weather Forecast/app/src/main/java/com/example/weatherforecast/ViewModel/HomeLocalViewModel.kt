@@ -1,19 +1,11 @@
 package com.example.weatherforecast.ViewModel
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
-import com.example.weatherforecast.LocalDataSource.DaoHourlyWeatherResponse
-import com.example.weatherforecast.LocalDataSource.DaoLocationResponse
-import com.example.weatherforecast.LocalDataSource.DaoWeatherResponse
-import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Services.ResponseState
 import com.example.weatherforecast.Model.DailyWeatherData
 import com.example.weatherforecast.Model.HourlyWeatherData
-import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
@@ -25,14 +17,14 @@ import kotlinx.coroutines.launch
 
 class HomeLocalViewModel(val repository: Repository) : ViewModel (){
 
-    private var _weather = MutableStateFlow<DaoWeatherResponse>(DaoWeatherResponse.Loading)
-    var weather: StateFlow<DaoWeatherResponse> = _weather
+    private var _weather = MutableStateFlow<ResponseState<WeatherData>>(ResponseState.Loading)
+    var weather: StateFlow<ResponseState<WeatherData>> = _weather
 
-    private var _hourList = MutableStateFlow<DaoHourlyWeatherResponse>(DaoHourlyWeatherResponse.Loading)
-    var hourList: StateFlow<DaoHourlyWeatherResponse> = _hourList
+    private var _hourList = MutableStateFlow<ResponseState<List<HourlyWeatherData>>>(ResponseState.Loading)
+    var hourList: StateFlow<ResponseState<List<HourlyWeatherData>>> = _hourList
 
-    private var _dayList = MutableStateFlow<DaoDailyWeatherDataResponse>(DaoDailyWeatherDataResponse.Loading)
-    var dayList: StateFlow<DaoDailyWeatherDataResponse> = _dayList
+    private var _dayList = MutableStateFlow<ResponseState<List<DailyWeatherData>>>(ResponseState.Loading)
+    var dayList: StateFlow<ResponseState<List<DailyWeatherData>>> = _dayList
 
     fun insertLastWeather(weather: WeatherData){
         viewModelScope.launch(Dispatchers.IO){
@@ -62,25 +54,25 @@ class HomeLocalViewModel(val repository: Repository) : ViewModel (){
         viewModelScope.launch(Dispatchers.IO){
             repository.getLastWeather()
                 .catch {
-                    _weather.value = DaoWeatherResponse.Failure(it)
+                    _weather.value = ResponseState.Failure(it)
                 }.collect {
-                    _weather.value = DaoWeatherResponse.Success(it)
+                    _weather.value = ResponseState.Success(it)
                 }
         }
         viewModelScope.launch(Dispatchers.IO){
             repository.getLastWeatherHours()
                 .catch {
-                    _hourList.value = DaoHourlyWeatherResponse.Failure(it)
+                    _hourList.value = ResponseState.Failure(it)
                 }.collect {
-                    _hourList.value = DaoHourlyWeatherResponse.Success(it)
+                    _hourList.value = ResponseState.Success(it)
                 }
         }
         viewModelScope.launch(Dispatchers.IO){
             repository.getLastWeatherDays()
                 .catch {
-                    _dayList.value = DaoDailyWeatherDataResponse.Failure(it)
+                    _dayList.value = ResponseState.Failure(it)
                 }.collect {
-                    _dayList.value = DaoDailyWeatherDataResponse.Success(it)
+                    _dayList.value = ResponseState.Success(it)
                 }
         }
     }

@@ -3,7 +3,8 @@ package com.example.weatherforecast.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
+import com.example.weatherforecast.Model.AlertData
+import com.example.weatherforecast.Services.ResponseState
 import com.example.weatherforecast.Repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class SettingViewModel(val repository: Repository) : ViewModel (){
 
-    private var _alertList = MutableStateFlow<DaoAlertResponse>(DaoAlertResponse.Loading)
-    var alertList: StateFlow<DaoAlertResponse> = _alertList
+    private var _alertList = MutableStateFlow<ResponseState<List<AlertData>>>(ResponseState.Loading)
+    var alertList: StateFlow<ResponseState<List<AlertData>>> = _alertList
 
     fun deleteAllLocations(){
         viewModelScope.launch(Dispatchers.IO){
@@ -33,9 +34,9 @@ class SettingViewModel(val repository: Repository) : ViewModel (){
         viewModelScope.launch(Dispatchers.IO){
             repository.getAllAlerts()
                 .catch {
-                    _alertList.value = DaoAlertResponse.Failure(it)
+                    _alertList.value = ResponseState.Failure(it)
                 }.collect {
-                    _alertList.value = DaoAlertResponse.Success(it)
+                    _alertList.value = ResponseState.Success(it)
                 }
         }
     }

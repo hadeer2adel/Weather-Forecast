@@ -12,16 +12,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIcon
 import com.example.weatherforecast.Helpers.isNetworkConnected
-import com.example.weatherforecast.LocalDataSource.DaoDailyWeatherDataResponse
-import com.example.weatherforecast.LocalDataSource.DaoHourlyWeatherResponse
-import com.example.weatherforecast.LocalDataSource.DaoWeatherResponse
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Model.getDailyWeatherData
@@ -30,10 +26,9 @@ import com.example.weatherforecast.Model.getWeatherData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.DayAdapter
 import com.example.weatherforecast.RecycleView.HourAdapter
-import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
-import com.example.weatherforecast.RemoteDataSource.ApiForecastWeatherResponse
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.ResponseState
+import com.example.weatherforecast.Services.Networking.NetworkManager
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.HomeLocalViewModel
@@ -81,9 +76,7 @@ class HomeFragment : Fragment(){
         }
         else {
             localViewModel.getLastWeather()
-            handleDaoWeatherResponse()
-            handleDaoHourlyWeatherResponse()
-            handleDaoDailyWeatherResponse()
+            handleResponseState()
         }
     }
 
@@ -106,10 +99,10 @@ class HomeFragment : Fragment(){
         binding.weekRecyclerView.adapter = dayAdapter
     }
     private fun initViewModel(){
-        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val networkManager: NetworkManager = NetworkManagerImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
         val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
-        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+        val repository: Repository = RepositoryImpl(networkManager, localDataSource)
 
         val remoteFactory = RemoteViewModelFactory(repository)
         remoteViewModel = ViewModelProvider(this, remoteFactory).get(RemoteViewModel::class.java)
@@ -118,47 +111,45 @@ class HomeFragment : Fragment(){
         localViewModel = ViewModelProvider(this, localFactory).get(HomeLocalViewModel::class.java)
     }
 
-    private fun handleDaoWeatherResponse(){
+    private fun handleResponseState(){
         lifecycleScope.launch {
             localViewModel.weather.collectLatest { response ->
                 when(response){
-                    is DaoWeatherResponse.Loading -> { onLoading() }
-                    is DaoWeatherResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         if(response.data != null)
                             setDataOnView(response.data)
                     }
-                    is DaoWeatherResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
-    }
-    private fun handleDaoHourlyWeatherResponse(){
+
         lifecycleScope.launch {
             localViewModel.hourList.collectLatest { response ->
                 when(response){
-                    is DaoHourlyWeatherResponse.Loading -> { onLoading() }
-                    is DaoHourlyWeatherResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         hourAdapter.submitList(response.data)
                         hourAdapter.notifyDataSetChanged()
                     }
-                    is DaoHourlyWeatherResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
-    }
-    private fun handleDaoDailyWeatherResponse(){
+        
         lifecycleScope.launch {
             localViewModel.dayList.collectLatest { response ->
                 when(response){
-                    is DaoDailyWeatherDataResponse.Loading -> { onLoading() }
-                    is DaoDailyWeatherDataResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         dayAdapter.submitList(response.data)
                         dayAdapter.notifyDataSetChanged()
                     }
-                    is DaoDailyWeatherDataResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
@@ -167,14 +158,14 @@ class HomeFragment : Fragment(){
         lifecycleScope.launch {
             remoteViewModel.weather.collectLatest { response ->
                 when(response){
-                    is ApiCurrentWeatherResponse.Loading -> { onLoading() }
-                    is ApiCurrentWeatherResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         val weather = getWeatherData(response.data)
                         setDataOnView(weather)
                         localViewModel.insertLastWeather(weather)
                     }
-                    is ApiCurrentWeatherResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
@@ -183,8 +174,8 @@ class HomeFragment : Fragment(){
         lifecycleScope.launch {
             remoteViewModel.weatherList.collectLatest { response ->
                 when(response){
-                    is ApiForecastWeatherResponse.Loading -> { onLoading() }
-                    is ApiForecastWeatherResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         val hourlyWeatherData = getHourlyWeatherData(response.data)
                         hourAdapter.submitList(hourlyWeatherData)
@@ -195,7 +186,7 @@ class HomeFragment : Fragment(){
                         localViewModel.insertLastWeatherHour(hourlyWeatherData)
                         localViewModel.insertLastWeatherDay(dailyWeatherData)
                     }
-                    is ApiForecastWeatherResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }

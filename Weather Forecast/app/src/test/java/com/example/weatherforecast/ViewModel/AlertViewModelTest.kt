@@ -2,7 +2,7 @@ package com.example.weatherforecast.ViewModel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
+import com.example.weatherforecast.Services.Caching.ResponseState
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Repository.FakeRepositoryImpl
@@ -87,11 +87,11 @@ class AlertViewModelTest {
         val job = launch {
             viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoAlertResponse.Loading -> { }
-                    is DaoAlertResponse.Success ->{
+                    is ResponseState.Loading -> { }
+                    is ResponseState.Success ->{
                         result = response.data
                     }
-                    is DaoAlertResponse.Failure ->{  }
+                    is ResponseState.Failure ->{  }
                 }
             }
         }
@@ -117,11 +117,11 @@ class AlertViewModelTest {
         val job = launch {
             viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoAlertResponse.Loading -> { }
-                    is DaoAlertResponse.Success ->{
+                    is ResponseState.Loading -> { }
+                    is ResponseState.Success ->{
                         result = response.data
                     }
-                    is DaoAlertResponse.Failure ->{  }
+                    is ResponseState.Failure ->{  }
                 }
             }
         }
@@ -147,11 +147,11 @@ class AlertViewModelTest {
         val job = launch {
             viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoAlertResponse.Loading -> { }
-                    is DaoAlertResponse.Success ->{
+                    is ResponseState.Loading -> { }
+                    is ResponseState.Success ->{
                         result = response.data
                     }
-                    is DaoAlertResponse.Failure ->{  }
+                    is ResponseState.Failure ->{  }
                 }
             }
         }

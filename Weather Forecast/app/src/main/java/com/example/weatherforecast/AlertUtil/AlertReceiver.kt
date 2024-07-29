@@ -3,20 +3,19 @@ package com.example.weatherforecast.AlertUtil
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.example.weatherforecast.Helpers.City
 import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIcon
 import com.example.weatherforecast.Helpers.isNetworkConnected
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
+import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.getWeatherData
 import com.example.weatherforecast.R
-import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
+import com.example.weatherforecast.Services.ResponseState
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +29,7 @@ class AlertReceiver: BroadcastReceiver() {
     lateinit var repository: Repository
     lateinit var alertMaker: AlertMaker
     private var weather =
-        MutableStateFlow<ApiCurrentWeatherResponse>(ApiCurrentWeatherResponse.Loading)
+        MutableStateFlow<ResponseState<CurrentWeatherResponse>>(ResponseState.Loading)
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null || (!AppSettings.getInstance(context).notification)) {
@@ -44,7 +43,7 @@ class AlertReceiver: BroadcastReceiver() {
             dataBase.getDAOLocations(),
             dataBase.getDAOAlerts()
         )
-        repository = RepositoryImpl(RemoteDataSourceImpl.getInstance(), localDataSource)
+        repository = RepositoryImpl(NetworkManagerImpl.getInstance(), localDataSource)
 
         if (isNetworkConnected(context)) {
             showWeatherAlert(context, intent)
@@ -84,9 +83,9 @@ class AlertReceiver: BroadcastReceiver() {
         CoroutineScope(Dispatchers.IO).launch {
             repository.getCurrentWeather(latitude, longitude, units, language)
                 .catch {
-                    weather.value = ApiCurrentWeatherResponse.Failure(it)
+                    weather.value = ResponseState.Failure(it)
                 }.collect {
-                    weather.value = ApiCurrentWeatherResponse.Success(it!!)
+                    weather.value = ResponseState.Success(it!!)
                 }
         }
     }
@@ -100,8 +99,8 @@ class AlertReceiver: BroadcastReceiver() {
         CoroutineScope(Dispatchers.Main).launch {
             weather.collectLatest { response ->
                 when (response) {
-                    is ApiCurrentWeatherResponse.Loading -> {}
-                    is ApiCurrentWeatherResponse.Success -> {
+                    is ResponseState.Loading -> {}
+                    is ResponseState.Success -> {
                         val weatherData = getWeatherData(response.data)
                         val cityName = getCity(context, weatherData.latitude, weatherData.longitude).cityName
 
@@ -117,7 +116,7 @@ class AlertReceiver: BroadcastReceiver() {
                         else
                             alertMaker.makeAlarm(weatherDescription, weatherIcon)
                     }
-                    is ApiCurrentWeatherResponse.Failure -> {}
+                    is ResponseState.Failure -> {}
                 }
             }
         }

@@ -12,12 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.weatherforecast.Helpers.getCity
 import com.example.weatherforecast.Helpers.getCountryFlagUrl
 import com.example.weatherforecast.Helpers.getUnits
 import com.example.weatherforecast.Helpers.getWeatherIcon
-import com.example.weatherforecast.LocalDataSource.DataBase
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.Caching.DataBase
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.WeatherData
 import com.example.weatherforecast.Model.getDailyWeatherData
@@ -26,10 +25,9 @@ import com.example.weatherforecast.Model.getWeatherData
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.DayAdapter
 import com.example.weatherforecast.RecycleView.HourAdapter
-import com.example.weatherforecast.RemoteDataSource.ApiCurrentWeatherResponse
-import com.example.weatherforecast.RemoteDataSource.ApiForecastWeatherResponse
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.ResponseState
+import com.example.weatherforecast.Services.Networking.NetworkManager
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.RemoteViewModel
@@ -83,10 +81,10 @@ class LocationFragment : Fragment(){
         binding.weekRecyclerView.adapter = dayAdapter
     }
     private fun initViewModel(){
-        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val networkManager: NetworkManager = NetworkManagerImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
         val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
-        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+        val repository: Repository = RepositoryImpl(networkManager, localDataSource)
 
         val factory = RemoteViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(RemoteViewModel::class.java)
@@ -105,17 +103,17 @@ class LocationFragment : Fragment(){
         lifecycleScope.launch {
             viewModel.weather.collectLatest {response ->
                 when(response){
-                    is ApiCurrentWeatherResponse.Loading -> {
+                    is ResponseState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.scrollView.visibility = View.GONE
                     }
-                    is ApiCurrentWeatherResponse.Success ->{
+                    is ResponseState.Success ->{
                         binding.progressBar.visibility = View.GONE
                         binding.scrollView.visibility = View.VISIBLE
                         val weather = getWeatherData(response.data)
                         setDataOnView(weather)
                     }
-                    is ApiCurrentWeatherResponse.Failure ->{
+                    is ResponseState.Failure ->{
                         binding.progressBar.visibility = View.GONE
                         Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
                     }
@@ -127,11 +125,11 @@ class LocationFragment : Fragment(){
         lifecycleScope.launch {
             viewModel.weatherList.collectLatest {response ->
                 when(response){
-                    is ApiForecastWeatherResponse.Loading -> {
+                    is ResponseState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.scrollView.visibility = View.GONE
                     }
-                    is ApiForecastWeatherResponse.Success ->{
+                    is ResponseState.Success ->{
                         binding.progressBar.visibility = View.GONE
                         binding.scrollView.visibility = View.VISIBLE
                         val hourlyWeatherData = getHourlyWeatherData(response.data)
@@ -141,7 +139,7 @@ class LocationFragment : Fragment(){
                         dayAdapter.submitList(dailyWeatherData)
                         dayAdapter.notifyDataSetChanged()
                     }
-                    is ApiForecastWeatherResponse.Failure ->{
+                    is ResponseState.Failure ->{
                         binding.progressBar.visibility = View.GONE
                         Toast.makeText(requireContext(), response.error.message, Toast.LENGTH_SHORT).show()
                     }

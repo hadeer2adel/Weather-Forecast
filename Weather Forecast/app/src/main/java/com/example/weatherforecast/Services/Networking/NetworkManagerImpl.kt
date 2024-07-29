@@ -1,4 +1,4 @@
-package com.example.weatherforecast.RemoteDataSource
+package com.example.weatherforecast.Services.Networking
 
 import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.ForecastWeatherResponse
@@ -6,27 +6,27 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RemoteDataSourceImpl : RemoteDataSource {
+class NetworkManagerImpl : NetworkManager {
 
     private val API_URL = "https://api.openweathermap.org/data/2.5/"
     private var apiKey = "7c25a82b0bf376312b96832ded4861a8"
-    private val service: RemoteDAO
+    private val service: NetworkService
 
     init {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(API_URL)
             .build()
-        service = retrofit.create(RemoteDAO:: class.java)
+        service = retrofit.create(NetworkService:: class.java)
     }
 
     companion object {
         @Volatile
-        private var instance: RemoteDataSourceImpl? = null
-        fun getInstance(): RemoteDataSourceImpl {
+        private var instance: NetworkManagerImpl? = null
+        fun getInstance(): NetworkManagerImpl {
             if(instance == null)
-                instance = RemoteDataSourceImpl()
-            return instance as RemoteDataSourceImpl
+                instance = NetworkManagerImpl()
+            return instance as NetworkManagerImpl
         }
     }
 

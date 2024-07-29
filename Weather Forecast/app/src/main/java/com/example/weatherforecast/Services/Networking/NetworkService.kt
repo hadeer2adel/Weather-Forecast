@@ -1,4 +1,4 @@
-package com.example.weatherforecast.RemoteDataSource
+package com.example.weatherforecast.Services.Networking
 
 import com.example.weatherforecast.Model.CurrentWeatherResponse
 import com.example.weatherforecast.Model.ForecastWeatherResponse
@@ -6,7 +6,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface RemoteDAO {
+interface NetworkService {
 
     @GET("weather")
     suspend fun getCurrentWeather(@Query("lat") latitude: Double,

@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import com.example.weatherforecast.Helpers.isSharedPreferencesContains
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.R
+import com.example.weatherforecast.base.BaseActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -26,7 +27,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
-class StartActivity : AppCompatActivity() {
+class StartActivity : BaseActivity() {
 
     private lateinit var fusedClient : FusedLocationProviderClient
     private lateinit var locationRequest : LocationRequest

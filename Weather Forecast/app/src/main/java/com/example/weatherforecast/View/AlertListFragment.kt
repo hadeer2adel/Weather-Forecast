@@ -19,17 +19,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.Helpers.showDialog
-import com.example.weatherforecast.LocalDataSource.DaoAlertResponse
-import com.example.weatherforecast.LocalDataSource.DataBase
+import com.example.weatherforecast.Services.ResponseState
+import com.example.weatherforecast.Services.Caching.DataBase
 import com.example.weatherforecast.AlertUtil.AlertPermission
-import com.example.weatherforecast.LocalDataSource.LocalDataSourceImpl
+import com.example.weatherforecast.Services.Caching.LocalDataSourceImpl
 import com.example.weatherforecast.Model.AppSettings
 import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.AlertUtil.AlertManagement
 import com.example.weatherforecast.R
 import com.example.weatherforecast.RecycleView.AlertAdapter
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSource
-import com.example.weatherforecast.RemoteDataSource.RemoteDataSourceImpl
+import com.example.weatherforecast.Services.Networking.NetworkManager
+import com.example.weatherforecast.Services.Networking.NetworkManagerImpl
 import com.example.weatherforecast.Repository.Repository
 import com.example.weatherforecast.Repository.RepositoryImpl
 import com.example.weatherforecast.ViewModel.AlertViewModel
@@ -112,27 +112,27 @@ class AlertListFragment : Fragment() {
         binding.recycleView.adapter = adapter
     }
     private fun initViewModel(){
-        val remoteDataSource: RemoteDataSource = RemoteDataSourceImpl.getInstance()
+        val networkManager: NetworkManager = NetworkManagerImpl.getInstance()
         val dataBase: DataBase = DataBase.getInstance(requireContext())
         val localDataSource = LocalDataSourceImpl(dataBase.getDAOLastWeather(), dataBase.getDAOLocations(), dataBase.getDAOAlerts())
-        val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
+        val repository: Repository = RepositoryImpl(networkManager, localDataSource)
 
         val factory = AlertViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(AlertViewModel::class.java)
-        handleDaoAlertResponse()
+        handleResponseState()
     }
 
-    private fun handleDaoAlertResponse(){
+    private fun handleResponseState(){
         lifecycleScope.launch {
             viewModel.alertList.collectLatest { response ->
                 when(response){
-                    is DaoAlertResponse.Loading -> { onLoading() }
-                    is DaoAlertResponse.Success ->{
+                    is ResponseState.Loading -> { onLoading() }
+                    is ResponseState.Success ->{
                         onSuccess()
                         adapter.submitList(response.data)
                         adapter.notifyDataSetChanged()
                     }
-                    is DaoAlertResponse.Failure ->{ onFailure(response.error.message) }
+                    is ResponseState.Failure ->{ onFailure(response.error.message) }
                 }
             }
         }
