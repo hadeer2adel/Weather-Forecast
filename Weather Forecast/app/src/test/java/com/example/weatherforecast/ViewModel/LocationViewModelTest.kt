@@ -2,7 +2,7 @@ package com.example.weatherforecast.ViewModel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.weatherforecast.Services.Caching.ResponseState
+import com.example.weatherforecast.Services.ResponseState
 import com.example.weatherforecast.Model.LocationData
 import com.example.weatherforecast.Model.AlertData
 import com.example.weatherforecast.Repository.FakeRepositoryImpl
@@ -42,15 +42,11 @@ class LocationViewModelTest {
         1,
         10.5,
         15.6,
-        "Cairo",
-        "EG"
     )
     private val location2 = LocationData(
         2,
         202.0,
         185.7,
-        "Roma",
-        "IT"
     )
 
     private val alertList = listOf(alert1, alert2)
@@ -72,8 +68,6 @@ class LocationViewModelTest {
             0,
             latitude,
             longitude,
-            "Tokyo",
-            "JP"
         )
     }
 
